@@ -1,0 +1,195 @@
+
+substitutions:
+  node_name: esp32-02
+  device_verbose_name: "Light Controller"
+  ip_suffix: "31"
+  ap_password: "y0ltlm7Rryim"
+  board_type: esp32dev
+
+packages:
+  wifi: !include common/wifi.yml
+  device_base: !include common/device_base.yml
+  i2c: !include common/i2c.yml
+
+esphome:
+  includes:
+    - /home/dave/src/esp32-custom/src/glow
+    - /home/dave/src/esp32-custom/src/display
+
+# Enable Home Assistant API
+api:
+  encryption:
+    key: "THGSFcmxAmRLb5PSvpDS7nEBZCeYwe2x+24T0x2OyEw="
+  password: ""
+
+globals:
+  - id: grid_on
+    type: bool
+    restore_value: yes
+    initial_value: 'false'
+  - id: strip_on
+    type: bool
+    restore_value: yes
+    initial_value: 'false'
+  - id: grid_columns
+    type: uint16_t
+    restore_value: no
+    initial_value: '9'
+    
+light:
+  - platform: partition
+    name: "LED Grid"
+    id: 'grid0'
+    segments:
+      - id: strip0
+        from: 0
+        to: 8
+      - id: strip1
+        from: 0
+        to: 8
+      - id: strip2
+        from: 0
+        to: 8
+      - id: strip3
+        from: 0
+        to: 8
+    on_turn_on:
+      then:
+        - lambda: |-
+            id(grid_on) = true;
+    on_turn_off:
+      then:
+        - lambda: |-
+            id(grid_on) = false;
+    effects: !include common/lightEffects.yml
+
+  - platform: fastled_clockless
+    name: "LED Grid Section 1"
+    id: strip0
+    chipset: NEOPIXEL
+    num_leds: 9
+    pin: GPIO33
+    # effects: !include common/lightEffects.yml
+
+  - platform: fastled_clockless
+    name: "LED Grid Section 2"
+    id: strip1
+    chipset: NEOPIXEL
+    num_leds: 9
+    pin: GPIO14
+    # effects: !include common/lightEffects.yml
+
+  - platform: fastled_clockless
+    name: "LED Grid Section 3"
+    id: strip2
+    chipset: NEOPIXEL
+    num_leds: 9
+    pin: GPIO27
+    # effects: !include common/lightEffects.yml
+
+  - platform: fastled_clockless
+    name: "LED Grid Section 4"
+    id: strip3
+    chipset: NEOPIXEL
+    num_leds: 9
+    pin: GPIO13
+    # effects: !include common/lightEffects.yml
+
+  - platform: fastled_clockless
+    name: "LED Strip"
+    id: strip4
+    chipset: WS2811
+    rgb_order: BRG
+    num_leds: 30
+    pin: GPIO26
+    effects: !include common/strip_effects.yml
+    on_turn_on:
+      then:
+        - lambda: |-
+            id(strip_on) = true;
+    on_turn_off:
+      then:
+        - lambda: |-
+            id(strip_on) = false;
+
+  - platform: fastled_clockless
+    name: "LED Frame"
+    id: led_frame
+    chipset: WS2811
+    rgb_order: BRG
+    num_leds: 19
+    pin: GPIO25
+
+sensor:
+  - platform: rotary_encoder
+    name: "LED Brightness"
+    id: 'rotary1'
+    pin_a:
+      number: GPIO18
+      inverted: true
+      mode:
+        input: true
+    pin_b:
+      number: GPIO5
+      inverted: true
+      mode:
+        input: true
+        pullup: true
+    min_value: 0
+    max_value: 100
+    unit_of_measurement: "%"
+    publish_initial_value: true
+    on_value:
+      then:
+        - light.turn_on:
+            id: grid0
+            brightness: !lambda |-
+              // output value must be in range 0 - 1.0
+              return id(rotary1).state / 100.0;
+        - light.turn_on:
+            id: strip4
+            brightness: !lambda |-
+              // output value must be in range 0 - 1.0
+              return id(rotary1).state / 100.0;
+        
+switch:
+  - platform: template
+    # pin: GPIO19
+    id: led_toggle
+    name: "LED Toggle Switch"
+    optimistic: true
+    on_turn_on:
+      then:
+        - light.turn_on: grid0
+        - light.turn_on: strip4
+    on_turn_off:
+      then:
+        - light.turn_off: grid0
+        - light.turn_off: strip4
+
+binary_sensor:
+  - platform: gpio
+    name: "LED Toggle Button"
+    pin:
+      number: GPIO19
+      mode:
+        input: true
+    on_press:
+      then:
+        - switch.toggle: led_toggle
+
+font:
+  # gfonts://family[@weight]
+  - file: "gfonts://Lato"
+    id: lato
+    size: 11
+
+display:
+  - platform: ssd1306_i2c
+    id: display01
+    model: "SSD1306 128x32"
+    address: 0x3C
+    lambda: |-
+      #include "display/write_display.h"
+      drawLines(it, id(lato),
+        id(rotary1).state, id(grid_on), id(strip_on));

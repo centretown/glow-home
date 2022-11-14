@@ -1,0 +1,25 @@
+# device_base.yml
+substitutions:
+  log_level: DEBUG
+#   node_name: esp32-02
+#   device_verbose_name: "My Device"
+#   board_type: esp32dev
+
+esphome:
+  name: ${node_name}
+  build_path: ./build/${node_name}
+
+esp32:
+  board: $board_type
+  framework:
+    type: arduino
+  
+# Enable logging
+logger:
+  level: $log_level
+
+captive_portal:
+
+ota:
+  password: "19995aac489e7eab0577feae9a5f4a8d"
+  

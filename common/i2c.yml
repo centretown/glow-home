@@ -1,0 +1,6 @@
+# I²C Bus
+i2c:
+  sda: GPIO21
+  scl: GPIO22
+  scan: true
+  frequency: 100kHz

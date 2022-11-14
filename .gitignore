@@ -1,0 +1,4 @@
+secrets.yaml
+esp32-custom/src/esphome
+esp32-custom/src/esphome.h
+build

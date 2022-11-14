@@ -1,0 +1,24 @@
+# substitutions:
+#   node_name: my_device
+#   ip_suffix: "00"
+#   ap_password: "secret"
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+  # Optional manual IP
+  manual_ip:
+    static_ip: 192.168.0.$ip_suffix
+    gateway: 192.168.0.1
+    subnet: 255.255.255.0
+
+  fast_connect: true
+  
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: $node_name Fallback Hotspot
+    password: $ap_password
+    manual_ip:
+      static_ip: 192.168.0.$ip_suffix
+      gateway: 192.168.0.1
+      subnet: 255.255.255.0

@@ -1,0 +1,50 @@
+esphome:
+  name: pan-tilt
+  includes:
+    - /home/dave/esphome/.esphome/build/pan-tilt/src/custom
+
+esp32:
+  board: esp32dev
+  framework:
+    type: arduino
+
+# Enable logging
+logger:
+  level: DEBUG
+
+# Enable Home Assistant API
+api:
+  password: ""
+
+ota:
+  password: ""
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "Pan-Tilt Fallback Hotspot"
+    password: "ryUVhmvnstfg"
+
+captive_portal:
+
+light:
+  - platform: fastled_clockless
+    name: "LED Frame"
+    id: led_frame
+    chipset: WS2811
+    rgb_order: BRG
+    num_leds: 19
+    pin: GPIO27
+    # effects: !include common/lightEffects.yml
+
+  - platform: fastled_clockless
+    name: "LED Ribbon"
+    id: led_ribbon
+    chipset: WS2811
+    rgb_order: BRG
+    num_leds: 15
+    pin: GPIO14
+    # effects: !include common/lightEffects.yml

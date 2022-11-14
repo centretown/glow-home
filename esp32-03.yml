@@ -1,0 +1,29 @@
+esphome:
+  name: esp32-03
+
+esp32:
+  board: esp32dev
+  framework:
+    type: arduino
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+  password: "football"
+
+ota:
+  password: "football"
+
+wifi:
+  ssid: "xlab"
+  password: "BeetlebOmb"
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "Esp32-03 Fallback Hotspot"
+    password: "rIzwCKTS0FOy"
+
+captive_portal:
+    

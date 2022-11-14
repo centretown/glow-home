@@ -1,0 +1,58 @@
+servo:
+  - id: pan_servo
+    output: pan_output
+    restore: true
+    transition_length: 5s
+        
+  - id: tilt_servo
+    output: tilt_output
+    restore: true
+    transition_length: 5s
+
+output:
+  - platform: ledc
+    id: pan_output
+    pin: $pan_gpio
+    frequency: 50
+    channel: 14
+
+  - platform: ledc
+    id: tilt_output
+    pin: $tilt_gpio
+    frequency: 50
+    channel: 15
+
+number:
+  - platform: template
+    id: $tilt_id
+    name: $tilt_name
+    
+    min_value: 0
+    max_value: 180
+    unit_of_measurement: "°"
+    step: 1
+    mode: slider
+    optimistic: true
+    on_value:
+      then:
+      - servo.write:
+          id: tilt_servo
+          level: !lambda |-
+            return (90-x) / 90;
+
+  - platform: template
+    id: $pan_id
+    name: $pan_name
+    
+    min_value: 0
+    max_value: 180
+    unit_of_measurement: "°"
+    step: 1
+    mode: slider
+    optimistic: true
+    on_value:
+      then:
+      - servo.write:
+          id: pan_servo
+          level: !lambda |-
+            return (90-x) / 90;

@@ -1,0 +1,127 @@
+
+substitutions:
+  node_name: heltec32-01
+  device_verbose_name: "Heltec w/display"
+  ip_suffix: "220"
+  ap_password: "y0ltlm7Rryim"
+  board_type: heltec_wifi_kit_32
+
+packages:
+  wifi: !include common/wifi.yml
+  device_base: !include common/device_base.yml
+
+esphome:
+  includes:
+    - ./esp32-custom/src/glow
+
+api:
+  password: "19995aac489e7eab0577feae9a5f4a8d"
+    
+light:
+  - platform: fastled_clockless
+    name: "LED Strip 01"
+    id: strip1
+    chipset: WS2811
+    rgb_order: BRG
+    num_leds: 20
+    pin: GPIO12
+    effects: !include common/strip_effects.yml
+    on_turn_on:
+      then:
+        - lambda: |-
+            id(strip_on) = true;
+    on_turn_off:
+      then:
+        - lambda: |-
+            id(strip_on) = false;
+
+i2c:
+  # Built-in display
+  - id: bus_a
+    sda: 4
+    scl: 15
+    scan: false
+
+font:
+  # gfonts://family[@weight]
+  - file: "gfonts://Lato"
+    id: lato
+    size: 14
+
+sensor:
+  - platform: rotary_encoder
+    name: "LED Brightness"
+    id: 'rotary1'
+    pin_a:
+      number: GPIO14
+      inverted: true
+      mode:
+        input: true
+    pin_b:
+      number: GPIO27
+      inverted: true
+      mode:
+        input: true
+        pullup: true
+    min_value: 0
+    max_value: 100
+    unit_of_measurement: "%"
+    publish_initial_value: true
+    on_value:
+      then:
+        - light.turn_on:
+            id: strip1
+            brightness: !lambda |-
+              // output value must be in range 0 - 1.0
+              return id(rotary1).state / 100.0;
+  
+  - platform: wifi_signal
+    id: wifi_signal_1
+    name: "WiFi Signal"
+    update_interval: 60s
+  
+switch:
+  - platform: template
+    id: led_switch
+    name: "LED ON/OFF Switch"
+    optimistic: true
+    on_turn_on:
+      then:
+        - light.turn_on: strip1
+    on_turn_off:
+      then:
+        - light.turn_off: strip1
+
+binary_sensor:
+  - platform: gpio
+    name: "LED ON/OFF"
+    pin:
+      number: GPIO26
+      mode:
+        input: true
+    on_press:
+      then:
+        - switch.toggle: led_switch
+
+
+globals:
+  - id: strip_on
+    type: bool
+    restore_value: yes
+    initial_value: 'false'
+        
+display:
+  - platform: ssd1306_i2c
+    i2c_id: bus_a
+    model: "SSD1306 128x64"
+    id: blue_display
+    reset_pin: 16
+#    i2c_id: bus_a
+    address: 0x3C
+    lambda: |-
+      const char* on_off = (id(strip_on)) ? "ON" : "OFF";
+
+      it.printf(0, 0, id(lato), "WIFI signal: %.2f", id(wifi_signal_1).state);
+      it.printf(0, 16, id(lato), "%s", on_off);
+      it.printf(0, 32, id(lato), "Brightness: %.2f", id(rotary1).state);
+

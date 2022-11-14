@@ -1,0 +1,90 @@
+
+substitutions:
+  node_name: esp32cam02
+  device_verbose_name: "Camera 2"
+  ip_suffix: "190"
+  ap_password: "743qku7ulQtg"
+
+packages:
+  wifi: !include common/wifi.yml
+
+esphome:
+  name: esp32cam02
+
+esp32:
+  board: esp32cam
+  framework:
+    type: arduino
+
+# Enable logging
+logger:
+  level: WARN
+
+# Enable Home Assistant API
+api:
+  encryption:
+    key: "u7rzZBlaPL/sr558osM/IqfnAXCvrvWe2psHaP7paaA="
+
+ota:
+  password: "9a397860f145886d1435d7e8149a8fb7"
+
+# wifi:
+#   ssid: !secret wifi_ssid
+#   password: !secret wifi_password
+
+#   # Enable fallback hotspot (captive portal) in case wifi connection fails
+#   ap:
+#     ssid: "Esp32Cam02 Fallback Hotspot"
+#     password: "743qku7ulQtg"
+
+captive_portal:
+
+esp32_camera:
+  name: "cam02"
+  id: cam02
+  external_clock:
+    pin: GPIO0
+    frequency: 20MHz
+  i2c_pins:
+    sda: GPIO26
+    scl: GPIO27
+  data_pins: [GPIO5, GPIO18, GPIO19, GPIO21, GPIO36, GPIO39, GPIO34, GPIO35]
+  vsync_pin: GPIO25
+  href_pin: GPIO23
+  pixel_clock_pin: GPIO22
+  power_down_pin: GPIO32
+  resolution: 1024x768
+  vertical_flip: false
+  horizontal_mirror: false
+  brightness: 1
+
+  disabled_by_default: false
+  jpeg_quality: 20
+  contrast: -1
+  saturation: 0
+  special_effect: NONE
+  agc_mode: AUTO
+  aec2: true
+  ae_level: 0
+  aec_value: 300
+  aec_mode: AUTO
+  agc_value: 0
+  agc_gain_ceiling: 2X
+  wb_mode: AUTO
+  test_pattern: false
+  max_framerate: 30.0fps
+  idle_framerate: 0.1fps
+
+esp32_camera_web_server:
+  - port: 8080
+    mode: stream
+  - port: 8081
+    mode: snapshot
+
+light:
+  - platform: status_led
+    name: "Status"
+    id: status
+    pin:
+      number: GPIO33
+      mode: output
