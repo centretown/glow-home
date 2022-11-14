@@ -12,7 +12,8 @@ packages:
 
 esphome:
   includes:
-    - ./esp32-custom/src/glow
+    - esp32-custom/src/glow
+    - esp32-custom/src/display
 
 api:
   password: "19995aac489e7eab0577feae9a5f4a8d"

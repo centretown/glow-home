@@ -13,8 +13,8 @@ packages:
 
 esphome:
   includes:
-    - /home/dave/src/esp32-custom/src/glow
-    - /home/dave/src/esp32-custom/src/display
+    - esp32-custom/src/glow
+    - esp32-custom/src/display
 
 # Enable Home Assistant API
 api:

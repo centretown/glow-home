@@ -43,6 +43,26 @@ namespace glow
       return static_cast<uint8_t>(value);
     }
 
+    inline uint8_t adjust(float ratio)
+    {
+      uint16_t length = Length();
+      if (length < 2)
+      {
+        return Begin();
+      }
+      ratio *= length;
+      if (Reversed())
+      {
+        ratio = End() - ratio - 1;
+      }
+      else
+      {
+        ratio = Begin() + ratio;
+      }
+
+      return static_cast<uint8_t>(ratio);
+    }
+
     inline void shift(uint8_t amount)
     {
       *this >>= amount;

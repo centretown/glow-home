@@ -19,9 +19,9 @@ namespace glow
     Pixels pixels;
     Grid grid;
 
-    GradientRange hue_range = {0, 63};
-    GradientRange saturation_range = {127, 256};
-    GradientRange luminance_range = {191, 256};
+    GradientRange hue_range = {0, 1};
+    GradientRange saturation_range = {255, 256};
+    GradientRange luminance_range = {255, 256};
 
     bool is_setup = false;
     bool is_logged = false;
@@ -77,14 +77,27 @@ namespace glow
       grid.SpinValues(pixels, grid, *this);
     }
 
+    //   inline ESPHSVColor Map(uint16_t index)
+    //   {
+    //     hsv.saturation = saturation_range.get(grid, index);
+    //     hsv.value = luminance_range.get(grid, index);
+    //     hsv.hue = hue_range.get(grid, index);
+    //     return hsv;
+    //   }
+
+    // private:
     inline ESPHSVColor Map(uint16_t index)
     {
-      hsv.saturation = saturation_range.get(grid, index);
-      hsv.value = luminance_range.get(grid, index);
-      hsv.hue = hue_range.get(grid, index);
+      float ratio = static_cast<float>(index) - grid.Begin();
+      ratio /= static_cast<float>(grid.Length());
+
+      hsv.hue = hue_range.adjust(ratio);
+      hsv.saturation = saturation_range.adjust(ratio);
+      hsv.value = luminance_range.adjust(ratio);
       return hsv;
     }
 
+  public:
     inline void Hue(uint16_t from, uint16_t to = out_of_bounds)
     {
       hue_range.set(from, to);
@@ -123,5 +136,48 @@ namespace glow
         is_logged = true;
       }
     }
+
+    inline bool FlipHue(uint32_t &counter, bool &reverse,
+                        uint16_t lo, uint16_t hi,
+                        uint32_t mlls, uint32_t gap = 5000)
+    {
+      return Flip(hue_range, counter, reverse, lo, hi, mlls, gap);
+    }
+
+    inline bool FlipSaturation(uint32_t &counter, bool &reverse,
+                               uint16_t lo, uint16_t hi,
+                               uint32_t mlls, uint32_t gap = 5000)
+    {
+      return Flip(saturation_range, counter, reverse, lo, hi, mlls, gap);
+    }
+
+    inline bool FlipLuminance(uint32_t &counter, bool &reverse,
+                              uint16_t lo, uint16_t hi,
+                              uint32_t mlls, uint32_t gap = 5000)
+    {
+      return Flip(luminance_range, counter, reverse, lo, hi, mlls, gap);
+    }
+
+    inline bool Flip(GradientRange &gradient, uint32_t &counter, bool &reverse,
+                     uint16_t lo, uint16_t hi,
+                     uint32_t mlls, uint32_t gap = 5000)
+    {
+      if (mlls >= counter)
+      {
+        counter = mlls + gap;
+        reverse = !reverse;
+        if (reverse)
+        {
+          gradient(hi, lo);
+        }
+        else
+        {
+          gradient(lo, hi);
+        }
+        return true;
+      }
+      return false;
+    }
   };
+
 }
