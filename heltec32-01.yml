@@ -117,7 +117,6 @@ display:
     model: "SSD1306 128x64"
     id: blue_display
     reset_pin: 16
-#    i2c_id: bus_a
     address: 0x3C
     lambda: |-
       const char* on_off = (id(strip_on)) ? "ON" : "OFF";

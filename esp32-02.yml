@@ -154,7 +154,6 @@ sensor:
         
 switch:
   - platform: template
-    # pin: GPIO19
     id: led_toggle
     name: "LED Toggle Switch"
     optimistic: true
