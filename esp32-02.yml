@@ -22,20 +22,6 @@ api:
     key: "THGSFcmxAmRLb5PSvpDS7nEBZCeYwe2x+24T0x2OyEw="
   password: ""
 
-globals:
-  - id: grid_on
-    type: bool
-    restore_value: yes
-    initial_value: 'false'
-  - id: strip_on
-    type: bool
-    restore_value: yes
-    initial_value: 'false'
-  - id: grid_columns
-    type: uint16_t
-    restore_value: no
-    initial_value: '9'
-    
 light:
   - platform: partition
     name: "LED Grid"
@@ -165,7 +151,26 @@ switch:
       then:
         - light.turn_off: grid0
         - light.turn_off: strip4
-
+  
+  - platform: template
+    id: led_toggle_2
+    name: "Double Click"
+    optimistic: true
+    
+globals:
+  - id: grid_on
+    type: bool
+    restore_value: yes
+    initial_value: 'false'
+  - id: strip_on
+    type: bool
+    restore_value: yes
+    initial_value: 'false'
+  - id: grid_columns
+    type: uint16_t
+    restore_value: no
+    initial_value: '9'
+        
 binary_sensor:
   - platform: gpio
     name: "LED Toggle Button"
@@ -176,7 +181,17 @@ binary_sensor:
     on_press:
       then:
         - switch.toggle: led_toggle
-
+    
+    # on_click:
+    #   - min_length: 0ms
+    #     max_length: 500ms
+    #     then:
+    #       - switch.toggle: led_toggle
+    #   - min_length: 500ms
+    #     max_length: 1000ms
+    #     then:
+    #       - switch.toggle: led_toggle_2
+    
 font:
   # gfonts://family[@weight]
   - file: "gfonts://Lato"

@@ -7,7 +7,7 @@ substitutions:
 
 esphome:
   name: ${node_name}
-  build_path: ./build/${node_name}
+  build_path: build/${node_name}
 
 esp32:
   board: $board_type
