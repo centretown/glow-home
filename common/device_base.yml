@@ -5,6 +5,7 @@ substitutions:
 #   device_verbose_name: "My Device"
 #   board_type: esp32dev
 
+# https://esphome.io/index.html#
 esphome:
   name: ${node_name}
   build_path: build/${node_name}

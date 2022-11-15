@@ -11,6 +11,7 @@ packages:
   device_base: !include common/device_base.yml
   i2c: !include common/i2c.yml
 
+# https://esphome.io/index.html#
 esphome:
   includes:
     - esp32-custom/src/glow
@@ -22,6 +23,7 @@ api:
     key: "THGSFcmxAmRLb5PSvpDS7nEBZCeYwe2x+24T0x2OyEw="
   password: ""
 
+# https://esphome.io/components/light/index.html
 light:
   - platform: partition
     name: "LED Grid"
@@ -106,6 +108,7 @@ light:
     num_leds: 19
     pin: GPIO25
 
+# https://esphome.io/components/sensor/index.html
 sensor:
   - platform: rotary_encoder
     name: "LED Brightness"
@@ -138,6 +141,7 @@ sensor:
               // output value must be in range 0 - 1.0
               return id(rotary1).state / 100.0;
         
+# https://esphome.io/components/switch/index.html
 switch:
   - platform: template
     id: led_toggle
@@ -157,6 +161,7 @@ switch:
     name: "Double Click"
     optimistic: true
     
+# https://esphome.io/guides/automations.html?highlight=template#global-variables
 globals:
   - id: grid_on
     type: bool
@@ -171,6 +176,7 @@ globals:
     restore_value: no
     initial_value: '9'
         
+# https://esphome.io/components/binary_sensor/index.html
 binary_sensor:
   - platform: gpio
     name: "LED Toggle Button"
@@ -192,12 +198,14 @@ binary_sensor:
     #     then:
     #       - switch.toggle: led_toggle_2
     
+# https://esphome.io/components/display/index.html?highlight=font#fonts
 font:
   # gfonts://family[@weight]
   - file: "gfonts://Lato"
     id: lato
     size: 11
 
+# https://esphome.io/components/display/index.html
 display:
   - platform: ssd1306_i2c
     id: display01
