@@ -1,187 +1,27 @@
       - addressable_lambda: 
-          name: "Flip Hue"
-          update_interval: 100ms
+          name: "Gradient"
+          update_interval: 16ms
           lambda: |-
             
-            #include "glow/Gradients.h"
-            static uint32_t count = 0;
-            static bool reverse = false;
-            static glow::Gradients gradients;
-    
-            if (initial_run) {
-              gradients.Setup(&it, current_color, 4);
-              gradients.Hue(gradients.hsv.hue, 
-                gradients.hsv.hue + 85);
-            }
-    
-            gradients.Run();
-            if (gradients.FlipHue(count, reverse,
-              gradients.hsv.hue, 
-              gradients.hsv.hue+85, 
-              millis())) {
-              
-              gradients.shiftHue(8);
-            }
-  
-      - addressable_lambda: 
-          name: "Flip Saturation"
-          update_interval: 100ms
-          lambda: |-
-            
-            #include "glow/Gradients.h"
-            static uint32_t count = 0;
-            static bool reverse = false;
-            static glow::Gradients gradients;
-    
-            if (initial_run) {
-              gradients.Setup(&it, current_color, 4);
-              gradients.Saturation(63, 255);
-              gradients.Luminance(255);
-            }
-    
-            gradients.Run();
-            if (gradients.FlipSaturation(count, reverse,
-                  63, 255, millis())) {
-              gradients.shiftHue(8);
-            }
-  
-      - addressable_lambda: 
-          name: "Flip Luminance"
-          update_interval: 100ms
-          lambda: |-
-            
-            #include "glow/Gradients.h"
-            static uint32_t count = 0;
-            static bool reverse = false;
-            static glow::Gradients gradients;
-    
-            if (initial_run) {
-              gradients.Setup(&it, current_color, 4);
-              gradients.Saturation(255);
-              gradients.Luminance(128, 255);
-            }
-    
-            gradients.Run();
-            if (gradients.FlipLuminance(count, reverse,
-                       128, 255, millis())) {
-              gradients.shiftHue(8);
-            }
-
-
-      - addressable_lambda: 
-          name: "Test Two"
-          update_interval: 200ms
-          lambda: |-
-            
-            #include "glow/Gradients.h"
-
-            static glow::Gradients gradients;
+            #include "glow/Pixels.h"
+            static glow::Pixels pixels;
+            static Color from(0,0,255);
+            static Color to(63,63,63);
+            static uint8_t hue = 0;
+            static uint32_t counter = 0;
+            const uint32_t interval = 48;
 
             if (initial_run) {
-              gradients.Setup(&it, current_color, 4);
-              gradients.Hue(gradients.hsv.hue, 
-                gradients.hsv.hue + 85);
-              gradients.Saturation(255);
-              gradients.Luminance(255);
+              pixels.setup(&it, 4);
             }
 
-            gradients.Run();
-            gradients.shiftHue(3);
+            auto now = millis();
+            if (counter - now > interval) {
+              counter = now + interval;
 
-      - addressable_lambda: 
-          name: "Hue Flip Test 5s"
-          update_interval: 5s
-          lambda: |-
-            
-            #include "glow/Gradients.h"
-
-            static glow::Gradients gradients;
-            static bool reverse = false;
-
-            if (initial_run) {
-              gradients.Setup(&it, current_color, 1);
-              gradients.Hue(192, 317);
-              gradients.Saturation(255);
-              gradients.Luminance(255);
+              hue++;
+              from = ESPHSVColor(hue,255,255).to_rgb();
+              to = ESPHSVColor(hue,85,255).to_rgb();
             }
 
-            gradients.Run();
-
-            reverse = !reverse;
-            if (reverse) {
-              gradients.Hue(317, 192);
-            }
-            else {
-              gradients.Hue(192, 317);
-            }
-
-
-      - addressable_lambda: 
-          name: "Test Two-A"
-          update_interval: 60ms
-          lambda: |-
-            
-            #include "glow/Gradients.h"
-
-            static glow::Gradients gradients;
-            
-            if (initial_run) {
-              gradients.Setup(&it, current_color, 4);
-              gradients.Hue(317, 192);
-              gradients.Saturation(127);
-              gradients.Luminance(255);
-            }
-
-            gradients.Run();
-            // gradients.shiftHue(3);
-
-
-      - addressable_lambda: 
-          name: "Test Three"
-          update_interval: 20ms
-          lambda: |-
-            
-            #include "glow/Gradients.h"
-
-            static glow::Gradients gradients;
-
-            if (initial_run) {
-              gradients.Setup(&it, current_color, 4);
-            }
-
-            gradients.Run();
-            gradients.shiftHue(1);
-
-
-      - addressable_lambda: 
-          name: "Test Four"
-          update_interval: 40ms
-          lambda: |-
-            
-            #include "glow/Gradients.h"
-
-            static glow::Gradients gradients;
-
-            if (initial_run) {
-              gradients.Setup(&it, current_color, 4);
-            }
-
-            gradients.Run();
-            gradients.shiftHue(1);
-
-
-      - addressable_lambda: 
-          name: "Test Five"
-          update_interval: 40ms
-          lambda: |-
-            
-            #include "glow/Gradients.h"
-
-            static glow::Gradients gradients;
-
-            if (initial_run) {
-              gradients.Setup(&it, current_color, 1);
-            }
-
-            gradients.Run();
-            gradients.shiftHue(1);
+            pixels.gradient(from, to);

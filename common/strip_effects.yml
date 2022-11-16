@@ -1,34 +1,31 @@
   - addressable_lambda: 
-      name: "Hue Switch"
-      update_interval: 100ms
+      name: "Gradient"
+      update_interval: 16ms
       lambda: |-
         
-        #include "glow/Gradients.h"
-
-        static uint32_t count = millis();
-        static glow::Gradients gradients;
-        static bool reverse = false;
+        #include "glow/Pixels.h"
+        static glow::Pixels pixels;
+        static Color from(0,0,255);
+        static Color to(63,63,63);
+        static uint8_t hue = 0;
+        static uint32_t counter = 0;
+        const uint32_t interval = 48;
 
         if (initial_run) {
-          gradients.Setup(&it, current_color, 1);
-          gradients.Hue(192, 317);
-          gradients.Saturation(255);
-          gradients.Luminance(255);
+          pixels.setup(&it, 1);
         }
 
-        gradients.Run();
+        auto now = millis();
+        if (counter - now > interval) {
+          counter = now + interval;
 
-        uint32_t mlls = millis();
-        if (mlls >= count) {
-          reverse = !reverse;
-          count = mlls + 5000;
-          if (reverse) {
-            gradients.Hue(317, 192);
-          }
-          else {
-            gradients.Hue(192, 317);
-          }
+          hue++;
+          from = ESPHSVColor(hue,255,255).to_rgb();
+          to = ESPHSVColor(hue,85,255).to_rgb();
         }
+
+        pixels.gradient(from, to);
+
   - addressable_scan:
   - addressable_scan:
       name: Scan Effect With Custom Values
