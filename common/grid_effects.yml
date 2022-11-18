@@ -1,71 +1,96 @@
+
       - addressable_lambda: 
-          name: "Grid Value Gradient"
-          update_interval: 100ms
-          lambda: |-
-            #include "glow/write_lights.h"
-            static int hue = 0;
-            if (initial_run) {
-              ESPHSVColor hsv = current_hsv_color(current_color);
-              hue = hsv.hue;
-            }
-            hsvValue(it, hue, initial_run, id(grid_columns));
-      - addressable_lambda:
-          name: "Grid Saturation Gradient"
-          update_interval: 100ms
-          lambda: |-
-            #include "glow/write_lights.h"
-            #include "glow/Grid.h"
-            static int hue = 0;
-            static glow::Grid grid(36, 9);
-            if (initial_run) {
-              ESPHSVColor hsv = current_hsv_color(current_color);
-              hue = hsv.hue;
-            }
-            hsvSaturation(it, hue, initial_run, id(grid_columns));
-      - pulse:
-          name: "Grid Slow Pulse"
-          # transition_length: 1s      # defaults to 1s
-          update_interval: 2s
-      - random:
-          name: Grid Random
-          transition_length: 5s
-          update_interval: 7s        
-      - strobe:
-          name: Grid Strobe
-          colors:
-            - state: true
-              brightness: 100%
-              red: 100%
-              green: 90%
-              blue: 0%
-              duration: 500ms
-            - state: false
-              duration: 250ms
-            - state: true
-              brightness: 100%
-              red: 0%
-              green: 100%
-              blue: 0%
-              duration: 500ms
-      - flicker:
-          name: Grid Flicker
-          alpha: 95%
-          intensity: 1.5%
-      - addressable_rainbow:
-          name: Grid Rainbow
-          speed: 5
-          width: 144
-      - addressable_scan:
-          name: Grid Scan
-          move_interval: 100ms
-          scan_width: 1
-      - addressable_fireworks:
-          name: Grid Fireworks
-          update_interval: 32ms
-          spark_probability: 10%
-          use_random_color: false
-          fade_out_rate: 120
-      - addressable_flicker:
-          name: Grid Addressable Flicker
+          name: "Gradient Rows"
           update_interval: 16ms
-          intensity: 5%
+          lambda: |-
+            
+            #include "glow/Gradients.h"
+            static glow::Gradients gradients;
+            static uint8_t hue = 0;
+
+            if (initial_run) {
+              gradients.setup(&it, 4); // 4 rows
+              // change something every 48ms
+              gradients.set_interval(48);
+              // set base color to red
+              gradients.set_base_color(ESPHSVColor(hue, 255, 255));
+            }
+
+            if (gradients.check_interval(millis())) {
+              // move around the color wheel, saturation and value 100%
+              gradients.set_base_color(ESPHSVColor(++hue, 255, 255));
+            }
+
+            gradients.rows_to(Color::WHITE);
+
+      - addressable_lambda: 
+          name: "Gradient Rows Paralell"
+          update_interval: 16ms
+          lambda: |-
+            
+            #include "glow/Gradients.h"
+            static glow::Gradients gradients;
+            static uint8_t hue = 0;
+
+            if (initial_run) {
+              gradients.setup(&it, 4); // 4 rows
+              // change something every 48ms
+              gradients.set_interval(48);
+              // set base color to red
+              gradients.set_base_color(ESPHSVColor(hue, 255, 255));
+            }
+
+            if (gradients.check_interval(millis())) {
+              // move around the color wheel, saturation and value 100%
+              gradients.set_base_color(ESPHSVColor(++hue, 255, 255));
+            }
+
+            gradients.rows_paralell_to(Color::WHITE);
+
+      - addressable_lambda: 
+          name: "Gradient Columns"
+          update_interval: 16ms
+          lambda: |-
+            
+            #include "glow/Gradients.h"
+            static glow::Gradients gradients;
+            static uint8_t hue = 0;
+
+            if (initial_run) {
+              gradients.setup(&it, 4); // 4 rows
+              // change something every 48ms
+              gradients.set_interval(48);
+              // set base color to red
+              gradients.set_base_color(ESPHSVColor(hue, 255, 255));
+            }
+
+            if (gradients.check_interval(millis())) {
+              // move around the color wheel, saturation and value 100%
+              gradients.set_base_color(ESPHSVColor(++hue, 255, 255));
+            }
+
+            gradients.columns_to(Color::WHITE);
+
+      - addressable_lambda: 
+          name: "Gradient Columns Paralell"
+          update_interval: 16ms
+          lambda: |-
+            
+            #include "glow/Gradients.h"
+            static glow::Gradients gradients;
+            static uint8_t hue = 0;
+
+            if (initial_run) {
+              gradients.setup(&it, 4); // 4 rows
+              // change something every 48ms
+              gradients.set_interval(48);
+              // set base color to red
+              gradients.set_base_color(ESPHSVColor(hue, 255, 255));
+            }
+
+            if (gradients.check_interval(millis())) {
+              // move around the color wheel, saturation and value 100%
+              gradients.set_base_color(ESPHSVColor(++hue, 255, 255));
+            }
+
+            gradients.columns_paralell_to(Color::WHITE);

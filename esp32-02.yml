@@ -9,13 +9,13 @@ substitutions:
 packages:
   wifi: !include common/wifi.yml
   device_base: !include common/device_base.yml
-  i2c: !include common/i2c.yml
+  # i2c: !include common/i2c.yml
 
 # https://esphome.io/index.html#
 esphome:
   includes:
     - esp32-custom/src/glow
-    - esp32-custom/src/display
+    # - esp32-custom/src/display
 
 # Enable Home Assistant API
 api:
@@ -49,7 +49,7 @@ light:
       then:
         - lambda: |-
             id(grid_on) = false;
-    effects: !include common/lightEffects.yml
+    effects: !include common/grid_effects.yml
 
   - platform: fastled_clockless
     name: "LED Grid Section 1"
@@ -57,7 +57,6 @@ light:
     chipset: NEOPIXEL
     num_leds: 9
     pin: GPIO33
-    # effects: !include common/lightEffects.yml
 
   - platform: fastled_clockless
     name: "LED Grid Section 2"
@@ -65,7 +64,6 @@ light:
     chipset: NEOPIXEL
     num_leds: 9
     pin: GPIO14
-    # effects: !include common/lightEffects.yml
 
   - platform: fastled_clockless
     name: "LED Grid Section 3"
@@ -73,7 +71,6 @@ light:
     chipset: NEOPIXEL
     num_leds: 9
     pin: GPIO27
-    # effects: !include common/lightEffects.yml
 
   - platform: fastled_clockless
     name: "LED Grid Section 4"
@@ -81,7 +78,6 @@ light:
     chipset: NEOPIXEL
     num_leds: 9
     pin: GPIO13
-    # effects: !include common/lightEffects.yml
 
   - platform: fastled_clockless
     name: "LED Strip"
@@ -99,14 +95,6 @@ light:
       then:
         - lambda: |-
             id(strip_on) = false;
-
-  - platform: fastled_clockless
-    name: "LED Frame"
-    id: led_frame
-    chipset: WS2811
-    rgb_order: BRG
-    num_leds: 19
-    pin: GPIO25
 
 # https://esphome.io/components/sensor/index.html
 sensor:
@@ -198,20 +186,20 @@ binary_sensor:
     #     then:
     #       - switch.toggle: led_toggle_2
     
-# https://esphome.io/components/display/index.html?highlight=font#fonts
-font:
-  # gfonts://family[@weight]
-  - file: "gfonts://Lato"
-    id: lato
-    size: 11
+# # https://esphome.io/components/display/index.html?highlight=font#fonts
+# font:
+#   # gfonts://family[@weight]
+#   - file: "gfonts://Lato"
+#     id: lato
+#     size: 11
 
-# https://esphome.io/components/display/index.html
-display:
-  - platform: ssd1306_i2c
-    id: display01
-    model: "SSD1306 128x32"
-    address: 0x3C
-    lambda: |-
-      #include "display/write_display.h"
-      drawLines(it, id(lato),
-        id(rotary1).state, id(grid_on), id(strip_on));
+# # https://esphome.io/components/display/index.html
+# display:
+#   - platform: ssd1306_i2c
+#     id: display01
+#     model: "SSD1306 128x32"
+#     address: 0x3C
+#     lambda: |-
+#       #include "display/write_display.h"
+#       drawLines(it, id(lato),
+#         id(rotary1).state, id(grid_on), id(strip_on));

@@ -1,30 +1,26 @@
   - addressable_lambda: 
-      name: "Gradient"
+      name: "Gradient Rows"
       update_interval: 16ms
       lambda: |-
         
-        #include "glow/Pixels.h"
-        static glow::Pixels pixels;
-        static Color from(0,0,255);
-        static Color to(63,63,63);
+        #include "glow/Gradients.h"
+        static glow::Gradients gradients;
         static uint8_t hue = 0;
-        static uint32_t counter = 0;
-        const uint32_t interval = 48;
 
         if (initial_run) {
-          pixels.setup(&it, 1);
+          gradients.setup(&it); // 1 row
+          // change something every 48ms
+          gradients.set_interval(48);
+          // set base color to red
+          gradients.set_base_color(ESPHSVColor(hue, 255, 255));
         }
 
-        auto now = millis();
-        if (counter - now > interval) {
-          counter = now + interval;
-
-          hue++;
-          from = ESPHSVColor(hue,255,255).to_rgb();
-          to = ESPHSVColor(hue,85,255).to_rgb();
+        if (gradients.check_interval(millis())) {
+          // move around the color wheel, saturation and value 100%
+          gradients.set_base_color(ESPHSVColor(++hue, 255, 255));
         }
 
-        pixels.gradient(from, to);
+        gradients.rows_to(Color::WHITE);
 
   - addressable_scan:
   - addressable_scan:

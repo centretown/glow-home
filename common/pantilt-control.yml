@@ -31,7 +31,7 @@ number:
     max_value: 180
     unit_of_measurement: "°"
     step: 1
-    mode: slider
+    mode: box
     optimistic: true
     on_value:
       then:
@@ -48,7 +48,7 @@ number:
     max_value: 180
     unit_of_measurement: "°"
     step: 1
-    mode: slider
+    mode: box
     optimistic: true
     on_value:
       then:

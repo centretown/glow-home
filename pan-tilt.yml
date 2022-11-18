@@ -16,6 +16,8 @@ packages:
   device_base: !include common/device_base.yml
   pan_slider: !include common/pantilt-control.yml
 
+api:
+
 sensor:
   - platform: rotary_encoder
     name: "Gimbal Rotary"
