@@ -32,6 +32,8 @@ number:
     unit_of_measurement: "°"
     step: 1
     mode: box
+    restore_value: true
+    initial_value: 90
     optimistic: true
     on_value:
       then:
@@ -49,6 +51,8 @@ number:
     unit_of_measurement: "°"
     step: 1
     mode: box
+    restore_value: true
+    initial_value: 160
     optimistic: true
     on_value:
       then:
