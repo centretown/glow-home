@@ -1,0 +1,74 @@
+
+number:
+  # destination hue
+    - platform: template
+      id: gradient_hue
+      name: Gradient Hue
+      min_value: 0
+      max_value: 255
+      step: 1
+      restore_value: true
+      initial_value: 0
+      optimistic: true
+      mode: box
+  
+  # destination saturation
+    - platform: template
+      id: gradient_saturation
+      name: Gradient Saturation
+      min_value: 0
+      max_value: 255
+      step: 1
+      restore_value: true
+      initial_value: 255
+      optimistic: true
+      mode: box
+  
+  # destination value
+    - platform: template
+      id: gradient_value
+      name: Gradient Value
+      min_value: 0
+      max_value: 255
+      step: 1
+      restore_value: true
+      initial_value: 255
+      optimistic: true
+      mode: box
+  
+  # grid rows
+    - platform: template
+      id: gradient_rows
+      name: Gradient Rows
+      min_value: 1
+      max_value: 100
+      step: 1
+      restore_value: true
+      initial_value: 4
+      optimistic: true
+      mode: box
+  
+  # color change interval
+    - platform: template
+      id: gradient_interval
+      name: Gradient Interval
+      min_value: 0
+      max_value: 10000
+      step: 1
+      restore_value: true
+      initial_value: 48
+      optimistic: true
+      mode: box
+  
+  # amount to change each interval
+    - platform: template
+      id: gradient_delta
+      name: Gradient Delta
+      min_value: -63
+      max_value: 63
+      step: 1
+      restore_value: true
+      initial_value: -1
+      optimistic: true
+      mode: box
+  

@@ -4,6 +4,8 @@
 using namespace esphome;
 using namespace light;
 
+#include "Presets.h"
+
 namespace glow
 {
   class Gradients
@@ -11,11 +13,17 @@ namespace glow
   private:
     AddressableLight *light = nullptr;
     uint16_t length = 0;
-    uint16_t rows = 1;
     uint16_t columns = 1;
-    Color base_color;
     uint32_t next = 0;
+    Color begin;
+    Color end;
+
+    // from presets
+    ESPHSVColor hsv_begin;
+    ESPHSVColor hsv_end;
+    uint16_t rows = 4;
     uint32_t interval = 48;
+    int16_t delta = 1;
 
     union
     {
@@ -23,23 +31,56 @@ namespace glow
       {
         uint is_setup : 1;
         uint is_logged : 1;
-        uint reserved : 14;
+        uint reserved : 6;
       };
-      uint16_t flags = 0;
+      uint8_t flags = 0;
     };
 
   public:
-    void setup(AddressableLight *it,
-               uint16_t row_count = 1)
+  
+    void setup(AddressableLight *it, Color current_color)
+    {
+      if (setup_light(it) == false)
+        return;
+
+      Presets presets;
+      presets.setup(current_color);
+      setup_from_presets(presets);
+    }
+
+    void setup(AddressableLight *it, const Presets &presets)
+    {
+      if (setup_light(it) == false)
+        return;
+      setup_from_presets(presets);
+    }
+
+    bool setup_light(AddressableLight *it)
     {
       light = it;
+      if (light == nullptr)
+      {
+        log_not_setup();
+        return false;
+      }
+      return true;
+    }
+
+    void setup_from_presets(const Presets &presets)
+    {
+      presets.log();
+      hsv_begin = presets.begin;
+      begin = hsv_begin.to_rgb();
+      hsv_end = presets.end;
+      end = hsv_end.to_rgb();
+
       length = (uint16_t)light->size();
-      set_rows(row_count);
-      is_setup = 1;
+      set_rows_and_columns(presets.rows);
+      set_interval_and_delta(presets.interval, presets.delta);
       log_setup();
     }
 
-    void set_rows(uint16_t row_count)
+    void set_rows_and_columns(uint16_t row_count)
     {
       if (row_count < length)
       {
@@ -48,82 +89,49 @@ namespace glow
       }
     }
 
-    inline void set_interval(uint32_t v)
+    inline void set_interval_and_delta(uint32_t v, int16_t d)
     {
       interval = v;
+      delta = d;
     }
 
-    inline void set_base_color(ESPHSVColor hsv)
+    bool check_interval(uint32_t now) ALWAYS_INLINE
     {
-      base_color = hsv.to_rgb();
-    }
-
-    inline void set_color(Color c)
-    {
-      base_color = c;
-    }
-
-    void columns_to(Color to)
-    {
-      if (!check_setup())
-        return;
-
-      uint8_t amnt = 255 / length;
-      Color color;
-      for (int32_t i = 0; i < length; i++)
+      if (next - now > interval)
       {
-        div_t point = div(i, rows);
-        uint16_t j = (uint16_t)(point.rem * columns + point.quot);
-        color = color_gradient(base_color, to, amnt * i);
-        light->get(j) = color;
+        if (delta != 0)
+        {
+          hsv_begin.hue += delta;
+          begin = hsv_begin.to_rgb();
+        }
+        next = now + interval;
+        return true;
       }
+
+      return false;
     }
 
-    void columns_paralell_to(Color to)
+    // implement
+
+    void as_columns();
+    void as_columns_flat();
+    void as_rows();
+    void as_rows_flat();
+    void as_diagonal();
+
+    Color step_gradient(uint8_t amnt)
     {
-      if (!check_setup())
-        return;
-
-      uint8_t amnt = 255 / columns;
       Color color;
-      for (int32_t i = 0; i < length; i++)
-      {
-        div_t point = div(i, rows);
-        uint16_t j = (uint16_t)(point.rem * columns + point.quot);
-        color = color_gradient(base_color, to, amnt * point.quot);
-        light->get(j) = color;
-      }
+      float amnt_f = float(amnt) / 255.0f;
+      color.r = begin.r + amnt_f * (end.r - begin.r);
+      color.g = begin.g + amnt_f * (end.g - begin.g);
+      color.b = begin.b + amnt_f * (end.b - begin.b);
+      return color;
     }
 
-    void rows_to(Color to)
-    {
-      if (!check_setup())
-        return;
+    // guard
 
-      uint8_t amnt = 255 / length;
-      Color color;
-      for (int32_t i = 0; i < length; i++)
-      {
-        color = color_gradient(base_color, to, amnt * i);
-        light->get(i) = color;
-      }
-    }
-
-    void rows_paralell_to(Color to)
-    {
-      if (!check_setup())
-        return;
-
-      uint8_t amnt = 255 / rows;
-      Color color;
-      for (int32_t i = 0; i < length; i++)
-      {
-        color = color_gradient(base_color, to, amnt * (i / columns));
-        light->get(i) = color;
-      }
-    }
-
-    inline bool check_setup()
+    bool check_setup()
     {
       if (!is_setup)
       {
@@ -136,13 +144,11 @@ namespace glow
 
     void log_setup()
     {
-      if (is_logged)
-      {
-        return;
-      }
       log_data();
+      log_colors();
       log_flags();
       is_logged = 1;
+      is_setup = 1;
     }
 
     void log_not_setup()
@@ -160,6 +166,19 @@ namespace glow
       ESP_LOGD("glow-Pixels",
                "length=%d, rows=%u, columns=%u",
                length, rows, columns);
+      ESP_LOGD("glow-Pixels",
+               "interval=%u, delta=%d",
+               interval, delta);
+    }
+
+    void log_colors()
+    {
+      ESP_LOGD("glow-Pixels",
+               "begin=red:%u green:%u blue:%u",
+               begin.red, begin.green, begin.blue);
+      ESP_LOGD("glow-Pixels",
+               "end=red:%u green:%u blue:%u",
+               end.red, end.green, end.blue);
     }
 
     void log_flags()
@@ -168,21 +187,6 @@ namespace glow
                "is_setup=%u, is_logged=%u",
                is_setup, is_logged);
     }
-
-    inline bool check_interval(uint32_t now)
-    {
-      if (next - now > interval)
-      {
-        next = now + interval;
-        return true;
-      }
-
-      return false;
-    }
-
-  public:
-    static ESPHSVColor hsv_color(Color color);
-    static Color color_gradient(const Color &from, const Color &to, uint8_t amnt);
   };
 
 }

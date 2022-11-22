@@ -3,29 +3,82 @@
 
 namespace glow
 {
-  ESPHSVColor Gradients::hsv_color(Color color)
+  void Gradients::as_columns()
   {
-    float red = (float)color.red / 255.0;
-    float green = (float)color.green / 255.0;
-    float blue = (float)color.blue / 255.0;
-    float saturation, value;
-    int hue;
-    rgb_to_hsv(red, green, blue, hue, saturation, value);
-    hue *= 255;
-    hue /= 360;
-    saturation *= 255;
-    value *= 255;
+    if (!check_setup())
+      return;
 
-    return ESPHSVColor((uint8_t)hue, (uint8_t)saturation, (uint8_t)value);
+    uint8_t amnt = 255 / length;
+    for (int32_t i = 0; i < length; i++)
+    {
+      div_t point = div(i, rows);
+      uint16_t mapped = (uint16_t)(point.rem * columns + point.quot);
+      light->get(mapped) = step_gradient(amnt * i);
+    }
   }
 
-  Color Gradients::color_gradient(const Color &from, const Color &to, uint8_t amnt)
+  void Gradients::as_columns_flat()
   {
-    Color color;
-    float amnt_f = float(amnt) / 255.0f;
-    color.r = amnt_f * (to.r - from.r) + from.r;
-    color.g = amnt_f * (to.g - from.g) + from.g;
-    color.b = amnt_f * (to.b - from.b) + from.b;
-    return color;
+    if (!check_setup())
+      return;
+
+    uint8_t amnt = 255 / columns;
+    for (int32_t i = 0; i < length; i++)
+    {
+      div_t point = div(i, rows);
+      uint16_t mapped = (uint16_t)(point.rem * columns + point.quot);
+      light->get(mapped) = step_gradient(amnt * point.quot);
+    }
   }
+
+  void Gradients::as_rows()
+  {
+    if (!check_setup())
+      return;
+
+    uint8_t amnt = 255 / length;
+    for (int32_t i = 0; i < length; i++)
+    {
+      light->get(i) = step_gradient(amnt * i);
+    }
+  }
+
+  void Gradients::as_rows_flat()
+  {
+    if (!check_setup())
+      return;
+
+    uint8_t amnt = 255 / rows;
+    for (int32_t i = 0; i < length; i++)
+    {
+      light->get(i) = step_gradient(amnt * (i / columns));
+    }
+  }
+
+  void Gradients::as_diagonal()
+  {
+    if (!check_setup())
+      return;
+
+    uint8_t amnt = 255 / (columns + rows - 1);
+    uint8_t sat = 0;
+    
+    for (int16_t c = -rows + 1; c < columns; c++, sat++)
+    {
+      for (int16_t r = 0; r < rows; r++)
+      {
+        if (c + r < 0)
+        {
+          continue;
+        }
+        if (c + r >= columns)
+        {
+          break;
+        }
+
+        light->get(r * columns + c + r) = step_gradient(amnt * sat);
+      }
+    }
+  }
+
 }
