@@ -119,10 +119,10 @@ namespace glow
     void as_rows_flat();
     void as_diagonal();
 
-    Color step_gradient(uint8_t amnt)
+    Color step_gradient(uint8_t amnt) ALWAYS_INLINE
     {
       Color color;
-      float amnt_f = float(amnt) / 255.0f;
+      float amnt_f = static_cast<float>(amnt) / 255.0f;
       color.r = begin.r + amnt_f * (end.r - begin.r);
       color.g = begin.g + amnt_f * (end.g - begin.g);
       color.b = begin.b + amnt_f * (end.b - begin.b);
@@ -131,7 +131,7 @@ namespace glow
 
     // guard
 
-    bool check_setup()
+    bool check_setup() ALWAYS_INLINE
     {
       if (!is_setup)
       {

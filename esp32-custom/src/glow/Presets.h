@@ -31,10 +31,12 @@ namespace glow
         float f_rows)
     {
       begin = hsv_color(current_color);
-      end = ESPHSVColor((uint8_t)hue, (uint8_t)saturation, (uint8_t)value);
-      interval = (uint32_t)f_interval;
-      delta = (int16_t)f_delta;
-      rows = (uint16_t)f_rows;
+      end = ESPHSVColor(static_cast<uint8_t>(hue),
+                        static_cast<uint8_t>(saturation),
+                        static_cast<uint8_t>(value));
+      interval = static_cast<uint32_t>(f_interval);
+      delta = static_cast<int16_t>(f_delta);
+      rows = static_cast<uint16_t>(f_rows);
     }
 
     void setup(Color current_color)
@@ -47,12 +49,12 @@ namespace glow
         return;
       }
 
-      end = ESPHSVColor((uint8_t)gradient_hue->state,
-                        (uint8_t)gradient_saturation->state,
-                        (uint8_t)gradient_value->state);
-      interval = (uint32_t)gradient_interval->state;
-      delta = (int16_t)gradient_delta->state;
-      rows = (uint16_t)gradient_rows->state;
+      end = ESPHSVColor(static_cast<uint8_t>(gradient_hue->state),
+                        static_cast<uint8_t>(gradient_saturation->state),
+                        static_cast<uint8_t>(gradient_value->state));
+      interval = static_cast<uint32_t>(gradient_interval->state);
+      delta = static_cast<int16_t>(gradient_delta->state);
+      rows = static_cast<uint16_t>(gradient_rows->state);
     }
 
     void log() const
@@ -70,9 +72,9 @@ namespace glow
 
     static ESPHSVColor hsv_color(Color color)
     {
-      float red = (float)color.red / 255.0;
-      float green = (float)color.green / 255.0;
-      float blue = (float)color.blue / 255.0;
+      float red = static_cast<float>(color.red) / 255.0;
+      float green = static_cast<float>(color.green) / 255.0;
+      float blue = static_cast<float>(color.blue) / 255.0;
       float saturation, value;
       int hue;
       rgb_to_hsv(red, green, blue, hue, saturation, value);
@@ -80,7 +82,9 @@ namespace glow
       hue /= 360;
       saturation *= 255;
       value *= 255;
-      return ESPHSVColor((uint8_t)hue, (uint8_t)saturation, (uint8_t)value);
+      return ESPHSVColor(static_cast<uint8_t>(hue),
+                         static_cast<uint8_t>(saturation),
+                         static_cast<uint8_t>(value));
     }
   };
 

@@ -10,12 +10,14 @@ packages:
   wifi: !include common/wifi.yml
   device_base: !include common/device_base.yml
   gradient_data: !include common/gradient_data.yml
+  expander: !include common/expander.yml
   # i2c: !include common/i2c.yml
 
 # https://esphome.io/index.html#
 esphome:
   includes:
     - esp32-custom/src/glow
+    - esp32-custom/src/arduino_port_expander
     # - esp32-custom/src/display
 
 # Enable Home Assistant API
