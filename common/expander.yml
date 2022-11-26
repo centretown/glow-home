@@ -1,0 +1,36 @@
+# define i2c device
+# for an ESP8266 SDA is D2 and goes to Arduino's A4
+#                SCL is D1 and goes to Arduino's A5
+i2c:
+  id: i2c_component
+  sda: GPIO21
+  scl: GPIO22
+  scan: False
+  # frequency: 100kHz
+
+  # define the port expander hub, here we define one with id 'expander1',
+# but you can define many
+custom_component:
+  - id: expander1
+    lambda: |-
+      auto expander = new ArduinoPortExpander(i2c_component, 0x08, true);
+      return {expander};
+
+# define binary outputs, here we have 4, as the relays are inverse logic
+# (a path to ground turns the relay ON), we defined the inverted: true
+# option of ESPHome outputs.
+output:
+- platform: custom
+  type: binary
+  lambda: |-
+    return {ape_binary_output(expander1, 13)};
+
+  outputs:
+    - id: relay_1
+      inverted: False
+
+light:
+  - platform: binary
+    id: mega_led
+    name: Mega LED
+    output: relay_1
