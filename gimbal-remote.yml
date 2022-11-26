@@ -1,0 +1,105 @@
+
+substitutions:
+  node_name: gimbal-remote
+  device_verbose_name: "Gimbal Remote"
+  ip_suffix: "222"
+  ap_password: "y0ltlm7Rryim"
+  board_type: esp32dev
+  pan_id: pan_value
+  pan_name: Pan
+  tilt_id: tilt_value
+  tilt_name: Tilt
+
+packages:
+  device_base: !include common/device_base.yml
+  wifi: !include common/wifi.yml
+  remote_servo: !include common/remote_servo.yml
+
+# https://esphome.io/index.html#
+esphome:
+  includes:
+    # - esp32-custom/src/arduino_port_expander
+
+# Enable Home Assistant API
+api:
+  encryption:
+    key: "THGSFcmxAmRLb5PSvpDS7nEBZCeYwe2x+24T0x2OyEw="
+  password: ""
+
+sensor:
+  - platform: rotary_encoder
+    name: "Remote Rotary"
+    id: remote_rotary
+    pin_a:
+      number: GPIO18
+      inverted: true
+      mode:
+        input: true
+    pin_b:
+      number: GPIO19
+      inverted: true
+      mode:
+        input: true
+        pullup: true
+    min_value: 0
+    max_value: 180
+    unit_of_measurement: "°"
+    publish_initial_value: true
+    filters:
+      - throttle: 500ms
+    on_value:
+      then:
+        - if:
+            condition:
+              switch.is_on: remote_gimbal_switch
+            then:
+              - number.set:
+                  id: $pan_id
+                  value: !lambda |-
+                    return x;
+            else:
+              - number.set:
+                  id: $tilt_id
+                  value: !lambda |-
+                        return x;
+
+globals:
+  - id: remote_toggle_save
+    type: float
+    restore_value: no  # Strings cannot be saved/restored
+    initial_value: '0.0'
+    
+switch:
+  - platform: template
+    id: remote_gimbal_switch
+    name: "Remote Gimbal Switch"
+    optimistic: true
+    on_turn_on: 
+      then:
+        - sensor.rotary_encoder.set_value:
+            id: remote_rotary
+            value: !lambda |-
+                float s = id(remote_toggle_save);
+                id(remote_toggle_save) = id($tilt_id).state; 
+                return s;
+    on_turn_off: 
+      then:
+        - sensor.rotary_encoder.set_value:
+            id: remote_rotary
+            value: !lambda |-
+                float s = id(remote_toggle_save);
+                id(remote_toggle_save) = id($pan_id).state; 
+                return s;
+
+binary_sensor:
+  - platform: gpio
+    name: "Remote Toggle Button"
+    id: remote_toggle_button
+    pin:
+      number: GPIO5
+      mode:
+        input: true
+    on_press:
+      then:
+        - switch.toggle: remote_gimbal_switch
+    

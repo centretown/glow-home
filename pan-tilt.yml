@@ -17,6 +17,60 @@ packages:
   pan_slider: !include common/pantilt-control.yml
 
 api:
+  services:
+    - service: pan_camera
+      variables:
+        pan_parameter: float
+      then:
+      - number.set:
+          id: pan_value
+          value: !lambda |-
+            return pan_parameter;
+
+    - service: tilt_camera
+      variables:
+        tilt_parameter: float
+      then:
+      - number.set:
+          id: tilt_value
+          value: !lambda |-
+            return tilt_parameter;
+  
+    - service: pan_camera_add
+      variables:
+        pan_parameter: float
+      then:
+      - number.set:
+          id: pan_value
+          value: !lambda |-
+            return id(pan_value).state+pan_parameter;
+  
+    - service: pan_camera_sub
+      variables:
+        pan_parameter: float
+      then:
+      - number.set:
+          id: pan_value
+          value: !lambda |-
+            return id(pan_value).state-pan_parameter;
+
+    - service: tilt_camera_add
+      variables:
+        tilt_parameter: float
+      then:
+      - number.set:
+          id: tilt_value
+          value: !lambda |-
+            return id(tilt_value).state+tilt_parameter;
+
+    - service: tilt_camera_sub
+      variables:
+        tilt_parameter: float
+      then:
+      - number.set:
+          id: tilt_value
+          value: !lambda |-
+            return id(tilt_value).state-tilt_parameter;
 
 sensor:
   - platform: rotary_encoder
@@ -55,7 +109,7 @@ sensor:
                         return x;
 
 globals:
-  - id: rotary_save
+  - id: toggle_save
     type: float
     restore_value: no  # Strings cannot be saved/restored
     initial_value: '0.0'
@@ -70,16 +124,16 @@ switch:
         - sensor.rotary_encoder.set_value:
             id: rotary2
             value: !lambda |-
-                float s = id(rotary_save);
-                id(rotary_save) = id($tilt_id).state; 
+                float s = id(toggle_save);
+                id(toggle_save) = id($tilt_id).state; 
                 return s;
     on_turn_off: 
       then:
         - sensor.rotary_encoder.set_value:
             id: rotary2
             value: !lambda |-
-                int s = id(rotary_save);
-                id(rotary_save) = id($pan_id).state; 
+                int s = id(toggle_save);
+                id(toggle_save) = id($pan_id).state; 
                 return s;
 
 binary_sensor:

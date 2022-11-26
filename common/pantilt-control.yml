@@ -60,3 +60,4 @@ number:
           id: pan_servo
           level: !lambda |-
             return (90-x) / 90;
+
