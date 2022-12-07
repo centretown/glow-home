@@ -1,40 +1,52 @@
 
+globals:
+  - id: remote_rotary_previous
+    type: float
+    restore_value: no  # Strings cannot be saved/restored
+    initial_value: '0.0'
+    
 number:
   - platform: template
     id: $tilt_id
     name: $tilt_name
-    min_value: 0
-    max_value: 180
+    min_value: -90.0
+    max_value: 90.0
     unit_of_measurement: "°"
     step: 1
     mode: box
     restore_value: true
-    initial_value: 90
+    initial_value: 0
     optimistic: true
-    # on_value:
-    #   then:
-    #   - homeassistant.service:
-    #       service: esphome.pan_tilt_tilt_camera
-    #       data:
-    #         tilt_parameter: !lambda |-
-    #             return x;
+    on_value:
+      then:
+        - lambda: |-
+            ESP_LOGD("glow-remote tilt", "x=%f", x);
+            // return 0;
+# - homeassistant.service:
+      #     service: esphome.pan_tilt_tilt_camera
+      #     data:
+      #       tilt_parameter: !lambda |-
 
   - platform: template
     id: $pan_id
     name: $pan_name
-    min_value: 0
-    max_value: 180
+    min_value: -90.0
+    max_value: 90.0
     unit_of_measurement: "°"
     step: 1
     mode: box
     restore_value: true
-    initial_value: 160
+    initial_value: 0
     optimistic: true
-    # on_value:
-    #   then:
-    #   - homeassistant.service:
-    #       service: esphome.pan_tilt_pan_camera
-    #       data:
-    #         pan_parameter: !lambda |-
-    #             return x;
+    on_value:
+      then:
+        - lambda: |-
+            ESP_LOGD("glow-remote pan", "x=%f", x);
+            // return 0;
+        # - homeassistant.service:
+          # service: esphome.pan_tilt_pan_camera
+          # data:
+          #   pan_parameter: !lambda |-
+          #       ESP_LOGD("glow-remote pan", "x=%f", x);
+          #       return 0;
 

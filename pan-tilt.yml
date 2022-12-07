@@ -37,11 +37,6 @@ api:
           value: !lambda |-
             return id(tilt_value).state+tilt_parameter;
   
-script:
-  - id: pan_add
-    then:
-      - logger.log: abc
-
 sensor:
   - platform: rotary_encoder
     name: "Gimbal Rotary"

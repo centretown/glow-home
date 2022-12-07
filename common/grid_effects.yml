@@ -4,71 +4,91 @@
           update_interval: 16ms
           lambda: |-
             #include "glow/Gradients.h"
-            static glow::Gradients gradients;
-
+            static glow::RowsGradient gradient;
             if (initial_run) {
-              gradients.setup(&it, current_color);
+              gradient.setup(&it, current_color);
             }
-
-            gradients.check_interval(millis());
-            gradients.as_rows();
+            gradient.apply();
 
       - addressable_lambda: 
           name: "Gradient Rows Flat"
           update_interval: 16ms
           lambda: |-
-            
             #include "glow/Gradients.h"
-            static glow::Gradients gradients;
-
+            static glow::RowsFlatGradient gradient;
             if (initial_run) {
-              gradients.setup(&it, current_color);
+              gradient.setup(&it, current_color);
             }
-
-            gradients.check_interval(millis());
-            gradients.as_rows_flat();
+            gradient.apply();
 
       - addressable_lambda: 
           name: "Gradient Columns"
           update_interval: 16ms
           lambda: |-
-            
             #include "glow/Gradients.h"
-            static glow::Gradients gradients;
-
+            static glow::ColumnsGradient gradient;
             if (initial_run) {
-              gradients.setup(&it, current_color);
+              gradient.setup(&it, current_color);
             }
-
-            gradients.check_interval(millis());
-            gradients.as_columns();
+            gradient.apply();
 
       - addressable_lambda: 
           name: "Gradient Columns Flat"
           update_interval: 16ms
           lambda: |-
-            
             #include "glow/Gradients.h"
-            static glow::Gradients gradients;
-
+            static glow::ColumnsFlatGradient gradient;
             if (initial_run) {
-              gradients.setup(&it, current_color);
+              gradient.setup(&it, current_color);
             }
-
-            gradients.check_interval(millis());
-            gradients.as_columns_flat();
+            gradient.apply();
 
       - addressable_lambda: 
           name: "Gradient Diagonal"
           update_interval: 16ms
           lambda: |-
-            
             #include "glow/Gradients.h"
-            static glow::Gradients gradients;
+            static glow::DiagonalGradient gradient;
+            if (initial_run) {
+              gradient.setup(&it, current_color);
+            }
+            gradient.apply();
+
+      - addressable_lambda: 
+          name: "Solid"
+          update_interval: 16ms
+          lambda: |-
+            #include "glow/Solid.h"
+            static glow::Solid solid;
+            if (initial_run) {
+              solid.setup(&it, current_color);
+            }
+            solid.apply();
+
+      - addressable_lambda: 
+          name: "Scanner"
+          update_interval: 16ms
+          lambda: |-
+            #include "glow/Scanner.h"
+            static glow::Scanner scanner;
+            if (initial_run) {
+              scanner.setup(&it, current_color);
+            }
+            scanner.apply();
+
+      - addressable_lambda: 
+          name: "Composite"
+          update_interval: 16ms
+          lambda: |-
+            #include "glow/Solid.h"
+            #include "glow/Scanner.h"
+            #include "glow/Composite.h"
+            using namespace glow;
+            static Solid solid;
+            static Scanner scanner;
+            static Composite<Solid, Scanner> composite(solid, scanner);
 
             if (initial_run) {
-              gradients.setup(&it, current_color);
+              composite.setup(&it, current_color);
             }
-
-            gradients.check_interval(millis());
-            gradients.as_diagonal();
+            composite.apply();

@@ -5,8 +5,8 @@ i2c:
   id: i2c_component
   sda: GPIO21
   scl: GPIO22
-  scan: False
-  # frequency: 100kHz
+  scan: True
+  frequency: 100kHz
 
   # define the port expander hub, here we define one with id 'expander1',
 # but you can define many

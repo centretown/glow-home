@@ -9,7 +9,7 @@ substitutions:
 packages:
   wifi: !include common/wifi.yml
   device_base: !include common/device_base.yml
-  gradient_data: !include common/gradient_data.yml
+  gradient_data: !include common/effect_data.yml
   expander: !include common/expander.yml
   # i2c: !include common/i2c.yml
 

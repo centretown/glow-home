@@ -2,12 +2,12 @@ servo:
   - id: pan_servo
     output: pan_output
     restore: true
-    transition_length: 5s
+    transition_length: 10s
         
   - id: tilt_servo
     output: tilt_output
     restore: true
-    transition_length: 5s
+    transition_length: 10s
 
 output:
   - platform: ledc

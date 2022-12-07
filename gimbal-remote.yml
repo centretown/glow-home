@@ -1,8 +1,8 @@
 
 substitutions:
-  node_name: gimbal-remote
-  device_verbose_name: "Gimbal Remote"
-  ip_suffix: "222"
+  node_name: gimbal-remote2
+  device_verbose_name: "Gimbal Remote2"
+  ip_suffix: "47"
   ap_password: "y0ltlm7Rryim"
   board_type: esp32dev
   pan_id: pan_value
@@ -31,22 +31,24 @@ sensor:
     name: "Remote Rotary"
     id: remote_rotary
     pin_a:
-      number: GPIO18
+      number: GPIO16
       inverted: true
       mode:
         input: true
     pin_b:
-      number: GPIO19
+      number: GPIO17
       inverted: true
       mode:
         input: true
         pullup: true
-    min_value: 0
-    max_value: 180
     unit_of_measurement: "°"
+    # resolution: 1
+    restore_mode: ALWAYS_ZERO
+    # min_value: 0.0
+    # max_value: 180.0
     publish_initial_value: true
-    filters:
-      - throttle: 500ms
+    # filters:
+    #   - throttle: 1s
     on_value:
       then:
         - if:
@@ -56,40 +58,26 @@ sensor:
               - number.set:
                   id: $pan_id
                   value: !lambda |-
-                    return x;
+                    float previous = id(remote_rotary_previous);
+                    id(remote_rotary_previous) = x; 
+                    ESP_LOGD("glow-remote pan",
+                            "x=%f, previous=%f dif=%f", x, previous, x-previous);
+                    return x-previous;
             else:
               - number.set:
                   id: $tilt_id
                   value: !lambda |-
-                        return x;
+                    float previous = id(remote_rotary_previous);
+                    id(remote_rotary_previous) = x; 
+                    ESP_LOGD("glow-remote tilt",
+                            "x=%f, previous=%f dif=%f", x, previous, x-previous);
+                    return x-previous;
 
-globals:
-  - id: remote_toggle_save
-    type: float
-    restore_value: no  # Strings cannot be saved/restored
-    initial_value: '0.0'
-    
 switch:
   - platform: template
     id: remote_gimbal_switch
     name: "Remote Gimbal Switch"
     optimistic: true
-    on_turn_on: 
-      then:
-        - sensor.rotary_encoder.set_value:
-            id: remote_rotary
-            value: !lambda |-
-                float s = id(remote_toggle_save);
-                id(remote_toggle_save) = id($tilt_id).state; 
-                return s;
-    on_turn_off: 
-      then:
-        - sensor.rotary_encoder.set_value:
-            id: remote_rotary
-            value: !lambda |-
-                float s = id(remote_toggle_save);
-                id(remote_toggle_save) = id($pan_id).state; 
-                return s;
 
 binary_sensor:
   - platform: gpio

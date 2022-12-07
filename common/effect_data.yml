@@ -1,0 +1,123 @@
+
+number:
+# update interval
+    - platform: template
+      id: update_interval
+      name: Update Interval
+      min_value: 0
+      max_value: 10000
+      step: 1
+      restore_value: true
+      initial_value: 48
+      optimistic: true
+      mode: box
+
+# grid rows
+    - platform: template
+      id: grid_rows
+      name: Grid Rows
+      min_value: 1
+      max_value: 100
+      step: 1
+      restore_value: true
+      initial_value: 4
+      optimistic: true
+      mode: box
+
+# hue delta interval
+    - platform: template
+      id: hue_delta
+      name: Hue Delta
+      min_value: -63
+      max_value: 63
+      step: 1
+      restore_value: true
+      initial_value: -1
+      optimistic: true
+      mode: box
+
+# destination hue
+    - platform: template
+      id: gradient_hue
+      name: Gradient Hue
+      min_value: 0
+      max_value: 255
+      step: 1
+      restore_value: true
+      initial_value: 0
+      optimistic: true
+      mode: box
+  
+# destination saturation
+    - platform: template
+      id: gradient_saturation
+      name: Gradient Saturation
+      min_value: 0
+      max_value: 255
+      step: 1
+      restore_value: true
+      initial_value: 255
+      optimistic: true
+      mode: box
+  
+# destination value
+    - platform: template
+      id: gradient_value
+      name: Gradient Value
+      min_value: 0
+      max_value: 255
+      step: 1
+      restore_value: true
+      initial_value: 255
+      optimistic: true
+      mode: box
+
+  # destination hue
+    - platform: template
+      id: scan_hue
+      name: Scan Hue
+      min_value: 0
+      max_value: 255
+      step: 1
+      restore_value: true
+      initial_value: 0
+      optimistic: true
+      mode: box
+
+    # destination saturation
+    - platform: template
+      id: scan_saturation
+      name: Scan Saturation
+      min_value: 0
+      max_value: 255
+      step: 1
+      restore_value: true
+      initial_value: 255
+      optimistic: true
+      mode: box
+
+    # destination value
+    - platform: template
+      id: scan_value
+      name: Scan Value
+      min_value: 0
+      max_value: 255
+      step: 1
+      restore_value: true
+      initial_value: 255
+      optimistic: true
+      mode: box
+
+  # scan width
+    - platform: template
+      id: scan_width
+      name: Scan Width
+      min_value: 1
+      max_value: 100
+      step: 1
+      restore_value: true
+      initial_value: 4
+      optimistic: true
+      mode: box
+
+
