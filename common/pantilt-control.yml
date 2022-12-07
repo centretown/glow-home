@@ -27,8 +27,8 @@ number:
     id: $tilt_id
     name: $tilt_name
     
-    min_value: 0
-    max_value: 180
+    min_value: 49
+    max_value: 126
     unit_of_measurement: "°"
     step: 1
     mode: box
@@ -46,13 +46,13 @@ number:
     id: $pan_id
     name: $pan_name
     
-    min_value: 0
-    max_value: 180
+    min_value: 65
+    max_value: 138
     unit_of_measurement: "°"
     step: 1
     mode: box
     restore_value: true
-    initial_value: 160
+    initial_value: 128
     optimistic: true
     on_value:
       then:

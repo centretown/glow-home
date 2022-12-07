@@ -16,6 +16,7 @@ packages:
   device_base: !include common/device_base.yml
   pan_slider: !include common/pantilt-control.yml
 
+  
 api:
   services:
     - service: pan_camera
@@ -25,7 +26,7 @@ api:
       - number.set:
           id: pan_value
           value: !lambda |-
-            return pan_parameter;
+            return id(pan_value).state+pan_parameter;
 
     - service: tilt_camera
       variables:
@@ -34,43 +35,12 @@ api:
       - number.set:
           id: tilt_value
           value: !lambda |-
-            return tilt_parameter;
-  
-    - service: pan_camera_add
-      variables:
-        pan_parameter: float
-      then:
-      - number.set:
-          id: pan_value
-          value: !lambda |-
-            return id(pan_value).state+pan_parameter;
-  
-    - service: pan_camera_sub
-      variables:
-        pan_parameter: float
-      then:
-      - number.set:
-          id: pan_value
-          value: !lambda |-
-            return id(pan_value).state-pan_parameter;
-
-    - service: tilt_camera_add
-      variables:
-        tilt_parameter: float
-      then:
-      - number.set:
-          id: tilt_value
-          value: !lambda |-
             return id(tilt_value).state+tilt_parameter;
-
-    - service: tilt_camera_sub
-      variables:
-        tilt_parameter: float
-      then:
-      - number.set:
-          id: tilt_value
-          value: !lambda |-
-            return id(tilt_value).state-tilt_parameter;
+  
+script:
+  - id: pan_add
+    then:
+      - logger.log: abc
 
 sensor:
   - platform: rotary_encoder
@@ -87,13 +57,13 @@ sensor:
       mode:
         input: true
         pullup: true
-    min_value: 0
-    max_value: 180
+    # min_value: 0
+    # max_value: 180
     unit_of_measurement: "°"
     publish_initial_value: true
 
     on_value:
-      then:
+      then: 
         - if:
             condition:
               switch.is_on: gimbal_toggle
@@ -101,15 +71,21 @@ sensor:
               - number.set:
                   id: $pan_id
                   value: !lambda |-
-                    return x;
+                    float pan = id($pan_id).state;
+                    float previous = id(rotary_previous);
+                    id(rotary_previous) = x; 
+                    return pan + x - previous;
             else:
               - number.set:
                   id: $tilt_id
                   value: !lambda |-
-                        return x;
+                    float tilt = id($tilt_id).state;
+                    float previous = id(rotary_previous);
+                    id(rotary_previous) = x; 
+                    return tilt + x - previous;
 
 globals:
-  - id: toggle_save
+  - id: rotary_previous
     type: float
     restore_value: no  # Strings cannot be saved/restored
     initial_value: '0.0'
@@ -119,22 +95,6 @@ switch:
     id: gimbal_toggle
     name: "Gimbal Toggle Switch"
     optimistic: true
-    on_turn_on: 
-      then:
-        - sensor.rotary_encoder.set_value:
-            id: rotary2
-            value: !lambda |-
-                float s = id(toggle_save);
-                id(toggle_save) = id($tilt_id).state; 
-                return s;
-    on_turn_off: 
-      then:
-        - sensor.rotary_encoder.set_value:
-            id: rotary2
-            value: !lambda |-
-                int s = id(toggle_save);
-                id(toggle_save) = id($pan_id).state; 
-                return s;
 
 binary_sensor:
   - platform: gpio
