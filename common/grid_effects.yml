@@ -77,16 +77,33 @@
             scanner.apply();
 
       - addressable_lambda: 
-          name: "Composite"
+          name: "Composite Columns Flat"
           update_interval: 16ms
           lambda: |-
-            #include "glow/Solid.h"
+            #include "glow/Gradients.h"
             #include "glow/Scanner.h"
             #include "glow/Composite.h"
             using namespace glow;
-            static Solid solid;
+            static ColumnsFlatGradient gradient;
             static Scanner scanner;
-            static Composite<Solid, Scanner> composite(solid, scanner);
+            static Composite<ColumnsFlatGradient, Scanner> composite(gradient, scanner);
+
+            if (initial_run) {
+              composite.setup(&it, current_color);
+            }
+            composite.apply();
+
+      - addressable_lambda: 
+          name: "Composite Rows"
+          update_interval: 16ms
+          lambda: |-
+            #include "glow/Gradients.h"
+            #include "glow/Scanner.h"
+            #include "glow/Composite.h"
+            using namespace glow;
+            static RowsGradient gradient;
+            static Scanner scanner;
+            static Composite<RowsGradient, Scanner> composite(gradient, scanner);
 
             if (initial_run) {
               composite.setup(&it, current_color);

@@ -83,7 +83,7 @@ namespace glow
 #define millis() esphome::millis()
       const uint32_t now = millis();
 
-      if (next - now > interval && is_setup == 1)
+      if (next - now > interval && is_setup)
       {
         next = now + interval;
         return true;
@@ -93,37 +93,31 @@ namespace glow
 
     void update_hue() ALWAYS_INLINE
     {
-      if (delta != 0)
-      {
-        hsv_color.hue += delta;
-        color = hsv_color.to_rgb();
-      }
+      if (delta == 0)
+        return;
+
+      color = update_hue(hsv_color, delta);
     }
 
-    bool check_setup() ALWAYS_INLINE
+    Color update_hue(ESPHSVColor &hsv, int16_t change) ALWAYS_INLINE
     {
-      if (!is_setup)
-      {
-        log_not_setup();
-        return false;
-      }
-
-      return true;
+      hsv.hue += change;
+      return hsv.to_rgb();
     }
 
     virtual void log() const
     {
-      ESP_LOGD("glow-Base",
+      ESP_LOGD("glow-Lamp",
                "rows=%u, columns=%u, interval=%u, delta=%d",
                rows, columns, interval, delta);
-      ESP_LOGD("glow-Base",
+      ESP_LOGD("glow-Lamp",
                "color=red:%u green:%u blue:%u",
                color.red, color.green, color.blue);
-      ESP_LOGD("glow-Base",
+      ESP_LOGD("glow-Lamp",
                "hsv_color=hue:%u saturation:%u value:%u",
                hsv_color.hue, hsv_color.saturation,
                hsv_color.value);
-      ESP_LOGD("glow-Base",
+      ESP_LOGD("glow-Lamp",
                "is_setup=%u, is_logged=%u",
                is_setup, is_logged);
     }
@@ -131,11 +125,48 @@ namespace glow
     void log_not_setup()
     {
       if (is_logged)
-      {
         return;
-      }
       ESP_LOGD("glow-Pixels", "Not Setup!");
       is_logged = 1;
+    }
+
+    uint16_t map_columns(uint16_t i, div_t &point) ALWAYS_INLINE
+    {
+      point = div(i, rows);
+      return (uint16_t)(point.rem * columns + point.quot);
+    }
+
+    uint16_t map_diagonal(uint16_t i, div_t &point) ALWAYS_INLINE
+    {
+      point = div(i, rows);
+      //    rem,quot; (rows=4)
+      // 0 = 0,0
+      // 1 = 1,0
+      // 2 = 2,0
+      // 3 = 3,0
+      // 4 = 0,1
+    }
+
+    template <typename CHROMA>
+    void spin(uint16_t begin, uint16_t end,
+              CHROMA &chroma)
+    {
+      for (uint16_t i = begin; i < end; ++i)
+      {
+        light->get(i) = chroma(i);
+      }
+    }
+
+    template <typename MAPPER, typename CHROMA>
+    void spin(uint16_t begin, uint16_t end,
+              MAPPER &mapper, CHROMA &chroma)
+    {
+      for (uint16_t i = begin; i < end; ++i)
+      {
+        uint16_t offset = mapper(i);
+        light->get(offset) = chroma(i);
+      }
+      update_hue();
     }
   };
 

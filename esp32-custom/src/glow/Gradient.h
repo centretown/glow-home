@@ -19,7 +19,7 @@ namespace glow
     void setup(AddressableLight *it, Color current_color) override
     {
       Lamp::setup(it, current_color);
-      if (is_setup != 1)
+      if (!is_setup)
         return;
 
       GradientPresets presets;

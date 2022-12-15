@@ -27,7 +27,8 @@ namespace glow
       ScannerPresets presets;
       presets.setup();
       width = presets.width;
-      scan_color = presets.scan_hsv_color.to_rgb();
+      scan_hsv_color = presets.scan_hsv_color;
+      scan_color = scan_hsv_color.to_rgb();
       log();
     }
 
@@ -48,6 +49,7 @@ namespace glow
       }
 
       update_hue();
+      scan_color = update_hue(scan_hsv_color, delta);
     }
 
     void log() const override

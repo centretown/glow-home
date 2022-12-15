@@ -19,13 +19,19 @@ namespace glow
         return;
 
       uint8_t amnt = 255 / length;
-      for (int32_t i = 0; i < length; i++)
+      div_t point{0, 0};
+
+      auto mapper = [&](uint16_t i)
       {
-        div_t point = div(i, rows);
-        uint16_t mapped = (uint16_t)(point.rem * columns + point.quot);
-        light->get(mapped) = step_gradient(amnt * i);
-      }
-      update_hue();
+        return map_columns(i, point);
+      };
+
+      auto chroma = [&](uint16_t i)
+      {
+        return step_gradient(amnt * i);
+      };
+
+      spin(0, length, mapper, chroma);
     }
   };
 
@@ -38,13 +44,19 @@ namespace glow
         return;
 
       uint8_t amnt = 255 / columns;
-      for (int32_t i = 0; i < length; i++)
+      div_t point{0, 0};
+
+      auto mapper = [&](uint16_t i)
       {
-        div_t point = div(i, rows);
-        uint16_t mapped = (uint16_t)(point.rem * columns + point.quot);
-        light->get(mapped) = step_gradient(amnt * point.quot);
-      }
-      update_hue();
+        return map_columns(i, point);
+      };
+
+      auto chroma = [&](uint16_t i)
+      {
+        return step_gradient(amnt * point.quot);
+      };
+
+      spin(0, length, mapper, chroma);
     }
   };
 
@@ -55,13 +67,13 @@ namespace glow
     {
       if (!is_ready())
         return;
-        
+
       uint8_t amnt = 255 / length;
-      for (int32_t i = 0; i < length; i++)
+      auto chroma = [&](uint16_t i)
       {
-        light->get(i) = step_gradient(amnt * i);
-      }
-      update_hue();
+        return step_gradient(amnt * i);
+      };
+      spin(0, length, chroma);
     }
   };
 
@@ -72,12 +84,13 @@ namespace glow
     {
       if (!is_ready())
         return;
+
       uint8_t amnt = 255 / rows;
-      for (int32_t i = 0; i < length; i++)
+      auto chroma = [&](uint16_t i)
       {
-        light->get(i) = step_gradient(amnt * (i / columns));
-      }
-      update_hue();
+        return step_gradient(amnt * (i / columns));
+      };
+      spin(0, length, chroma);
     }
   };
 
@@ -91,6 +104,16 @@ namespace glow
 
       uint8_t amnt = 255 / (columns + rows - 1);
       uint8_t sat = 0;
+
+      auto mapper = [&](uint16_t i)
+      {
+        // return map_columns(i);
+      };
+
+      auto chroma = [&](uint16_t i)
+      {
+        return step_gradient(amnt * i);
+      };
 
       for (int16_t c = -rows + 1; c < columns; c++, sat++)
       {
