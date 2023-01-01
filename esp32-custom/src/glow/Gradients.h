@@ -10,6 +10,40 @@ using namespace light;
 
 namespace glow
 {
+  class RowsGradient : public Gradient
+  {
+  public:
+    void apply()
+    {
+      if (!is_ready())
+        return;
+
+      uint8_t amnt = 255 / length;
+      auto chroma = [&](uint16_t i)
+      {
+        return step_gradient(amnt * i);
+      };
+      spin(0, length, chroma);
+    }
+  };
+
+  class RowsFlatGradient : public Gradient
+  {
+  public:
+    void apply()
+    {
+      if (!is_ready())
+        return;
+
+      uint8_t amnt = 255 / rows;
+      auto chroma = [&](uint16_t i)
+      {
+        return step_gradient(amnt * (i / columns));
+      };
+      spin(0, length, chroma);
+    }
+  };
+
   class ColumnsGradient : public Gradient
   {
   public:
@@ -60,40 +94,6 @@ namespace glow
     }
   };
 
-  class RowsGradient : public Gradient
-  {
-  public:
-    void apply()
-    {
-      if (!is_ready())
-        return;
-
-      uint8_t amnt = 255 / length;
-      auto chroma = [&](uint16_t i)
-      {
-        return step_gradient(amnt * i);
-      };
-      spin(0, length, chroma);
-    }
-  };
-
-  class RowsFlatGradient : public Gradient
-  {
-  public:
-    void apply()
-    {
-      if (!is_ready())
-        return;
-
-      uint8_t amnt = 255 / rows;
-      auto chroma = [&](uint16_t i)
-      {
-        return step_gradient(amnt * (i / columns));
-      };
-      spin(0, length, chroma);
-    }
-  };
-
   class DiagonalGradient : public Gradient
   {
   public:
@@ -102,12 +102,12 @@ namespace glow
       if (!is_ready())
         return;
 
-      uint8_t amnt = 255 / (columns + rows - 1);
-      uint8_t sat = 0;
+      // uint8_t amnt = 255 / (columns + rows - 1);
+      uint8_t amnt = 255 / length;
 
       auto mapper = [&](uint16_t i)
       {
-        // return map_columns(i);
+        return map_diagonal(i);
       };
 
       auto chroma = [&](uint16_t i)
@@ -115,23 +115,7 @@ namespace glow
         return step_gradient(amnt * i);
       };
 
-      for (int16_t c = -rows + 1; c < columns; c++, sat++)
-      {
-        for (int16_t r = 0; r < rows; r++)
-        {
-          if (c + r < 0)
-          {
-            continue;
-          }
-          if (c + r >= columns)
-          {
-            break;
-          }
-
-          light->get(r * columns + c + r) = step_gradient(amnt * sat);
-        }
-      }
-      update_hue();
+      spin(0, length, mapper, chroma);
     }
   };
 }

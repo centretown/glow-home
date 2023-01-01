@@ -21,6 +21,9 @@
     "functional": "cpp",
     "tuple": "cpp",
     "type_traits": "cpp",
-    "random": "cpp"
+    "random": "cpp",
+    "bitset": "cpp",
+    "chrono": "cpp",
+    "algorithm": "cpp"
   }
 }
