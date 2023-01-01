@@ -40,7 +40,8 @@ namespace glow
       for (uint16_t i = position;
            i < position + width; i++)
       {
-        light->get(i % length) = scan_color;
+        uint16_t offset = map_diagonal(i % length);
+        light->get(offset) = scan_color;
       }
 
       if (++position >= length)
