@@ -22,6 +22,8 @@ namespace glow
       if (!is_setup)
         return;
 
+      Lamp::log();
+
       GradientPresets presets;
       presets.setup();
 

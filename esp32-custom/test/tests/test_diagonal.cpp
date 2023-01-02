@@ -1,7 +1,7 @@
 #define CATCH_CONFIG_MAIN
 #include <catch2/catch.hpp>
 
-#include "../../src/glow/grid.h"
+#include "../../src/glow/Grid.h"
 
 using namespace glow;
 
@@ -10,8 +10,8 @@ TEST_CASE("Grid Map Diagonal 2x2", "[map_diagonal_2x2]")
   Grid grid;
   grid.setup(4, 2);
 
-  REQUIRE(1 == grid.pivot_first);
-  REQUIRE(1 == grid.pivot_offset);
+  REQUIRE(1 == grid.get_first());
+  REQUIRE(1 == grid.get_offset());
 
   REQUIRE(0 == grid.map_diagonal(0));
   REQUIRE(1 == grid.map_diagonal(1));
@@ -23,9 +23,9 @@ TEST_CASE("Grid Map Diagonal 2x3", "[map_diagonal_2x3]")
 {
   Grid grid;
   grid.setup(6, 2);
-  REQUIRE(1 == grid.pivot_first);
-  REQUIRE(1 == grid.pivot_offset);
-  REQUIRE(4 == grid.pivot_last);
+  REQUIRE(1 == grid.get_first());
+  REQUIRE(1 == grid.get_offset());
+  REQUIRE(4 == grid.get_last());
 
   REQUIRE(0 == grid.map_diagonal(0));
   REQUIRE(1 == grid.map_diagonal(1));
@@ -39,8 +39,8 @@ TEST_CASE("Grid Map Diagonal 3x2", "[map_diagonal_3x2]")
 {
   Grid grid;
   grid.setup(6, 3);
-  REQUIRE(1 == grid.pivot_first);
-  REQUIRE(1 == grid.pivot_offset);
+  REQUIRE(1 == grid.get_first());
+  REQUIRE(1 == grid.get_offset());
 
   REQUIRE(0 == grid.map_diagonal(0));
   REQUIRE(1 == grid.map_diagonal(1));
@@ -54,9 +54,9 @@ TEST_CASE("Grid Map Diagonal 3x4", "[map_diagonal_3x4]")
 {
   Grid grid;
   grid.setup(12, 3);
-  REQUIRE(3 == grid.pivot_first);
-  REQUIRE(2 == grid.pivot_offset);
-  REQUIRE(8 == grid.pivot_last);
+  REQUIRE(3 == grid.get_first());
+  REQUIRE(2 == grid.get_offset());
+  REQUIRE(8 == grid.get_last());
 
   REQUIRE(0 == grid.map_diagonal(0));
   REQUIRE(1 == grid.map_diagonal(1));
@@ -76,9 +76,9 @@ TEST_CASE("Grid Map Diagonal 4x5", "[map_diagonal_4x5]")
 {
   Grid grid;
   grid.setup(20, 4);
-  REQUIRE(6 == grid.pivot_first);
-  REQUIRE(3 == grid.pivot_offset);
-  REQUIRE(13 == grid.pivot_last);
+  REQUIRE(6 == grid.get_first());
+  REQUIRE(3 == grid.get_offset());
+  REQUIRE(13 == grid.get_last());
 
   REQUIRE(0 == grid.map_diagonal(0));
   REQUIRE(1 == grid.map_diagonal(1));
@@ -106,9 +106,9 @@ TEST_CASE("Grid Map Diagonal 4x9", "[map_diagonal_49]")
 {
   Grid grid;
   grid.setup(36, 4);
-  REQUIRE(6 == grid.pivot_first);
-  REQUIRE(3 == grid.pivot_offset);
-  REQUIRE(29 == grid.pivot_last);
+  REQUIRE(6 == grid.get_first());
+  REQUIRE(3 == grid.get_offset());
+  REQUIRE(29 == grid.get_last());
 
   REQUIRE(0 == grid.map_diagonal(0));
   REQUIRE(1 == grid.map_diagonal(1));
@@ -148,4 +148,5 @@ TEST_CASE("Grid Map Diagonal 4x9", "[map_diagonal_49]")
   REQUIRE(26 == grid.map_diagonal(33));
   REQUIRE(34 == grid.map_diagonal(34));
   REQUIRE(35 == grid.map_diagonal(35));
+
 }

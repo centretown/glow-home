@@ -1,5 +1,5 @@
 #include <iostream>
-#include "../src/glow/grid.h"
+#include "../src/glow/Grid.h"
 #include "GlowConfig.h"
 
 using namespace glow;
@@ -13,7 +13,8 @@ int main(int argc, char **argv)
   Grid grid;
   grid.setup(20, 4);
 
-  for (uint16_t index = 0; index < grid.length; index++)
+  const uint16_t length = grid.get_length();
+  for (uint16_t index = 0; index < length; index++)
   {
     uint16_t result = grid.map_diagonal(index);
     printf("index=%u result=%u\n", index, result);

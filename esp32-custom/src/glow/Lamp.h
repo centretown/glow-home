@@ -4,7 +4,7 @@
 using namespace esphome;
 using namespace light;
 
-#include "grid.h"
+#include "Grid.h"
 #include "Presets.h"
 #include "color_to_hsv.h"
 
@@ -98,9 +98,14 @@ namespace glow
 
     virtual void log() const
     {
+      char buffer[80];
+      grid.log_buffer(buffer, sizeof(buffer));
+
+      ESP_LOGD("glow-Lamp", buffer);
+
       ESP_LOGD("glow-Lamp",
-               "rows=%u, columns=%u, interval=%u, delta=%d",
-               grid.rows, grid.columns, interval, delta);
+               "interval=%u, delta=%d",
+               interval, delta);
       ESP_LOGD("glow-Lamp",
                "color=red:%u green:%u blue:%u",
                color.red, color.green, color.blue);

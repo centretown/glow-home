@@ -551,35 +551,35 @@ glow.cpp.s:
 	$(MAKE) -f CMakeFiles/glow.dir/build.make CMakeFiles/glow.dir/glow.cpp.s
 .PHONY : glow.cpp.s
 
-home/dave/src/glow-home/esp32-custom/src/glow/grid.o: home/dave/src/glow-home/esp32-custom/src/glow/grid.cpp.o
+home/dave/src/glow-home/esp32-custom/src/glow/Grid.o: home/dave/src/glow-home/esp32-custom/src/glow/Grid.cpp.o
 
-.PHONY : home/dave/src/glow-home/esp32-custom/src/glow/grid.o
+.PHONY : home/dave/src/glow-home/esp32-custom/src/glow/Grid.o
 
 # target to build an object file
-home/dave/src/glow-home/esp32-custom/src/glow/grid.cpp.o:
-	$(MAKE) -f CMakeFiles/glow.dir/build.make CMakeFiles/glow.dir/home/dave/src/glow-home/esp32-custom/src/glow/grid.cpp.o
-	$(MAKE) -f CMakeFiles/GridLib.dir/build.make CMakeFiles/GridLib.dir/home/dave/src/glow-home/esp32-custom/src/glow/grid.cpp.o
-.PHONY : home/dave/src/glow-home/esp32-custom/src/glow/grid.cpp.o
+home/dave/src/glow-home/esp32-custom/src/glow/Grid.cpp.o:
+	$(MAKE) -f CMakeFiles/glow.dir/build.make CMakeFiles/glow.dir/home/dave/src/glow-home/esp32-custom/src/glow/Grid.cpp.o
+	$(MAKE) -f CMakeFiles/GridLib.dir/build.make CMakeFiles/GridLib.dir/home/dave/src/glow-home/esp32-custom/src/glow/Grid.cpp.o
+.PHONY : home/dave/src/glow-home/esp32-custom/src/glow/Grid.cpp.o
 
-home/dave/src/glow-home/esp32-custom/src/glow/grid.i: home/dave/src/glow-home/esp32-custom/src/glow/grid.cpp.i
+home/dave/src/glow-home/esp32-custom/src/glow/Grid.i: home/dave/src/glow-home/esp32-custom/src/glow/Grid.cpp.i
 
-.PHONY : home/dave/src/glow-home/esp32-custom/src/glow/grid.i
+.PHONY : home/dave/src/glow-home/esp32-custom/src/glow/Grid.i
 
 # target to preprocess a source file
-home/dave/src/glow-home/esp32-custom/src/glow/grid.cpp.i:
-	$(MAKE) -f CMakeFiles/glow.dir/build.make CMakeFiles/glow.dir/home/dave/src/glow-home/esp32-custom/src/glow/grid.cpp.i
-	$(MAKE) -f CMakeFiles/GridLib.dir/build.make CMakeFiles/GridLib.dir/home/dave/src/glow-home/esp32-custom/src/glow/grid.cpp.i
-.PHONY : home/dave/src/glow-home/esp32-custom/src/glow/grid.cpp.i
+home/dave/src/glow-home/esp32-custom/src/glow/Grid.cpp.i:
+	$(MAKE) -f CMakeFiles/glow.dir/build.make CMakeFiles/glow.dir/home/dave/src/glow-home/esp32-custom/src/glow/Grid.cpp.i
+	$(MAKE) -f CMakeFiles/GridLib.dir/build.make CMakeFiles/GridLib.dir/home/dave/src/glow-home/esp32-custom/src/glow/Grid.cpp.i
+.PHONY : home/dave/src/glow-home/esp32-custom/src/glow/Grid.cpp.i
 
-home/dave/src/glow-home/esp32-custom/src/glow/grid.s: home/dave/src/glow-home/esp32-custom/src/glow/grid.cpp.s
+home/dave/src/glow-home/esp32-custom/src/glow/Grid.s: home/dave/src/glow-home/esp32-custom/src/glow/Grid.cpp.s
 
-.PHONY : home/dave/src/glow-home/esp32-custom/src/glow/grid.s
+.PHONY : home/dave/src/glow-home/esp32-custom/src/glow/Grid.s
 
 # target to generate assembly for a file
-home/dave/src/glow-home/esp32-custom/src/glow/grid.cpp.s:
-	$(MAKE) -f CMakeFiles/glow.dir/build.make CMakeFiles/glow.dir/home/dave/src/glow-home/esp32-custom/src/glow/grid.cpp.s
-	$(MAKE) -f CMakeFiles/GridLib.dir/build.make CMakeFiles/GridLib.dir/home/dave/src/glow-home/esp32-custom/src/glow/grid.cpp.s
-.PHONY : home/dave/src/glow-home/esp32-custom/src/glow/grid.cpp.s
+home/dave/src/glow-home/esp32-custom/src/glow/Grid.cpp.s:
+	$(MAKE) -f CMakeFiles/glow.dir/build.make CMakeFiles/glow.dir/home/dave/src/glow-home/esp32-custom/src/glow/Grid.cpp.s
+	$(MAKE) -f CMakeFiles/GridLib.dir/build.make CMakeFiles/GridLib.dir/home/dave/src/glow-home/esp32-custom/src/glow/Grid.cpp.s
+.PHONY : home/dave/src/glow-home/esp32-custom/src/glow/Grid.cpp.s
 
 # Help Target
 help:
@@ -624,9 +624,9 @@ help:
 	@echo "... glow.o"
 	@echo "... glow.i"
 	@echo "... glow.s"
-	@echo "... home/dave/src/glow-home/esp32-custom/src/glow/grid.o"
-	@echo "... home/dave/src/glow-home/esp32-custom/src/glow/grid.i"
-	@echo "... home/dave/src/glow-home/esp32-custom/src/glow/grid.s"
+	@echo "... home/dave/src/glow-home/esp32-custom/src/glow/Grid.o"
+	@echo "... home/dave/src/glow-home/esp32-custom/src/glow/Grid.i"
+	@echo "... home/dave/src/glow-home/esp32-custom/src/glow/Grid.s"
 .PHONY : help
 
 

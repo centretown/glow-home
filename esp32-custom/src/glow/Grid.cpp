@@ -1,4 +1,4 @@
-#include "grid.h"
+#include "Grid.h"
 
 namespace glow
 {
@@ -7,13 +7,17 @@ namespace glow
     length = full_length;
     rows = row_count;
     columns = length / rows;
-    length = rows * columns;
     uint16_t lesser = (rows > columns) ? columns : rows;
+
+    pivot_first = 0;
+    pivot_last = 0;
+    pivot_offset = 0;
 
     for (uint16_t i = 0; i < lesser; i++)
     {
       pivot_first += i;
     }
+    
     pivot_offset = lesser - 1;
     pivot_last = pivot_first +
                  (columns - lesser) * rows + rows - 1;
