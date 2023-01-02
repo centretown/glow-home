@@ -1,4 +1,4 @@
-# Install script for directory: /home/dave/src/glow-test/tests
+# Install script for directory: /home/dave/src/glow-home/esp32-custom/test/tests
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -39,6 +39,6 @@ endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("/home/dave/src/glow-test/_deps/catch-build/cmake_install.cmake")
+  include("/home/dave/src/glow-home/esp32-custom/test/_deps/catch-build/cmake_install.cmake")
 endif()
 

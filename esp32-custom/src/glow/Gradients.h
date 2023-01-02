@@ -35,10 +35,10 @@ namespace glow
       if (!is_ready())
         return;
 
-      uint8_t amnt = 255 / rows;
+      uint8_t amnt = 255 / grid.rows;
       auto chroma = [&](uint16_t i)
       {
-        return step_gradient(amnt * (i / columns));
+        return step_gradient(amnt * (i / grid.columns));
       };
       spin(0, length, chroma);
     }
@@ -77,7 +77,7 @@ namespace glow
       if (!is_ready())
         return;
 
-      uint8_t amnt = 255 / columns;
+      uint8_t amnt = 255 / grid.columns;
       div_t point{0, 0};
 
       auto mapper = [&](uint16_t i)

@@ -48,10 +48,10 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/dave/src/glow-test
+CMAKE_SOURCE_DIR = /home/dave/src/glow-home/esp32-custom/test
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/dave/src/glow-test
+CMAKE_BINARY_DIR = /home/dave/src/glow-home/esp32-custom/test
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -91,14 +91,14 @@ rebuild_cache/fast: rebuild_cache
 
 # The main all target
 all: cmake_check_build_system
-	cd /home/dave/src/glow-test && $(CMAKE_COMMAND) -E cmake_progress_start /home/dave/src/glow-test/CMakeFiles /home/dave/src/glow-test/tests/CMakeFiles/progress.marks
-	cd /home/dave/src/glow-test && $(MAKE) -f CMakeFiles/Makefile2 tests/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/dave/src/glow-test/CMakeFiles 0
+	cd /home/dave/src/glow-home/esp32-custom/test && $(CMAKE_COMMAND) -E cmake_progress_start /home/dave/src/glow-home/esp32-custom/test/CMakeFiles /home/dave/src/glow-home/esp32-custom/test/tests/CMakeFiles/progress.marks
+	cd /home/dave/src/glow-home/esp32-custom/test && $(MAKE) -f CMakeFiles/Makefile2 tests/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/dave/src/glow-home/esp32-custom/test/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
 clean:
-	cd /home/dave/src/glow-test && $(MAKE) -f CMakeFiles/Makefile2 tests/clean
+	cd /home/dave/src/glow-home/esp32-custom/test && $(MAKE) -f CMakeFiles/Makefile2 tests/clean
 .PHONY : clean
 
 # The main clean target
@@ -108,22 +108,22 @@ clean/fast: clean
 
 # Prepare targets for installation.
 preinstall: all
-	cd /home/dave/src/glow-test && $(MAKE) -f CMakeFiles/Makefile2 tests/preinstall
+	cd /home/dave/src/glow-home/esp32-custom/test && $(MAKE) -f CMakeFiles/Makefile2 tests/preinstall
 .PHONY : preinstall
 
 # Prepare targets for installation.
 preinstall/fast:
-	cd /home/dave/src/glow-test && $(MAKE) -f CMakeFiles/Makefile2 tests/preinstall
+	cd /home/dave/src/glow-home/esp32-custom/test && $(MAKE) -f CMakeFiles/Makefile2 tests/preinstall
 .PHONY : preinstall/fast
 
 # clear depends
 depend:
-	cd /home/dave/src/glow-test && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
+	cd /home/dave/src/glow-home/esp32-custom/test && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
 .PHONY : depend
 
 # Convenience name for target.
 tests/CMakeFiles/testlib.dir/rule:
-	cd /home/dave/src/glow-test && $(MAKE) -f CMakeFiles/Makefile2 tests/CMakeFiles/testlib.dir/rule
+	cd /home/dave/src/glow-home/esp32-custom/test && $(MAKE) -f CMakeFiles/Makefile2 tests/CMakeFiles/testlib.dir/rule
 .PHONY : tests/CMakeFiles/testlib.dir/rule
 
 # Convenience name for target.
@@ -133,7 +133,7 @@ testlib: tests/CMakeFiles/testlib.dir/rule
 
 # fast build rule for target.
 testlib/fast:
-	cd /home/dave/src/glow-test && $(MAKE) -f tests/CMakeFiles/testlib.dir/build.make tests/CMakeFiles/testlib.dir/build
+	cd /home/dave/src/glow-home/esp32-custom/test && $(MAKE) -f tests/CMakeFiles/testlib.dir/build.make tests/CMakeFiles/testlib.dir/build
 .PHONY : testlib/fast
 
 test_diagonal.o: test_diagonal.cpp.o
@@ -142,7 +142,7 @@ test_diagonal.o: test_diagonal.cpp.o
 
 # target to build an object file
 test_diagonal.cpp.o:
-	cd /home/dave/src/glow-test && $(MAKE) -f tests/CMakeFiles/testlib.dir/build.make tests/CMakeFiles/testlib.dir/test_diagonal.cpp.o
+	cd /home/dave/src/glow-home/esp32-custom/test && $(MAKE) -f tests/CMakeFiles/testlib.dir/build.make tests/CMakeFiles/testlib.dir/test_diagonal.cpp.o
 .PHONY : test_diagonal.cpp.o
 
 test_diagonal.i: test_diagonal.cpp.i
@@ -151,7 +151,7 @@ test_diagonal.i: test_diagonal.cpp.i
 
 # target to preprocess a source file
 test_diagonal.cpp.i:
-	cd /home/dave/src/glow-test && $(MAKE) -f tests/CMakeFiles/testlib.dir/build.make tests/CMakeFiles/testlib.dir/test_diagonal.cpp.i
+	cd /home/dave/src/glow-home/esp32-custom/test && $(MAKE) -f tests/CMakeFiles/testlib.dir/build.make tests/CMakeFiles/testlib.dir/test_diagonal.cpp.i
 .PHONY : test_diagonal.cpp.i
 
 test_diagonal.s: test_diagonal.cpp.s
@@ -160,7 +160,7 @@ test_diagonal.s: test_diagonal.cpp.s
 
 # target to generate assembly for a file
 test_diagonal.cpp.s:
-	cd /home/dave/src/glow-test && $(MAKE) -f tests/CMakeFiles/testlib.dir/build.make tests/CMakeFiles/testlib.dir/test_diagonal.cpp.s
+	cd /home/dave/src/glow-home/esp32-custom/test && $(MAKE) -f tests/CMakeFiles/testlib.dir/build.make tests/CMakeFiles/testlib.dir/test_diagonal.cpp.s
 .PHONY : test_diagonal.cpp.s
 
 # Help Target
@@ -187,6 +187,6 @@ help:
 # No rule that depends on this can have commands that come from listfiles
 # because they might be regenerated.
 cmake_check_build_system:
-	cd /home/dave/src/glow-test && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 0
+	cd /home/dave/src/glow-home/esp32-custom/test && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 0
 .PHONY : cmake_check_build_system
 

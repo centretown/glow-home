@@ -4,8 +4,8 @@
 
 
 # Configuration directories and files
-SourceDirectory: /home/dave/src/glow-test
-BuildDirectory: /home/dave/src/glow-test
+SourceDirectory: /home/dave/src/glow-home/esp32-custom/test
+BuildDirectory: /home/dave/src/glow-home/esp32-custom/test
 
 # Where to place the cost data store
 CostDataFile: 
@@ -26,8 +26,8 @@ SubmitURL: http://
 NightlyStartTime: 00:00:00 EDT
 
 # Commands for the build/test/submit cycle
-ConfigureCommand: "/usr/bin/cmake" "/home/dave/src/glow-test"
-MakeCommand: /usr/bin/cmake --build . --config "${CTEST_CONFIGURATION_TYPE}" -- -i
+ConfigureCommand: "/usr/bin/cmake" "/home/dave/src/glow-home/esp32-custom/test"
+MakeCommand: /usr/bin/cmake --build . --config "${CTEST_CONFIGURATION_TYPE}"
 DefaultCTestConfigurationType: Release
 
 # version control

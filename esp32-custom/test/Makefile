@@ -48,10 +48,10 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/dave/src/glow-test
+CMAKE_SOURCE_DIR = /home/dave/src/glow-home/esp32-custom/test
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/dave/src/glow-test
+CMAKE_BINARY_DIR = /home/dave/src/glow-home/esp32-custom/test
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -91,9 +91,9 @@ edit_cache/fast: edit_cache
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/dave/src/glow-test/CMakeFiles /home/dave/src/glow-test/CMakeFiles/progress.marks
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/dave/src/glow-home/esp32-custom/test/CMakeFiles /home/dave/src/glow-home/esp32-custom/test/CMakeFiles/progress.marks
 	$(MAKE) -f CMakeFiles/Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/dave/src/glow-test/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/dave/src/glow-home/esp32-custom/test/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
@@ -551,35 +551,35 @@ glow.cpp.s:
 	$(MAKE) -f CMakeFiles/glow.dir/build.make CMakeFiles/glow.dir/glow.cpp.s
 .PHONY : glow.cpp.s
 
-src/grid.o: src/grid.cpp.o
+home/dave/src/glow-home/esp32-custom/src/glow/grid.o: home/dave/src/glow-home/esp32-custom/src/glow/grid.cpp.o
 
-.PHONY : src/grid.o
+.PHONY : home/dave/src/glow-home/esp32-custom/src/glow/grid.o
 
 # target to build an object file
-src/grid.cpp.o:
-	$(MAKE) -f CMakeFiles/glow.dir/build.make CMakeFiles/glow.dir/src/grid.cpp.o
-	$(MAKE) -f CMakeFiles/GridLib.dir/build.make CMakeFiles/GridLib.dir/src/grid.cpp.o
-.PHONY : src/grid.cpp.o
+home/dave/src/glow-home/esp32-custom/src/glow/grid.cpp.o:
+	$(MAKE) -f CMakeFiles/glow.dir/build.make CMakeFiles/glow.dir/home/dave/src/glow-home/esp32-custom/src/glow/grid.cpp.o
+	$(MAKE) -f CMakeFiles/GridLib.dir/build.make CMakeFiles/GridLib.dir/home/dave/src/glow-home/esp32-custom/src/glow/grid.cpp.o
+.PHONY : home/dave/src/glow-home/esp32-custom/src/glow/grid.cpp.o
 
-src/grid.i: src/grid.cpp.i
+home/dave/src/glow-home/esp32-custom/src/glow/grid.i: home/dave/src/glow-home/esp32-custom/src/glow/grid.cpp.i
 
-.PHONY : src/grid.i
+.PHONY : home/dave/src/glow-home/esp32-custom/src/glow/grid.i
 
 # target to preprocess a source file
-src/grid.cpp.i:
-	$(MAKE) -f CMakeFiles/glow.dir/build.make CMakeFiles/glow.dir/src/grid.cpp.i
-	$(MAKE) -f CMakeFiles/GridLib.dir/build.make CMakeFiles/GridLib.dir/src/grid.cpp.i
-.PHONY : src/grid.cpp.i
+home/dave/src/glow-home/esp32-custom/src/glow/grid.cpp.i:
+	$(MAKE) -f CMakeFiles/glow.dir/build.make CMakeFiles/glow.dir/home/dave/src/glow-home/esp32-custom/src/glow/grid.cpp.i
+	$(MAKE) -f CMakeFiles/GridLib.dir/build.make CMakeFiles/GridLib.dir/home/dave/src/glow-home/esp32-custom/src/glow/grid.cpp.i
+.PHONY : home/dave/src/glow-home/esp32-custom/src/glow/grid.cpp.i
 
-src/grid.s: src/grid.cpp.s
+home/dave/src/glow-home/esp32-custom/src/glow/grid.s: home/dave/src/glow-home/esp32-custom/src/glow/grid.cpp.s
 
-.PHONY : src/grid.s
+.PHONY : home/dave/src/glow-home/esp32-custom/src/glow/grid.s
 
 # target to generate assembly for a file
-src/grid.cpp.s:
-	$(MAKE) -f CMakeFiles/glow.dir/build.make CMakeFiles/glow.dir/src/grid.cpp.s
-	$(MAKE) -f CMakeFiles/GridLib.dir/build.make CMakeFiles/GridLib.dir/src/grid.cpp.s
-.PHONY : src/grid.cpp.s
+home/dave/src/glow-home/esp32-custom/src/glow/grid.cpp.s:
+	$(MAKE) -f CMakeFiles/glow.dir/build.make CMakeFiles/glow.dir/home/dave/src/glow-home/esp32-custom/src/glow/grid.cpp.s
+	$(MAKE) -f CMakeFiles/GridLib.dir/build.make CMakeFiles/GridLib.dir/home/dave/src/glow-home/esp32-custom/src/glow/grid.cpp.s
+.PHONY : home/dave/src/glow-home/esp32-custom/src/glow/grid.cpp.s
 
 # Help Target
 help:
@@ -624,9 +624,9 @@ help:
 	@echo "... glow.o"
 	@echo "... glow.i"
 	@echo "... glow.s"
-	@echo "... src/grid.o"
-	@echo "... src/grid.i"
-	@echo "... src/grid.s"
+	@echo "... home/dave/src/glow-home/esp32-custom/src/glow/grid.o"
+	@echo "... home/dave/src/glow-home/esp32-custom/src/glow/grid.i"
+	@echo "... home/dave/src/glow-home/esp32-custom/src/glow/grid.s"
 .PHONY : help
 
 

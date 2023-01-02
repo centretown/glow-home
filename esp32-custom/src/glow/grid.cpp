@@ -1,12 +1,12 @@
-#include <iostream>
-#include "../include/grid.h"
+#include "grid.h"
 
 namespace glow
 {
-  Grid::Grid(uint16_t rows, uint16_t columns)
-      : rows(rows), columns(columns)
+  void Grid::setup(uint16_t full_length, uint16_t row_count)
   {
-    count = columns + rows - 1;
+    length = full_length;
+    rows = row_count;
+    columns = length / rows;
     length = rows * columns;
     uint16_t lesser = (rows > columns) ? columns : rows;
 
@@ -17,13 +17,6 @@ namespace glow
     pivot_offset = lesser - 1;
     pivot_last = pivot_first +
                  (columns - lesser) * rows + rows - 1;
-  }
-
-  uint16_t Grid::map_diagonal_middle(uint16_t index)
-  {
-    div_t p = div(index - pivot_first, rows);
-    return pivot_offset + p.quot +
-           p.rem * (columns - 1);
   }
 
   uint16_t Grid::map_diagonal_top(uint16_t index)

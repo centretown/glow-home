@@ -1,5 +1,5 @@
 #include <iostream>
-#include "include/grid.h"
+#include "../src/glow/grid.h"
 #include "GlowConfig.h"
 
 using namespace glow;
@@ -10,7 +10,8 @@ int main(int argc, char **argv)
             << Glow_VERSION_MINOR << std::endl;
   std::cout << "Usage: " << argv[0] << " number" << std::endl;
 
-  Grid grid(4, 5);
+  Grid grid;
+  grid.setup(20, 4);
 
   for (uint16_t index = 0; index < grid.length; index++)
   {

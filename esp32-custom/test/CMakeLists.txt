@@ -10,7 +10,7 @@ project(
 
 configure_file(GlowConfig.h.in GlowConfig.h)
 
-add_library(GridLib src/grid.cpp include)
+add_library(GridLib ../src/glow/grid.cpp ../src/glow/grid.h)
 
 if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
   include(CTest)
@@ -21,7 +21,7 @@ if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME AND BUILD_TESTING)
   add_subdirectory(tests)
 endif()
 
-add_executable(glow glow.cpp src/grid.cpp)
+add_executable(glow glow.cpp ../src/glow/grid.cpp)
 
 target_link_libraries(glow)
 
