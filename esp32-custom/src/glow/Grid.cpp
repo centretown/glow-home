@@ -2,8 +2,9 @@
 
 namespace glow
 {
-  void Grid::setup(uint16_t full_length, uint16_t row_count)
+  void Grid::setup(uint16_t full_length, uint16_t row_count, uint16_t org)
   {
+    origin = org;
     length = full_length;
     rows = row_count;
     columns = length / rows;
@@ -17,7 +18,7 @@ namespace glow
     {
       pivot_first += i;
     }
-    
+
     pivot_offset = lesser - 1;
     pivot_last = pivot_first +
                  (columns - lesser) * rows + rows - 1;
@@ -67,21 +68,35 @@ namespace glow
 
   uint16_t Grid::map_diagonal(uint16_t index)
   {
+    uint16_t offset = 0;
+
     if (columns < 3)
     {
-      return index;
+      offset = index;
     }
 
-    if (index < pivot_first)
+    else if (index < pivot_first)
     {
-      return map_diagonal_top(index);
+      offset = map_diagonal_top(index);
     }
 
-    if (index <= pivot_last)
+    else if (index <= pivot_last)
     {
-      return map_diagonal_middle(index);
+      offset = map_diagonal_middle(index);
     }
 
-    return map_diagonal_bottom(index);
+    else
+    {
+      offset = map_diagonal_bottom(index);
+    }
+
+    if (origin == 1)
+    {
+      div_t point = div(offset, columns);
+      offset = point.quot * columns +
+               (columns - point.rem - 1);
+    }
+
+    return offset;
   }
 }

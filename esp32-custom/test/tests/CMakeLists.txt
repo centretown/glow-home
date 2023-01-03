@@ -12,7 +12,7 @@ FetchContent_MakeAvailable(catch)
 # Adds Catch2::Catch2
 
 # Tests need to be added as executables first
-add_executable(testlib test_diagonal.cpp)
+add_executable(testlib test_grid.cpp)
 
 # Should be linked to the main library, as well as the Catch2 testing library
 target_link_libraries(testlib PRIVATE GridLib  Catch2::Catch2)

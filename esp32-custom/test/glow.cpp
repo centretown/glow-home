@@ -13,7 +13,7 @@ int main(int argc, char **argv)
   Grid grid;
   grid.setup(20, 4);
 
-  const uint16_t length = grid.get_length();
+  const uint16_t length = grid.Length();
   for (uint16_t index = 0; index < length; index++)
   {
     uint16_t result = grid.map_diagonal(index);

@@ -35,10 +35,10 @@ namespace glow
       if (!is_ready())
         return;
 
-      uint8_t amnt = 255 / grid.get_rows();
+      uint8_t amnt = 255 / grid.Rows();
       auto chroma = [&](uint16_t i)
       {
-        return step_gradient(amnt * (i / grid.get_columns()));
+        return step_gradient(amnt * (i / grid.Columns()));
       };
       spin(0, length, chroma);
     }
@@ -77,7 +77,7 @@ namespace glow
       if (!is_ready())
         return;
 
-      uint8_t amnt = 255 / grid.get_columns();
+      uint8_t amnt = 255 / grid.Columns();
       div_t point{0, 0};
 
       auto mapper = [&](uint16_t i)
@@ -102,8 +102,8 @@ namespace glow
       if (!is_ready())
         return;
 
-      // uint8_t amnt = 255 / (columns + rows - 1);
-      uint8_t amnt = 255 / length;
+      // uint16_t count = grid.Rows() + grid.Columns() - 1;
+      uint8_t amt = 255 / length;
 
       auto mapper = [&](uint16_t i)
       {
@@ -112,7 +112,7 @@ namespace glow
 
       auto chroma = [&](uint16_t i)
       {
-        return step_gradient(amnt * i);
+        return step_gradient(i * amt);
       };
 
       spin(0, length, mapper, chroma);

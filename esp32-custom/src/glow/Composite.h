@@ -21,10 +21,10 @@ namespace glow
         : background(background),
           foreground(foreground) {}
 
-    void setup(AddressableLight *it, Color current_color)
+    void setup(AddressableLight *it, Color current_color, uint16_t origin = 0)
     {
-      background.setup(it, current_color);
-      foreground.setup(it, current_color);
+      background.setup(it, current_color, origin);
+      foreground.setup(it, current_color, origin);
     }
 
     void apply()

@@ -136,32 +136,32 @@ testlib/fast:
 	cd /home/dave/src/glow-home/esp32-custom/test && $(MAKE) -f tests/CMakeFiles/testlib.dir/build.make tests/CMakeFiles/testlib.dir/build
 .PHONY : testlib/fast
 
-test_diagonal.o: test_diagonal.cpp.o
+test_grid.o: test_grid.cpp.o
 
-.PHONY : test_diagonal.o
+.PHONY : test_grid.o
 
 # target to build an object file
-test_diagonal.cpp.o:
-	cd /home/dave/src/glow-home/esp32-custom/test && $(MAKE) -f tests/CMakeFiles/testlib.dir/build.make tests/CMakeFiles/testlib.dir/test_diagonal.cpp.o
-.PHONY : test_diagonal.cpp.o
+test_grid.cpp.o:
+	cd /home/dave/src/glow-home/esp32-custom/test && $(MAKE) -f tests/CMakeFiles/testlib.dir/build.make tests/CMakeFiles/testlib.dir/test_grid.cpp.o
+.PHONY : test_grid.cpp.o
 
-test_diagonal.i: test_diagonal.cpp.i
+test_grid.i: test_grid.cpp.i
 
-.PHONY : test_diagonal.i
+.PHONY : test_grid.i
 
 # target to preprocess a source file
-test_diagonal.cpp.i:
-	cd /home/dave/src/glow-home/esp32-custom/test && $(MAKE) -f tests/CMakeFiles/testlib.dir/build.make tests/CMakeFiles/testlib.dir/test_diagonal.cpp.i
-.PHONY : test_diagonal.cpp.i
+test_grid.cpp.i:
+	cd /home/dave/src/glow-home/esp32-custom/test && $(MAKE) -f tests/CMakeFiles/testlib.dir/build.make tests/CMakeFiles/testlib.dir/test_grid.cpp.i
+.PHONY : test_grid.cpp.i
 
-test_diagonal.s: test_diagonal.cpp.s
+test_grid.s: test_grid.cpp.s
 
-.PHONY : test_diagonal.s
+.PHONY : test_grid.s
 
 # target to generate assembly for a file
-test_diagonal.cpp.s:
-	cd /home/dave/src/glow-home/esp32-custom/test && $(MAKE) -f tests/CMakeFiles/testlib.dir/build.make tests/CMakeFiles/testlib.dir/test_diagonal.cpp.s
-.PHONY : test_diagonal.cpp.s
+test_grid.cpp.s:
+	cd /home/dave/src/glow-home/esp32-custom/test && $(MAKE) -f tests/CMakeFiles/testlib.dir/build.make tests/CMakeFiles/testlib.dir/test_grid.cpp.s
+.PHONY : test_grid.cpp.s
 
 # Help Target
 help:
@@ -173,9 +173,9 @@ help:
 	@echo "... test"
 	@echo "... rebuild_cache"
 	@echo "... testlib"
-	@echo "... test_diagonal.o"
-	@echo "... test_diagonal.i"
-	@echo "... test_diagonal.s"
+	@echo "... test_grid.o"
+	@echo "... test_grid.i"
+	@echo "... test_grid.s"
 .PHONY : help
 
 

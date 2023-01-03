@@ -17,31 +17,33 @@ namespace glow
     uint16_t pivot_last = 0;
     uint16_t pivot_offset = 0;
 
-  public:
-    void setup(uint16_t full_length, uint16_t row_count);
+    uint16_t origin = 0;
 
-    inline uint16_t get_length() const
+  public:
+    void setup(uint16_t full_length, uint16_t row_count, uint16_t org = 0);
+
+    inline uint16_t Length() const
     {
       return length;
     }
-    inline uint16_t get_rows() const
+    inline uint16_t Rows() const
     {
       return rows;
     }
-    inline uint16_t get_columns() const
+    inline uint16_t Columns() const
     {
       return columns;
     }
 
-    inline uint16_t get_first() const
+    inline uint16_t First() const
     {
       return pivot_first;
     }
-    inline uint16_t get_last() const
+    inline uint16_t Last() const
     {
       return pivot_last;
     }
-    inline uint16_t get_offset() const
+    inline uint16_t Offset() const
     {
       return pivot_offset;
     }
@@ -63,7 +65,7 @@ namespace glow
     uint16_t map_diagonal_top(uint16_t index);
     uint16_t map_diagonal_bottom(uint16_t index);
 
-    virtual void log_buffer(char *buffer, size_t buffer_size) const
+    void log_buffer(char *buffer, size_t buffer_size) const
     {
       snprintf(buffer, buffer_size,
                "rows=%u columns=%u length=%u first=%u last=%u offset=%u",

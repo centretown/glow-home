@@ -36,7 +36,7 @@ namespace glow
     };
 
   public:
-    virtual void setup(AddressableLight *it, Color current_color)
+    virtual void setup(AddressableLight *it, Color current_color, uint8_t origin = 0)
     {
       light = it;
       if (light == nullptr)
@@ -51,7 +51,7 @@ namespace glow
 
       Presets presets;
       presets.setup();
-      grid.setup(length, presets.rows);
+      grid.setup(length, presets.rows, origin);
 
       set_interval(presets.interval);
       set_delta(presets.delta);

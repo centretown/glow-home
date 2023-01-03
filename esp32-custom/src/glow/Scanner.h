@@ -18,9 +18,9 @@ namespace glow
     uint16_t position = 0;
 
   public:
-    void setup(AddressableLight *it, Color current_color) override
+    void setup(AddressableLight *it, Color current_color, uint8_t origin = 0) override
     {
-      Lamp::setup(it, current_color);
+      Lamp::setup(it, current_color, origin);
       if (is_setup != 1)
         return;
 

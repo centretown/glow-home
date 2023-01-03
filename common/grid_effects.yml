@@ -55,6 +55,17 @@
             gradient.apply();
 
       - addressable_lambda: 
+          name: "Gradient Diagonal 1"
+          update_interval: 16ms
+          lambda: |-
+            #include "glow/Gradients.h"
+            static glow::DiagonalGradient gradient;
+            if (initial_run) {
+              gradient.setup(&it, current_color, 1);
+            }
+            gradient.apply();
+
+      - addressable_lambda: 
           name: "Solid"
           update_interval: 16ms
           lambda: |-
@@ -107,5 +118,60 @@
 
             if (initial_run) {
               composite.setup(&it, current_color);
+            }
+            composite.apply();
+
+
+      - addressable_lambda: 
+          name: "Solid Base Composite"
+          update_interval: 16ms
+          lambda: |-
+            #include "glow/Solid.h"
+            #include "glow/Scanner.h"
+            #include "glow/Composite.h"
+            using namespace glow;
+            static Solid solid;
+            static Scanner scanner;
+            static Composite<Solid, Scanner> composite(solid, scanner);
+
+            if (initial_run) {
+              composite.setup(&it, current_color);
+            }
+            composite.apply();
+
+      - addressable_lambda: 
+          name: "Solid Base Composite-1"
+          update_interval: 16ms
+          lambda: |-
+            #include "glow/Solid.h"
+            #include "glow/Scanner.h"
+            #include "glow/Composite.h"
+            using namespace glow;
+            static Solid solid;
+            static Scanner scanner;
+            static Composite<Solid, Scanner> composite(solid, scanner);
+
+            if (initial_run) {
+              composite.setup(&it, current_color, 1);
+            }
+            composite.apply();
+
+      - addressable_lambda: 
+          name: "Solid Base Composite-2"
+          update_interval: 16ms
+          lambda: |-
+            #include "glow/Solid.h"
+            #include "glow/Scanner.h"
+            #include "glow/Composite.h"
+            using namespace glow;
+            static Solid solid;
+            static Scanner scanner1;
+            static Scanner scanner2;
+            static Composite<Scanner, Scanner> foreground(scanner2, scanner1);
+            static Composite<Solid, Composite<Scanner, Scanner>> composite(solid, foreground);
+
+            if (initial_run) {
+              composite.setup(&it, current_color, 0);
+              scanner1.setup(&it, current_color, 1);
             }
             composite.apply();
