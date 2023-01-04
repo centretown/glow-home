@@ -61,7 +61,7 @@
             #include "glow/Gradients.h"
             static glow::DiagonalGradient gradient;
             if (initial_run) {
-              gradient.setup(&it, current_color, 1);
+              gradient.setup(&it, current_color, glow::TopRight);
             }
             gradient.apply();
 
@@ -152,7 +152,7 @@
             static Composite<Solid, Scanner> composite(solid, scanner);
 
             if (initial_run) {
-              composite.setup(&it, current_color, 1);
+              composite.setup(&it, current_color, TopRight);
             }
             composite.apply();
 
@@ -171,7 +171,8 @@
             static Composite<Solid, Composite<Scanner, Scanner>> composite(solid, foreground);
 
             if (initial_run) {
-              composite.setup(&it, current_color, 0);
-              scanner1.setup(&it, current_color, 1);
+              solid.setup(&it, current_color);
+              scanner2.setup(&it, current_color);
+              scanner1.setup(&it, current_color, TopRight);
             }
             composite.apply();

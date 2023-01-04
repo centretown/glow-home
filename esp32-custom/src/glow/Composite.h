@@ -21,7 +21,7 @@ namespace glow
         : background(background),
           foreground(foreground) {}
 
-    void setup(AddressableLight *it, Color current_color, uint16_t origin = 0)
+    void setup(AddressableLight *it, Color current_color, Origin origin = TopLeft)
     {
       background.setup(it, current_color, origin);
       foreground.setup(it, current_color, origin);

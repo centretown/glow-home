@@ -36,7 +36,7 @@ namespace glow
     };
 
   public:
-    virtual void setup(AddressableLight *it, Color current_color, uint8_t origin = 0)
+    virtual void setup(AddressableLight *it, Color current_color, Origin origin = TopLeft)
     {
       light = it;
       if (light == nullptr)

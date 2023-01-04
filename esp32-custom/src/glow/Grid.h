@@ -6,6 +6,21 @@
 
 namespace glow
 {
+  enum Origin : uint8_t
+  {
+    TopLeft,
+    TopRight,
+    BottomLeft,
+    BottomRight,
+  };
+
+  struct Pivot
+  {
+    uint16_t first = 0;
+    uint16_t last = 0;
+    uint16_t offset = 0;
+  };
+
   class Grid
   {
   private:
@@ -13,14 +28,12 @@ namespace glow
     uint16_t columns = 0;
     uint16_t length = 0;
 
-    uint16_t pivot_first = 0;
-    uint16_t pivot_last = 0;
-    uint16_t pivot_offset = 0;
+    Pivot pivot;
 
     uint16_t origin = 0;
 
   public:
-    void setup(uint16_t full_length, uint16_t row_count, uint16_t org = 0);
+    void setup(uint16_t full_length, uint16_t row_count, Origin org = TopLeft);
 
     inline uint16_t Length() const
     {
@@ -37,15 +50,15 @@ namespace glow
 
     inline uint16_t First() const
     {
-      return pivot_first;
+      return pivot.first;
     }
     inline uint16_t Last() const
     {
-      return pivot_last;
+      return pivot.last;
     }
     inline uint16_t Offset() const
     {
-      return pivot_offset;
+      return pivot.offset;
     }
 
     inline uint16_t map_columns(uint16_t i, div_t &point)
@@ -56,8 +69,8 @@ namespace glow
 
     inline uint16_t map_diagonal_middle(uint16_t index)
     {
-      div_t p = div(index - pivot_first, rows);
-      return pivot_offset + p.quot +
+      div_t p = div(index - pivot.first, rows);
+      return pivot.offset + p.quot +
              p.rem * (columns - 1);
     }
 
@@ -65,12 +78,14 @@ namespace glow
     uint16_t map_diagonal_top(uint16_t index);
     uint16_t map_diagonal_bottom(uint16_t index);
 
+    uint16_t adjust_origin(uint16_t offset);
+
     void log_buffer(char *buffer, size_t buffer_size) const
     {
       snprintf(buffer, buffer_size,
                "rows=%u columns=%u length=%u first=%u last=%u offset=%u",
                rows, columns, length,
-               pivot_first, pivot_last, pivot_offset);
+               pivot.first, pivot.last, pivot.offset);
     }
   };
 

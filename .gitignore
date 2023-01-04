@@ -12,3 +12,5 @@ esp32-custom/test/tests/testlib
 esp32-custom/test/glow
 .gitignore
 esp32-custom/test/.vscode/settings.json
+esp32-custom/test/Testing/Temporary/CTestCostData.txt
+esp32-custom/test/Testing/Temporary/LastTest.log

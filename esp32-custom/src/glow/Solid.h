@@ -12,7 +12,7 @@ namespace glow
   class Solid : public Lamp
   {
   public:
-    void setup(AddressableLight *it, Color current_color, uint16_t origin = 0)
+    void setup(AddressableLight *it, Color current_color, Origin origin = TopLeft)
     {
       Lamp::setup(it, current_color, origin);
       log();

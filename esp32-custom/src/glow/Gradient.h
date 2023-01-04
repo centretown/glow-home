@@ -16,7 +16,7 @@ namespace glow
     ESPHSVColor hsv_target;
 
   public:
-    void setup(AddressableLight *it, Color current_color, uint8_t origin = 0) override
+    void setup(AddressableLight *it, Color current_color, Origin origin = TopLeft)
     {
       Lamp::setup(it, current_color, origin);
       if (!is_setup)
