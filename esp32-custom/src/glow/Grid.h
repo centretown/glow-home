@@ -14,6 +14,13 @@ namespace glow
     BottomRight,
   };
 
+  enum Orientation : uint8_t
+  {
+    Horizontal,
+    Vertical,
+    Diagonal
+  };
+
   struct Pivot
   {
     uint16_t first = 0;
@@ -28,12 +35,16 @@ namespace glow
     uint16_t columns = 0;
     uint16_t length = 0;
 
+    Origin origin = TopLeft;
+    Orientation orientation = Horizontal;
+
+    div_t point{0, 0};
     Pivot pivot;
 
-    uint16_t origin = 0;
-
   public:
-    void setup(uint16_t full_length, uint16_t row_count, Origin org = TopLeft);
+    void setup(uint16_t full_length, uint16_t row_count,
+               Origin org = TopLeft,
+               Orientation ori = Horizontal);
 
     inline uint16_t Length() const
     {
@@ -60,6 +71,8 @@ namespace glow
     {
       return pivot.offset;
     }
+
+    uint16_t map(uint16_t index);
 
     inline uint16_t map_columns(uint16_t i, div_t &point)
     {

@@ -66,6 +66,28 @@
             gradient.apply();
 
       - addressable_lambda: 
+          name: "Gradient Diagonal 2"
+          update_interval: 16ms
+          lambda: |-
+            #include "glow/Gradients.h"
+            static glow::DiagonalGradient gradient;
+            if (initial_run) {
+              gradient.setup(&it, current_color, glow::BottomLeft);
+            }
+            gradient.apply();
+
+      - addressable_lambda: 
+          name: "Gradient Diagonal 3"
+          update_interval: 16ms
+          lambda: |-
+            #include "glow/Gradients.h"
+            static glow::DiagonalGradient gradient;
+            if (initial_run) {
+              gradient.setup(&it, current_color, glow::BottomRight);
+            }
+            gradient.apply();
+
+      - addressable_lambda: 
           name: "Solid"
           update_interval: 16ms
           lambda: |-

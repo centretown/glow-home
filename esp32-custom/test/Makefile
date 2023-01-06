@@ -512,17 +512,30 @@ ContinuousSubmit/fast:
 .PHONY : ContinuousSubmit/fast
 
 #=============================================================================
-# Target rules for targets named testlib
+# Target rules for targets named testchromalib
 
 # Build rule for target.
-testlib: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 testlib
-.PHONY : testlib
+testchromalib: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 testchromalib
+.PHONY : testchromalib
 
 # fast build rule for target.
-testlib/fast:
-	$(MAKE) -f tests/CMakeFiles/testlib.dir/build.make tests/CMakeFiles/testlib.dir/build
-.PHONY : testlib/fast
+testchromalib/fast:
+	$(MAKE) -f tests/CMakeFiles/testchromalib.dir/build.make tests/CMakeFiles/testchromalib.dir/build
+.PHONY : testchromalib/fast
+
+#=============================================================================
+# Target rules for targets named testgridlib
+
+# Build rule for target.
+testgridlib: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 testgridlib
+.PHONY : testgridlib
+
+# fast build rule for target.
+testgridlib/fast:
+	$(MAKE) -f tests/CMakeFiles/testgridlib.dir/build.make tests/CMakeFiles/testgridlib.dir/build
+.PHONY : testgridlib/fast
 
 glow.o: glow.cpp.o
 
@@ -550,6 +563,33 @@ glow.s: glow.cpp.s
 glow.cpp.s:
 	$(MAKE) -f CMakeFiles/glow.dir/build.make CMakeFiles/glow.dir/glow.cpp.s
 .PHONY : glow.cpp.s
+
+home/dave/src/glow-home/esp32-custom/src/esphome/components/light/esp_hsv_color.o: home/dave/src/glow-home/esp32-custom/src/esphome/components/light/esp_hsv_color.cpp.o
+
+.PHONY : home/dave/src/glow-home/esp32-custom/src/esphome/components/light/esp_hsv_color.o
+
+# target to build an object file
+home/dave/src/glow-home/esp32-custom/src/esphome/components/light/esp_hsv_color.cpp.o:
+	$(MAKE) -f CMakeFiles/GridLib.dir/build.make CMakeFiles/GridLib.dir/home/dave/src/glow-home/esp32-custom/src/esphome/components/light/esp_hsv_color.cpp.o
+.PHONY : home/dave/src/glow-home/esp32-custom/src/esphome/components/light/esp_hsv_color.cpp.o
+
+home/dave/src/glow-home/esp32-custom/src/esphome/components/light/esp_hsv_color.i: home/dave/src/glow-home/esp32-custom/src/esphome/components/light/esp_hsv_color.cpp.i
+
+.PHONY : home/dave/src/glow-home/esp32-custom/src/esphome/components/light/esp_hsv_color.i
+
+# target to preprocess a source file
+home/dave/src/glow-home/esp32-custom/src/esphome/components/light/esp_hsv_color.cpp.i:
+	$(MAKE) -f CMakeFiles/GridLib.dir/build.make CMakeFiles/GridLib.dir/home/dave/src/glow-home/esp32-custom/src/esphome/components/light/esp_hsv_color.cpp.i
+.PHONY : home/dave/src/glow-home/esp32-custom/src/esphome/components/light/esp_hsv_color.cpp.i
+
+home/dave/src/glow-home/esp32-custom/src/esphome/components/light/esp_hsv_color.s: home/dave/src/glow-home/esp32-custom/src/esphome/components/light/esp_hsv_color.cpp.s
+
+.PHONY : home/dave/src/glow-home/esp32-custom/src/esphome/components/light/esp_hsv_color.s
+
+# target to generate assembly for a file
+home/dave/src/glow-home/esp32-custom/src/esphome/components/light/esp_hsv_color.cpp.s:
+	$(MAKE) -f CMakeFiles/GridLib.dir/build.make CMakeFiles/GridLib.dir/home/dave/src/glow-home/esp32-custom/src/esphome/components/light/esp_hsv_color.cpp.s
+.PHONY : home/dave/src/glow-home/esp32-custom/src/esphome/components/light/esp_hsv_color.cpp.s
 
 home/dave/src/glow-home/esp32-custom/src/glow/Grid.o: home/dave/src/glow-home/esp32-custom/src/glow/Grid.cpp.o
 
@@ -620,10 +660,14 @@ help:
 	@echo "... ContinuousMemCheck"
 	@echo "... ContinuousTest"
 	@echo "... ContinuousSubmit"
-	@echo "... testlib"
+	@echo "... testchromalib"
+	@echo "... testgridlib"
 	@echo "... glow.o"
 	@echo "... glow.i"
 	@echo "... glow.s"
+	@echo "... home/dave/src/glow-home/esp32-custom/src/esphome/components/light/esp_hsv_color.o"
+	@echo "... home/dave/src/glow-home/esp32-custom/src/esphome/components/light/esp_hsv_color.i"
+	@echo "... home/dave/src/glow-home/esp32-custom/src/esphome/components/light/esp_hsv_color.s"
 	@echo "... home/dave/src/glow-home/esp32-custom/src/glow/Grid.o"
 	@echo "... home/dave/src/glow-home/esp32-custom/src/glow/Grid.i"
 	@echo "... home/dave/src/glow-home/esp32-custom/src/glow/Grid.s"

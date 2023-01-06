@@ -2,11 +2,14 @@
 
 namespace glow
 {
-  void Grid::setup(uint16_t full_length, uint16_t row_count, Origin org)
+  void Grid::setup(uint16_t full_length, uint16_t row_count,
+                   Origin org,
+                   Orientation ori)
   {
-    origin = org;
     length = full_length;
     rows = row_count;
+    origin = org;
+    orientation = ori;
     columns = length / rows;
     uint16_t lesser = (rows > columns) ? columns : rows;
 
@@ -22,6 +25,20 @@ namespace glow
     pivot.offset = lesser - 1;
     pivot.last = pivot.first +
                  (columns - lesser) * rows + rows - 1;
+  }
+
+  uint16_t Grid::map(uint16_t index)
+  {
+    uint16_t offset = index;
+    if (orientation == Diagonal)
+    {
+      offset = map_diagonal(index);
+    }
+    else if (orientation == Vertical)
+    {
+      offset = map_columns(index, point);
+    }
+    return adjust_origin(offset);
   }
 
   uint16_t Grid::map_diagonal_top(uint16_t index)
@@ -68,34 +85,22 @@ namespace glow
 
   uint16_t Grid::map_diagonal(uint16_t index)
   {
-    uint16_t offset = 0;
-
     if (columns < 3)
     {
-      offset = index;
+      return index;
     }
 
-    else if (index < pivot.first)
+    if (index < pivot.first)
     {
-      offset = map_diagonal_top(index);
+      return map_diagonal_top(index);
     }
 
-    else if (index <= pivot.last)
+    if (index <= pivot.last)
     {
-      offset = map_diagonal_middle(index);
+      return map_diagonal_middle(index);
     }
 
-    else
-    {
-      offset = map_diagonal_bottom(index);
-    }
-
-    if (origin != TopLeft)
-    {
-      offset = adjust_origin(offset);
-    }
-
-    return offset;
+    return map_diagonal_bottom(index);
   }
 
   uint16_t Grid::adjust_origin(uint16_t offset)
@@ -105,20 +110,20 @@ namespace glow
       return length - offset - 1;
     }
 
-    div_t point = div(offset, columns);
+    point = div(offset, columns);
 
     if (origin == BottomLeft)
     {
       return (rows - point.quot - 1) * columns +
-               point.rem;
+             point.rem;
     }
 
     if (origin == TopRight)
     {
-      return  point.quot * columns +
-               (columns - point.rem - 1);
+      return point.quot * columns +
+             (columns - point.rem - 1);
     }
-    
+
     return offset;
   }
 

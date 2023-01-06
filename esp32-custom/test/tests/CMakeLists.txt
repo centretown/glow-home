@@ -9,17 +9,26 @@ FetchContent_Declare(
   GIT_REPOSITORY https://github.com/catchorg/Catch2.git
   GIT_TAG v2.13.6)
 FetchContent_MakeAvailable(catch)
+
 # Adds Catch2::Catch2
 
 # Tests need to be added as executables first
-add_executable(testlib test_grid.cpp)
+add_executable(testgridlib
+  test_grid.cpp)
+
+add_executable(testchromalib
+  test_chroma.cpp
+  ../../src/esphome/components/light/esp_hsv_color.cpp
+)
 
 # Should be linked to the main library, as well as the Catch2 testing library
-target_link_libraries(testlib PRIVATE GridLib  Catch2::Catch2)
+target_link_libraries(testgridlib PRIVATE GridLib Catch2::Catch2)
+target_link_libraries(testchromalib PRIVATE Catch2::Catch2)
 
 # enable testing functionality
 enable_testing()
 
 # If you register a test, then ctest and make test will run it.
 # You can also run examples and check the output, as well.
-add_test(NAME testlibtest COMMAND testlib) # Command can be a target
+add_test(NAME gridtest COMMAND testgridlib) # Command can be a target
+add_test(NAME chromatest COMMAND testchromalib) # Command can be a target

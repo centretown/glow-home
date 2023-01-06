@@ -4,6 +4,8 @@
 # 
 # This file includes the relevant testing commands required for 
 # testing this directory and lists subdirectories to be tested as well.
-add_test(testlibtest "/home/dave/src/glow-home/esp32-custom/test/tests/testlib")
-set_tests_properties(testlibtest PROPERTIES  _BACKTRACE_TRIPLES "/home/dave/src/glow-home/esp32-custom/test/tests/CMakeLists.txt;25;add_test;/home/dave/src/glow-home/esp32-custom/test/tests/CMakeLists.txt;0;")
+add_test(gridtest "/home/dave/src/glow-home/esp32-custom/test/tests/testgridlib")
+set_tests_properties(gridtest PROPERTIES  _BACKTRACE_TRIPLES "/home/dave/src/glow-home/esp32-custom/test/tests/CMakeLists.txt;33;add_test;/home/dave/src/glow-home/esp32-custom/test/tests/CMakeLists.txt;0;")
+add_test(chromatest "/home/dave/src/glow-home/esp32-custom/test/tests/testchromalib")
+set_tests_properties(chromatest PROPERTIES  _BACKTRACE_TRIPLES "/home/dave/src/glow-home/esp32-custom/test/tests/CMakeLists.txt;34;add_test;/home/dave/src/glow-home/esp32-custom/test/tests/CMakeLists.txt;0;")
 subdirs("../_deps/catch-build")
