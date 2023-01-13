@@ -4,9 +4,24 @@
 using namespace esphome;
 using namespace light;
 
+#include "Properties.h"
 #include "Grid.h"
-#include "Presets.h"
+#include "Chroma.h"
+#include "Scanner.h"
 #include "color_to_hsv.h"
+
+extern template_::TemplateNumber *update_interval;
+extern template_::TemplateNumber *grid_rows;
+extern template_::TemplateNumber *hue_delta;
+
+extern template_::TemplateNumber *gradient_hue;
+extern template_::TemplateNumber *gradient_saturation;
+extern template_::TemplateNumber *gradient_value;
+
+extern template_::TemplateNumber *scan_hue;
+extern template_::TemplateNumber *scan_saturation;
+extern template_::TemplateNumber *scan_value;
+extern template_::TemplateNumber *scan_width;
 
 namespace glow
 {
@@ -14,59 +29,73 @@ namespace glow
   {
   protected:
     AddressableLight *light = nullptr;
-    uint16_t length = 0;
-    uint32_t interval = 48;
-    int16_t delta = 1;
 
-    Color color;
-    ESPHSVColor hsv_color;
     Grid grid;
+    Chroma chroma;
+    Scanner scanner;
 
     uint32_t next = 0;
+    uint32_t interval = 48;
 
-    union
-    {
-      struct
-      {
-        uint is_setup : 1;
-        uint is_logged : 1;
-        uint reserved : 6;
-      };
-      uint8_t flags = 0;
-    };
+    bool is_setup = false;
 
   public:
-    virtual void setup(AddressableLight *it, Color current_color, Origin origin = TopLeft)
+    void setup(AddressableLight *it,
+               Color current_color,
+               Origin origin = TopLeft,
+               Orientation orientation = Horizontal)
     {
       light = it;
       if (light == nullptr)
       {
-        log_not_setup();
         return;
       }
 
-      length = (uint16_t)light->size();
-      color = current_color;
-      hsv_color = color_to_hsv(color);
+      interval = static_cast<uint32_t>(update_interval->state);
 
-      Presets presets;
-      presets.setup();
-      grid.setup(length, presets.rows, origin);
+      grid.setup((uint16_t)light->size(),
+                 static_cast<uint16_t>(grid_rows->state),
+                 origin, orientation);
 
-      set_interval(presets.interval);
-      set_delta(presets.delta);
+      chroma.setup(current_color,
+                   ESPHSVColor(static_cast<uint8_t>(gradient_hue->state),
+                               static_cast<uint8_t>(gradient_saturation->state),
+                               static_cast<uint8_t>(gradient_value->state)),
+                   static_cast<int16_t>(hue_delta->state));
+
+      auto scan_color = ESPHSVColor(static_cast<uint8_t>(scan_hue->state),
+                                    static_cast<uint8_t>(scan_saturation->state),
+                                    static_cast<uint8_t>(scan_value->state));
+      scanner.setup(scan_width->state);
+    }
+
+    void setup(Properties &properties,
+               AddressableLight *it,
+               Color current_color,
+               Origin origin = TopLeft,
+               Orientation orientation = Horizontal)
+    {
+      light = it;
+      if (light == nullptr)
+      {
+        return;
+      }
+
+      interval = static_cast<uint32_t>(properties.update_interval);
+
+      grid.setup(static_cast<uint16_t>(properties.length),
+                 static_cast<uint16_t>(grid_rows->state),
+                 origin, orientation);
+
+      chroma.setup(current_color,
+                   ESPHSVColor(static_cast<uint8_t>(properties.gradient_hue),
+                               static_cast<uint8_t>(properties.gradient_saturation),
+                               static_cast<uint8_t>(properties.gradient_value)),
+                   static_cast<int16_t>(properties.hue_delta));
+
+      scanner.setup(scan_width->state);
       is_setup = 1;
       log();
-    }
-
-    void set_interval(int16_t v) ALWAYS_INLINE
-    {
-      interval = v;
-    }
-
-    void set_delta(int16_t d) ALWAYS_INLINE
-    {
-      delta = d;
     }
 
     bool is_ready() ALWAYS_INLINE
@@ -84,16 +113,7 @@ namespace glow
 
     void update_hue() ALWAYS_INLINE
     {
-      if (delta == 0)
-        return;
-
-      color = update_hue(hsv_color, delta);
-    }
-
-    Color update_hue(ESPHSVColor &hsv, int16_t change) ALWAYS_INLINE
-    {
-      hsv.hue += change;
-      return hsv.to_rgb();
+      chroma.update_hue();
     }
 
     virtual void log() const
@@ -118,14 +138,6 @@ namespace glow
                is_setup, is_logged);
     }
 
-    void log_not_setup()
-    {
-      if (is_logged)
-        return;
-      ESP_LOGD("glow-Pixels", "Not Setup!");
-      is_logged = 1;
-    }
-
     uint16_t map_columns(uint16_t i, div_t &point) ALWAYS_INLINE
     {
       return grid.map_columns(i, point);
@@ -136,25 +148,25 @@ namespace glow
       return grid.map_diagonal(index);
     }
 
-    template <typename CHROMA>
+    template <typename COLOR_MAPPER>
     void spin(uint16_t begin, uint16_t end,
-              CHROMA &chroma)
+              COLOR_MAPPER &color_mapper)
     {
       for (uint16_t i = begin; i < end; ++i)
       {
-        light->get(i) = chroma(i);
+        light->get(i) = color_mapper(i);
       }
       update_hue();
     }
 
-    template <typename MAPPER, typename CHROMA>
+    template <typename MAPPER, typename COLOR_MAPPER>
     void spin(uint16_t begin, uint16_t end,
-              MAPPER &mapper, CHROMA &chroma)
+              MAPPER &mapper, COLOR_MAPPER &color_mapper)
     {
       for (uint16_t i = begin; i < end; ++i)
       {
         uint16_t offset = mapper(i);
-        light->get(offset) = chroma(i);
+        light->get(offset) = color_mapper(i);
       }
       update_hue();
     }

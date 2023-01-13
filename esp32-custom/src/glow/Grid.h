@@ -1,8 +1,6 @@
 #pragma once
 
-#include <stdint.h>
-#include <stdlib.h>
-#include <stdio.h>
+#include "base.h"
 
 namespace glow
 {
@@ -31,6 +29,7 @@ namespace glow
   class Grid
   {
   private:
+  public:
     uint16_t rows = 0;
     uint16_t columns = 0;
     uint16_t length = 0;
@@ -46,52 +45,37 @@ namespace glow
                Origin org = TopLeft,
                Orientation ori = Horizontal);
 
-    inline uint16_t Length() const
-    {
-      return length;
-    }
-    inline uint16_t Rows() const
-    {
-      return rows;
-    }
-    inline uint16_t Columns() const
-    {
-      return columns;
-    }
-
-    inline uint16_t First() const
+    uint16_t First() const ALWAYS_INLINE
     {
       return pivot.first;
     }
-    inline uint16_t Last() const
+    uint16_t Last() const ALWAYS_INLINE
     {
       return pivot.last;
     }
-    inline uint16_t Offset() const
+    uint16_t Offset() const ALWAYS_INLINE
     {
       return pivot.offset;
     }
 
     uint16_t map(uint16_t index);
+    uint16_t map_diagonal(uint16_t index);
+    uint16_t map_diagonal_top(uint16_t index);
+    uint16_t map_diagonal_bottom(uint16_t index);
+    uint16_t map_to_origin(uint16_t offset);
 
-    inline uint16_t map_columns(uint16_t i, div_t &point)
+    uint16_t map_columns(uint16_t i, div_t &point) ALWAYS_INLINE
     {
       point = div(i, rows);
       return (uint16_t)(point.rem * columns + point.quot);
     }
 
-    inline uint16_t map_diagonal_middle(uint16_t index)
+    uint16_t map_diagonal_middle(uint16_t index) ALWAYS_INLINE
     {
       div_t p = div(index - pivot.first, rows);
       return pivot.offset + p.quot +
              p.rem * (columns - 1);
     }
-
-    uint16_t map_diagonal(uint16_t index);
-    uint16_t map_diagonal_top(uint16_t index);
-    uint16_t map_diagonal_bottom(uint16_t index);
-
-    uint16_t adjust_origin(uint16_t offset);
 
     void log_buffer(char *buffer, size_t buffer_size) const
     {

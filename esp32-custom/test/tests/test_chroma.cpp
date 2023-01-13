@@ -5,12 +5,17 @@
 
 using namespace glow;
 
-TEST_CASE("Grid Map Diagonal 2x2", "[map_2x2]")
+TEST_CASE("Chroma Basic", "[chroma_basic]")
 {
   Chroma chroma;
-  chroma.setup(0, 1, 2);
+  Color source{0, 255, 0};
+  ESPHSVColor target(0, 255, 255);
+  chroma.setup(source, target, 1);
+  char buffer[80];
+  chroma.log_buffer(buffer, sizeof(buffer));
+  printf("%s\n", buffer);
 
   REQUIRE(0 == chroma.hsv_target.hue);
-  REQUIRE(1 == chroma.hsv_target.saturation);
-  REQUIRE(2 == chroma.hsv_target.value);
+  REQUIRE(255 == chroma.hsv_target.saturation);
+  REQUIRE(255 == chroma.hsv_target.value);
 }

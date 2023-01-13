@@ -151,33 +151,6 @@ testgridlib/fast:
 	cd /home/dave/src/glow-home/esp32-custom/test && $(MAKE) -f tests/CMakeFiles/testgridlib.dir/build.make tests/CMakeFiles/testgridlib.dir/build
 .PHONY : testgridlib/fast
 
-home/dave/src/glow-home/esp32-custom/src/esphome/components/light/esp_hsv_color.o: home/dave/src/glow-home/esp32-custom/src/esphome/components/light/esp_hsv_color.cpp.o
-
-.PHONY : home/dave/src/glow-home/esp32-custom/src/esphome/components/light/esp_hsv_color.o
-
-# target to build an object file
-home/dave/src/glow-home/esp32-custom/src/esphome/components/light/esp_hsv_color.cpp.o:
-	cd /home/dave/src/glow-home/esp32-custom/test && $(MAKE) -f tests/CMakeFiles/testchromalib.dir/build.make tests/CMakeFiles/testchromalib.dir/home/dave/src/glow-home/esp32-custom/src/esphome/components/light/esp_hsv_color.cpp.o
-.PHONY : home/dave/src/glow-home/esp32-custom/src/esphome/components/light/esp_hsv_color.cpp.o
-
-home/dave/src/glow-home/esp32-custom/src/esphome/components/light/esp_hsv_color.i: home/dave/src/glow-home/esp32-custom/src/esphome/components/light/esp_hsv_color.cpp.i
-
-.PHONY : home/dave/src/glow-home/esp32-custom/src/esphome/components/light/esp_hsv_color.i
-
-# target to preprocess a source file
-home/dave/src/glow-home/esp32-custom/src/esphome/components/light/esp_hsv_color.cpp.i:
-	cd /home/dave/src/glow-home/esp32-custom/test && $(MAKE) -f tests/CMakeFiles/testchromalib.dir/build.make tests/CMakeFiles/testchromalib.dir/home/dave/src/glow-home/esp32-custom/src/esphome/components/light/esp_hsv_color.cpp.i
-.PHONY : home/dave/src/glow-home/esp32-custom/src/esphome/components/light/esp_hsv_color.cpp.i
-
-home/dave/src/glow-home/esp32-custom/src/esphome/components/light/esp_hsv_color.s: home/dave/src/glow-home/esp32-custom/src/esphome/components/light/esp_hsv_color.cpp.s
-
-.PHONY : home/dave/src/glow-home/esp32-custom/src/esphome/components/light/esp_hsv_color.s
-
-# target to generate assembly for a file
-home/dave/src/glow-home/esp32-custom/src/esphome/components/light/esp_hsv_color.cpp.s:
-	cd /home/dave/src/glow-home/esp32-custom/test && $(MAKE) -f tests/CMakeFiles/testchromalib.dir/build.make tests/CMakeFiles/testchromalib.dir/home/dave/src/glow-home/esp32-custom/src/esphome/components/light/esp_hsv_color.cpp.s
-.PHONY : home/dave/src/glow-home/esp32-custom/src/esphome/components/light/esp_hsv_color.cpp.s
-
 test_chroma.o: test_chroma.cpp.o
 
 .PHONY : test_chroma.o
@@ -243,9 +216,6 @@ help:
 	@echo "... test"
 	@echo "... testchromalib"
 	@echo "... testgridlib"
-	@echo "... home/dave/src/glow-home/esp32-custom/src/esphome/components/light/esp_hsv_color.o"
-	@echo "... home/dave/src/glow-home/esp32-custom/src/esphome/components/light/esp_hsv_color.i"
-	@echo "... home/dave/src/glow-home/esp32-custom/src/esphome/components/light/esp_hsv_color.s"
 	@echo "... test_chroma.o"
 	@echo "... test_chroma.i"
 	@echo "... test_chroma.s"

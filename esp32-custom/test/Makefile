@@ -395,17 +395,17 @@ NightlyConfigure/fast:
 .PHONY : NightlyConfigure/fast
 
 #=============================================================================
-# Target rules for targets named GridLib
+# Target rules for targets named GlowLib
 
 # Build rule for target.
-GridLib: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 GridLib
-.PHONY : GridLib
+GlowLib: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 GlowLib
+.PHONY : GlowLib
 
 # fast build rule for target.
-GridLib/fast:
-	$(MAKE) -f CMakeFiles/GridLib.dir/build.make CMakeFiles/GridLib.dir/build
-.PHONY : GridLib/fast
+GlowLib/fast:
+	$(MAKE) -f CMakeFiles/GlowLib.dir/build.make CMakeFiles/GlowLib.dir/build
+.PHONY : GlowLib/fast
 
 #=============================================================================
 # Target rules for targets named ExperimentalStart
@@ -570,7 +570,7 @@ home/dave/src/glow-home/esp32-custom/src/esphome/components/light/esp_hsv_color.
 
 # target to build an object file
 home/dave/src/glow-home/esp32-custom/src/esphome/components/light/esp_hsv_color.cpp.o:
-	$(MAKE) -f CMakeFiles/GridLib.dir/build.make CMakeFiles/GridLib.dir/home/dave/src/glow-home/esp32-custom/src/esphome/components/light/esp_hsv_color.cpp.o
+	$(MAKE) -f CMakeFiles/GlowLib.dir/build.make CMakeFiles/GlowLib.dir/home/dave/src/glow-home/esp32-custom/src/esphome/components/light/esp_hsv_color.cpp.o
 .PHONY : home/dave/src/glow-home/esp32-custom/src/esphome/components/light/esp_hsv_color.cpp.o
 
 home/dave/src/glow-home/esp32-custom/src/esphome/components/light/esp_hsv_color.i: home/dave/src/glow-home/esp32-custom/src/esphome/components/light/esp_hsv_color.cpp.i
@@ -579,7 +579,7 @@ home/dave/src/glow-home/esp32-custom/src/esphome/components/light/esp_hsv_color.
 
 # target to preprocess a source file
 home/dave/src/glow-home/esp32-custom/src/esphome/components/light/esp_hsv_color.cpp.i:
-	$(MAKE) -f CMakeFiles/GridLib.dir/build.make CMakeFiles/GridLib.dir/home/dave/src/glow-home/esp32-custom/src/esphome/components/light/esp_hsv_color.cpp.i
+	$(MAKE) -f CMakeFiles/GlowLib.dir/build.make CMakeFiles/GlowLib.dir/home/dave/src/glow-home/esp32-custom/src/esphome/components/light/esp_hsv_color.cpp.i
 .PHONY : home/dave/src/glow-home/esp32-custom/src/esphome/components/light/esp_hsv_color.cpp.i
 
 home/dave/src/glow-home/esp32-custom/src/esphome/components/light/esp_hsv_color.s: home/dave/src/glow-home/esp32-custom/src/esphome/components/light/esp_hsv_color.cpp.s
@@ -588,8 +588,35 @@ home/dave/src/glow-home/esp32-custom/src/esphome/components/light/esp_hsv_color.
 
 # target to generate assembly for a file
 home/dave/src/glow-home/esp32-custom/src/esphome/components/light/esp_hsv_color.cpp.s:
-	$(MAKE) -f CMakeFiles/GridLib.dir/build.make CMakeFiles/GridLib.dir/home/dave/src/glow-home/esp32-custom/src/esphome/components/light/esp_hsv_color.cpp.s
+	$(MAKE) -f CMakeFiles/GlowLib.dir/build.make CMakeFiles/GlowLib.dir/home/dave/src/glow-home/esp32-custom/src/esphome/components/light/esp_hsv_color.cpp.s
 .PHONY : home/dave/src/glow-home/esp32-custom/src/esphome/components/light/esp_hsv_color.cpp.s
+
+home/dave/src/glow-home/esp32-custom/src/glow/Chroma.o: home/dave/src/glow-home/esp32-custom/src/glow/Chroma.cpp.o
+
+.PHONY : home/dave/src/glow-home/esp32-custom/src/glow/Chroma.o
+
+# target to build an object file
+home/dave/src/glow-home/esp32-custom/src/glow/Chroma.cpp.o:
+	$(MAKE) -f CMakeFiles/GlowLib.dir/build.make CMakeFiles/GlowLib.dir/home/dave/src/glow-home/esp32-custom/src/glow/Chroma.cpp.o
+.PHONY : home/dave/src/glow-home/esp32-custom/src/glow/Chroma.cpp.o
+
+home/dave/src/glow-home/esp32-custom/src/glow/Chroma.i: home/dave/src/glow-home/esp32-custom/src/glow/Chroma.cpp.i
+
+.PHONY : home/dave/src/glow-home/esp32-custom/src/glow/Chroma.i
+
+# target to preprocess a source file
+home/dave/src/glow-home/esp32-custom/src/glow/Chroma.cpp.i:
+	$(MAKE) -f CMakeFiles/GlowLib.dir/build.make CMakeFiles/GlowLib.dir/home/dave/src/glow-home/esp32-custom/src/glow/Chroma.cpp.i
+.PHONY : home/dave/src/glow-home/esp32-custom/src/glow/Chroma.cpp.i
+
+home/dave/src/glow-home/esp32-custom/src/glow/Chroma.s: home/dave/src/glow-home/esp32-custom/src/glow/Chroma.cpp.s
+
+.PHONY : home/dave/src/glow-home/esp32-custom/src/glow/Chroma.s
+
+# target to generate assembly for a file
+home/dave/src/glow-home/esp32-custom/src/glow/Chroma.cpp.s:
+	$(MAKE) -f CMakeFiles/GlowLib.dir/build.make CMakeFiles/GlowLib.dir/home/dave/src/glow-home/esp32-custom/src/glow/Chroma.cpp.s
+.PHONY : home/dave/src/glow-home/esp32-custom/src/glow/Chroma.cpp.s
 
 home/dave/src/glow-home/esp32-custom/src/glow/Grid.o: home/dave/src/glow-home/esp32-custom/src/glow/Grid.cpp.o
 
@@ -598,7 +625,7 @@ home/dave/src/glow-home/esp32-custom/src/glow/Grid.o: home/dave/src/glow-home/es
 # target to build an object file
 home/dave/src/glow-home/esp32-custom/src/glow/Grid.cpp.o:
 	$(MAKE) -f CMakeFiles/glow.dir/build.make CMakeFiles/glow.dir/home/dave/src/glow-home/esp32-custom/src/glow/Grid.cpp.o
-	$(MAKE) -f CMakeFiles/GridLib.dir/build.make CMakeFiles/GridLib.dir/home/dave/src/glow-home/esp32-custom/src/glow/Grid.cpp.o
+	$(MAKE) -f CMakeFiles/GlowLib.dir/build.make CMakeFiles/GlowLib.dir/home/dave/src/glow-home/esp32-custom/src/glow/Grid.cpp.o
 .PHONY : home/dave/src/glow-home/esp32-custom/src/glow/Grid.cpp.o
 
 home/dave/src/glow-home/esp32-custom/src/glow/Grid.i: home/dave/src/glow-home/esp32-custom/src/glow/Grid.cpp.i
@@ -608,7 +635,7 @@ home/dave/src/glow-home/esp32-custom/src/glow/Grid.i: home/dave/src/glow-home/es
 # target to preprocess a source file
 home/dave/src/glow-home/esp32-custom/src/glow/Grid.cpp.i:
 	$(MAKE) -f CMakeFiles/glow.dir/build.make CMakeFiles/glow.dir/home/dave/src/glow-home/esp32-custom/src/glow/Grid.cpp.i
-	$(MAKE) -f CMakeFiles/GridLib.dir/build.make CMakeFiles/GridLib.dir/home/dave/src/glow-home/esp32-custom/src/glow/Grid.cpp.i
+	$(MAKE) -f CMakeFiles/GlowLib.dir/build.make CMakeFiles/GlowLib.dir/home/dave/src/glow-home/esp32-custom/src/glow/Grid.cpp.i
 .PHONY : home/dave/src/glow-home/esp32-custom/src/glow/Grid.cpp.i
 
 home/dave/src/glow-home/esp32-custom/src/glow/Grid.s: home/dave/src/glow-home/esp32-custom/src/glow/Grid.cpp.s
@@ -618,8 +645,35 @@ home/dave/src/glow-home/esp32-custom/src/glow/Grid.s: home/dave/src/glow-home/es
 # target to generate assembly for a file
 home/dave/src/glow-home/esp32-custom/src/glow/Grid.cpp.s:
 	$(MAKE) -f CMakeFiles/glow.dir/build.make CMakeFiles/glow.dir/home/dave/src/glow-home/esp32-custom/src/glow/Grid.cpp.s
-	$(MAKE) -f CMakeFiles/GridLib.dir/build.make CMakeFiles/GridLib.dir/home/dave/src/glow-home/esp32-custom/src/glow/Grid.cpp.s
+	$(MAKE) -f CMakeFiles/GlowLib.dir/build.make CMakeFiles/GlowLib.dir/home/dave/src/glow-home/esp32-custom/src/glow/Grid.cpp.s
 .PHONY : home/dave/src/glow-home/esp32-custom/src/glow/Grid.cpp.s
+
+home/dave/src/glow-home/esp32-custom/src/glow/base.o: home/dave/src/glow-home/esp32-custom/src/glow/base.cpp.o
+
+.PHONY : home/dave/src/glow-home/esp32-custom/src/glow/base.o
+
+# target to build an object file
+home/dave/src/glow-home/esp32-custom/src/glow/base.cpp.o:
+	$(MAKE) -f CMakeFiles/GlowLib.dir/build.make CMakeFiles/GlowLib.dir/home/dave/src/glow-home/esp32-custom/src/glow/base.cpp.o
+.PHONY : home/dave/src/glow-home/esp32-custom/src/glow/base.cpp.o
+
+home/dave/src/glow-home/esp32-custom/src/glow/base.i: home/dave/src/glow-home/esp32-custom/src/glow/base.cpp.i
+
+.PHONY : home/dave/src/glow-home/esp32-custom/src/glow/base.i
+
+# target to preprocess a source file
+home/dave/src/glow-home/esp32-custom/src/glow/base.cpp.i:
+	$(MAKE) -f CMakeFiles/GlowLib.dir/build.make CMakeFiles/GlowLib.dir/home/dave/src/glow-home/esp32-custom/src/glow/base.cpp.i
+.PHONY : home/dave/src/glow-home/esp32-custom/src/glow/base.cpp.i
+
+home/dave/src/glow-home/esp32-custom/src/glow/base.s: home/dave/src/glow-home/esp32-custom/src/glow/base.cpp.s
+
+.PHONY : home/dave/src/glow-home/esp32-custom/src/glow/base.s
+
+# target to generate assembly for a file
+home/dave/src/glow-home/esp32-custom/src/glow/base.cpp.s:
+	$(MAKE) -f CMakeFiles/GlowLib.dir/build.make CMakeFiles/GlowLib.dir/home/dave/src/glow-home/esp32-custom/src/glow/base.cpp.s
+.PHONY : home/dave/src/glow-home/esp32-custom/src/glow/base.cpp.s
 
 # Help Target
 help:
@@ -651,7 +705,7 @@ help:
 	@echo "... ExperimentalCoverage"
 	@echo "... NightlyCoverage"
 	@echo "... NightlyConfigure"
-	@echo "... GridLib"
+	@echo "... GlowLib"
 	@echo "... ExperimentalStart"
 	@echo "... NightlyBuild"
 	@echo "... ExperimentalBuild"
@@ -668,9 +722,15 @@ help:
 	@echo "... home/dave/src/glow-home/esp32-custom/src/esphome/components/light/esp_hsv_color.o"
 	@echo "... home/dave/src/glow-home/esp32-custom/src/esphome/components/light/esp_hsv_color.i"
 	@echo "... home/dave/src/glow-home/esp32-custom/src/esphome/components/light/esp_hsv_color.s"
+	@echo "... home/dave/src/glow-home/esp32-custom/src/glow/Chroma.o"
+	@echo "... home/dave/src/glow-home/esp32-custom/src/glow/Chroma.i"
+	@echo "... home/dave/src/glow-home/esp32-custom/src/glow/Chroma.s"
 	@echo "... home/dave/src/glow-home/esp32-custom/src/glow/Grid.o"
 	@echo "... home/dave/src/glow-home/esp32-custom/src/glow/Grid.i"
 	@echo "... home/dave/src/glow-home/esp32-custom/src/glow/Grid.s"
+	@echo "... home/dave/src/glow-home/esp32-custom/src/glow/base.o"
+	@echo "... home/dave/src/glow-home/esp32-custom/src/glow/base.i"
+	@echo "... home/dave/src/glow-home/esp32-custom/src/glow/base.s"
 .PHONY : help
 
 

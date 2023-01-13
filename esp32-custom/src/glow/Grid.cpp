@@ -38,7 +38,7 @@ namespace glow
     {
       offset = map_columns(index, point);
     }
-    return adjust_origin(offset);
+    return map_to_origin(offset);
   }
 
   uint16_t Grid::map_diagonal_top(uint16_t index)
@@ -103,7 +103,7 @@ namespace glow
     return map_diagonal_bottom(index);
   }
 
-  uint16_t Grid::adjust_origin(uint16_t offset)
+  uint16_t Grid::map_to_origin(uint16_t offset)
   {
     if (origin == BottomRight)
     {

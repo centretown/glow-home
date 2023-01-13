@@ -6,11 +6,11 @@
 using namespace esphome;
 using namespace light;
 
-#include "Gradient.h"
+#include "Lamp.h"
 
 namespace glow
 {
-  class RowsGradient : public Gradient
+  class RowsGradient : public Lamp
   {
   public:
     void apply()
@@ -19,15 +19,15 @@ namespace glow
         return;
 
       uint8_t amnt = 255 / length;
-      auto chroma = [&](uint16_t i)
+      auto color_mapper = [&](uint16_t i)
       {
-        return step_gradient(amnt * i);
+        return chroma.step_gradient(amnt * i);
       };
-      spin(0, length, chroma);
+      spin(0, length, color_mapper);
     }
   };
 
-  class RowsFlatGradient : public Gradient
+  class RowsFlatGradient : public Lamp
   {
   public:
     void apply()
@@ -36,15 +36,15 @@ namespace glow
         return;
 
       uint8_t amnt = 255 / grid.Rows();
-      auto chroma = [&](uint16_t i)
+      auto color_mapper = [&](uint16_t i)
       {
-        return step_gradient(amnt * (i / grid.Columns()));
+        return chroma.step_gradient(amnt * (i / grid.Columns()));
       };
-      spin(0, length, chroma);
+      spin(0, length, color_mapper);
     }
   };
 
-  class ColumnsGradient : public Gradient
+  class ColumnsGradient : public Lamp
   {
   public:
     void apply()
@@ -60,16 +60,16 @@ namespace glow
         return map_columns(i, point);
       };
 
-      auto chroma = [&](uint16_t i)
+      auto color_mapper = [&](uint16_t i)
       {
-        return step_gradient(amnt * i);
+        return chroma.step_gradient(amnt * i);
       };
 
-      spin(0, length, mapper, chroma);
+      spin(0, length, mapper, color_mapper);
     }
   };
 
-  class ColumnsFlatGradient : public Gradient
+  class ColumnsFlatGradient : public Lamp
   {
   public:
     void apply()
@@ -85,16 +85,16 @@ namespace glow
         return map_columns(i, point);
       };
 
-      auto chroma = [&](uint16_t i)
+      auto color_mapper = [&](uint16_t i)
       {
-        return step_gradient(amnt * point.quot);
+        return chroma.step_gradient(amnt * point.quot);
       };
 
-      spin(0, length, mapper, chroma);
+      spin(0, length, mapper, color_mapper);
     }
   };
 
-  class DiagonalGradient : public Gradient
+  class DiagonalGradient : public Lamp
   {
   public:
     void apply()
@@ -110,12 +110,12 @@ namespace glow
         return map_diagonal(i);
       };
 
-      auto chroma = [&](uint16_t i)
+      auto color_mapper = [&](uint16_t i)
       {
-        return step_gradient(i * amt);
+        return chroma.step_gradient(i * amt);
       };
 
-      spin(0, length, mapper, chroma);
+      spin(0, length, mapper, color_mapper);
     }
   };
 }

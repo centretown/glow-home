@@ -17,13 +17,11 @@ add_executable(testgridlib
   test_grid.cpp)
 
 add_executable(testchromalib
-  test_chroma.cpp
-  ../../src/esphome/components/light/esp_hsv_color.cpp
-)
+  test_chroma.cpp)
 
 # Should be linked to the main library, as well as the Catch2 testing library
-target_link_libraries(testgridlib PRIVATE GridLib Catch2::Catch2)
-target_link_libraries(testchromalib PRIVATE Catch2::Catch2)
+target_link_libraries(testgridlib PRIVATE GlowLib Catch2::Catch2)
+target_link_libraries(testchromalib PRIVATE GlowLib Catch2::Catch2)
 
 # enable testing functionality
 enable_testing()
