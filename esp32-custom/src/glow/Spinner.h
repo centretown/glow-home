@@ -4,7 +4,6 @@
 #include "Grid.h"
 #include "Chroma.h"
 #include "Scanner.h"
-#include "color_to_hsv.h"
 
 #ifndef ALWAYS_INLINE
 #define ALWAYS_INLINE __attribute__((always_inline))
@@ -12,12 +11,13 @@
 
 namespace glow
 {
-  template <typename TIMER, typename LIGHT>
+  template <typename LIGHT, typename TIMER>
   class Spinner
   {
   private:
     LIGHT *light = nullptr;
 
+  public:
     Grid grid;
     Chroma chroma;
     Scanner scanner;
@@ -26,7 +26,20 @@ namespace glow
     uint32_t next = 0;
     uint32_t interval = 48;
 
-  public:
+    void setup(LIGHT *it, Properties &properties)
+    {
+      light = it;
+      if (light == nullptr)
+      {
+        return;
+      }
+
+      interval = static_cast<uint32_t>(properties.update_interval);
+      grid.setup(properties);
+      chroma.setup(properties);
+      scanner.setup(properties.scan_width);
+    }
+
     bool is_ready() ALWAYS_INLINE
     {
       uint32_t now = timer.now();

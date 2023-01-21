@@ -1,24 +1,10 @@
 #pragma once
 
 #include "base.h"
+#include "Properties.h"
 
 namespace glow
 {
-  enum Origin : uint8_t
-  {
-    TopLeft,
-    TopRight,
-    BottomLeft,
-    BottomRight,
-  };
-
-  enum Orientation : uint8_t
-  {
-    Horizontal,
-    Vertical,
-    Diagonal
-  };
-
   struct Pivot
   {
     uint16_t first = 0;
@@ -41,9 +27,7 @@ namespace glow
     Pivot pivot;
 
   public:
-    void setup(uint16_t full_length, uint16_t row_count,
-               Origin org = TopLeft,
-               Orientation ori = Horizontal);
+    void setup(Properties &properties);
 
     uint16_t First() const ALWAYS_INLINE
     {
@@ -77,13 +61,7 @@ namespace glow
              p.rem * (columns - 1);
     }
 
-    void log_buffer(char *buffer, size_t buffer_size) const
-    {
-      snprintf(buffer, buffer_size,
-               "rows=%u columns=%u length=%u first=%u last=%u offset=%u",
-               rows, columns, length,
-               pivot.first, pivot.last, pivot.offset);
-    }
+    void log_buffer(char *buffer, size_t buffer_size) const;
   };
 
 } // namespace glow

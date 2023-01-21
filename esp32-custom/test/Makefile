@@ -512,6 +512,19 @@ ContinuousSubmit/fast:
 .PHONY : ContinuousSubmit/fast
 
 #=============================================================================
+# Target rules for targets named testspinnerlib
+
+# Build rule for target.
+testspinnerlib: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 testspinnerlib
+.PHONY : testspinnerlib
+
+# fast build rule for target.
+testspinnerlib/fast:
+	$(MAKE) -f tests/CMakeFiles/testspinnerlib.dir/build.make tests/CMakeFiles/testspinnerlib.dir/build
+.PHONY : testspinnerlib/fast
+
+#=============================================================================
 # Target rules for targets named testchromalib
 
 # Build rule for target.
@@ -714,6 +727,7 @@ help:
 	@echo "... ContinuousMemCheck"
 	@echo "... ContinuousTest"
 	@echo "... ContinuousSubmit"
+	@echo "... testspinnerlib"
 	@echo "... testchromalib"
 	@echo "... testgridlib"
 	@echo "... glow.o"

@@ -122,6 +122,21 @@ depend:
 .PHONY : depend
 
 # Convenience name for target.
+tests/CMakeFiles/testspinnerlib.dir/rule:
+	cd /home/dave/src/glow-home/esp32-custom/test && $(MAKE) -f CMakeFiles/Makefile2 tests/CMakeFiles/testspinnerlib.dir/rule
+.PHONY : tests/CMakeFiles/testspinnerlib.dir/rule
+
+# Convenience name for target.
+testspinnerlib: tests/CMakeFiles/testspinnerlib.dir/rule
+
+.PHONY : testspinnerlib
+
+# fast build rule for target.
+testspinnerlib/fast:
+	cd /home/dave/src/glow-home/esp32-custom/test && $(MAKE) -f tests/CMakeFiles/testspinnerlib.dir/build.make tests/CMakeFiles/testspinnerlib.dir/build
+.PHONY : testspinnerlib/fast
+
+# Convenience name for target.
 tests/CMakeFiles/testchromalib.dir/rule:
 	cd /home/dave/src/glow-home/esp32-custom/test && $(MAKE) -f CMakeFiles/Makefile2 tests/CMakeFiles/testchromalib.dir/rule
 .PHONY : tests/CMakeFiles/testchromalib.dir/rule
@@ -205,6 +220,33 @@ test_grid.cpp.s:
 	cd /home/dave/src/glow-home/esp32-custom/test && $(MAKE) -f tests/CMakeFiles/testgridlib.dir/build.make tests/CMakeFiles/testgridlib.dir/test_grid.cpp.s
 .PHONY : test_grid.cpp.s
 
+test_spinner.o: test_spinner.cpp.o
+
+.PHONY : test_spinner.o
+
+# target to build an object file
+test_spinner.cpp.o:
+	cd /home/dave/src/glow-home/esp32-custom/test && $(MAKE) -f tests/CMakeFiles/testspinnerlib.dir/build.make tests/CMakeFiles/testspinnerlib.dir/test_spinner.cpp.o
+.PHONY : test_spinner.cpp.o
+
+test_spinner.i: test_spinner.cpp.i
+
+.PHONY : test_spinner.i
+
+# target to preprocess a source file
+test_spinner.cpp.i:
+	cd /home/dave/src/glow-home/esp32-custom/test && $(MAKE) -f tests/CMakeFiles/testspinnerlib.dir/build.make tests/CMakeFiles/testspinnerlib.dir/test_spinner.cpp.i
+.PHONY : test_spinner.cpp.i
+
+test_spinner.s: test_spinner.cpp.s
+
+.PHONY : test_spinner.s
+
+# target to generate assembly for a file
+test_spinner.cpp.s:
+	cd /home/dave/src/glow-home/esp32-custom/test && $(MAKE) -f tests/CMakeFiles/testspinnerlib.dir/build.make tests/CMakeFiles/testspinnerlib.dir/test_spinner.cpp.s
+.PHONY : test_spinner.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -212,6 +254,7 @@ help:
 	@echo "... clean"
 	@echo "... depend"
 	@echo "... rebuild_cache"
+	@echo "... testspinnerlib"
 	@echo "... edit_cache"
 	@echo "... test"
 	@echo "... testchromalib"
@@ -222,6 +265,9 @@ help:
 	@echo "... test_grid.o"
 	@echo "... test_grid.i"
 	@echo "... test_grid.s"
+	@echo "... test_spinner.o"
+	@echo "... test_spinner.i"
+	@echo "... test_spinner.s"
 .PHONY : help
 
 

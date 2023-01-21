@@ -1,8 +1,12 @@
+.esphome
+.pio
+.vscode
+Temporary
 secrets.yaml
 esp32-custom/src/esphome
 esp32-custom/src/esphome.h
 build
-.esphome
+
 esp32-custom/test/_deps
 esp32-custom/test/CMakeFiles
 esp32-custom/test/tests/CMakeFiles
@@ -10,17 +14,8 @@ esp32-custom/test/tests/Testing
 esp32-custom/test/libGridLib.a
 esp32-custom/test/tests/testlib
 esp32-custom/test/glow
-.gitignore
-esp32-custom/test/.vscode/settings.json
-esp32-custom/test/Testing/Temporary/CTestCostData.txt
-esp32-custom/test/Testing/Temporary/LastTest.log
-esp32-custom/test/tests/testchromalib
-esp32-custom/test/tests/testgridlib
 esp32-custom/test/libGlowLib.a
 
-esp32-custom/.pio
-esp32-custom/.vscode/.browse.c_cpp.db*
-esp32-custom/.vscode/c_cpp_properties.json
-esp32-custom/.vscode/launch.json
-esp32-custom/.vscode/ipch
-
+esp32-custom/test/tests/testgridlib
+esp32-custom/test/tests/testchromalib
+esp32-custom/test/tests/testspinnerlib

@@ -1,15 +1,21 @@
 #pragma once
 
 #include "base.h"
-
-#include "../esphome/core/color.h"
-#include "../esphome/components/light/esp_hsv_color.h"
-
-using esphome::Color;
-using esphome::light::ESPHSVColor;
+#include "Properties.h"
 
 namespace glow
 {
+  constexpr uint16_t byte_limit = 0xff;
+  constexpr uint16_t hue_limit = 1530;
+  constexpr uint16_t hue_segment = hue_limit / 6;
+
+  constexpr uint16_t hue_red = 0;
+  constexpr uint16_t hue_yellow = hue_segment;
+  constexpr uint16_t hue_green = hue_limit / 3;
+  constexpr uint16_t hue_cyan = hue_limit / 2;
+  constexpr uint16_t hue_blue = hue_limit * 2 / 3;
+  constexpr uint16_t hue_magenta = hue_limit * 5 / 6;
+
   class Chroma
   {
     // private:
@@ -23,7 +29,7 @@ namespace glow
     int16_t delta = 1;
 
   public:
-    void setup(Color current_color, ESPHSVColor hsv, int16_t delta);
+    void setup(Properties &properties);
 
     void update_hue() ALWAYS_INLINE
     {
@@ -44,7 +50,13 @@ namespace glow
     }
 
     static ESPHSVColor color_to_hsv(Color color);
+#ifndef USE_ESP32
+    // keep original for testing
+    static ESPHSVColor old_color_to_hsv(Color color);
+#endif
     void log_buffer(char *buffer, size_t buffer_size) const;
+    static char *log_hsv(char *buffer, size_t buffer_size, ESPHSVColor hsv);
+    static char *log_rgb(char *buffer, size_t buffer_size, Color rgb);
   };
 
 }

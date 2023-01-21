@@ -13,8 +13,6 @@ configure_file(GlowConfig.h.in GlowConfig.h)
 include_directories(../src)
 
 add_library(GlowLib
-  ../src/glow/Grid.cpp
-  ../src/glow/Grid.h
   ../src/esphome/components/light/esp_hsv_color.cpp
   ../src/esphome/components/light/esp_hsv_color.h
   ../src/esphome/core/color.h
@@ -22,8 +20,12 @@ add_library(GlowLib
   ../src/esphome/core/optional.h
   ../src/glow/base.cpp
   ../src/glow/base.h
+  ../src/glow/Properties.h
+  ../src/glow/Grid.cpp
+  ../src/glow/Grid.h
   ../src/glow/Chroma.cpp
   ../src/glow/Chroma.h
+  ../src/glow/TestSpinner.h
 )
 
 if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)

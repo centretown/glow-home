@@ -2,14 +2,13 @@
 
 namespace glow
 {
-  void Grid::setup(uint16_t full_length, uint16_t row_count,
-                   Origin org,
-                   Orientation ori)
+  void Grid::setup(Properties &properties)
   {
-    length = full_length;
-    rows = row_count;
-    origin = org;
-    orientation = ori;
+    origin = properties.origin;
+    orientation = properties.orientation;
+    length = properties.length;
+
+    rows = static_cast<uint16_t>(properties.grid_rows);
     columns = length / rows;
     uint16_t lesser = (rows > columns) ? columns : rows;
 
@@ -127,4 +126,11 @@ namespace glow
     return offset;
   }
 
+  void Grid::log_buffer(char *buffer, size_t buffer_size) const
+  {
+    snprintf(buffer, buffer_size,
+             "rows=%u columns=%u length=%u first=%u last=%u offset=%u",
+             rows, columns, length,
+             pivot.first, pivot.last, pivot.offset);
+  }
 }
