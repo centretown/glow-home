@@ -1,4 +1,5 @@
 #pragma once
+#include "base.h"
 #include "../esphome/core/color.h"
 #include "../esphome/components/light/esp_hsv_color.h"
 
@@ -7,20 +8,6 @@ using esphome::light::ESPHSVColor;
 
 namespace glow
 {
-  enum ColorTransform : uint8_t
-  {
-    AsIs,          // ff0000 -> ff0000
-    Complementary, // ff0000 -> 00ffff (hue+128%255)
-    Monochromatic, // ff0000 -> ff3333 (sat gradient)
-    AnalogousA,    // ff0000 -> ff8000 (hue+)
-    AnalogousB,    // ff0000 -> ff007f (hue+)
-    TriadicA,      // ff0000 -> 00ff00
-    TriadicB,      // ff0000 -> 0000ff
-    TetradicA,     // ff0000 -> 7fff00
-    TetradicB,     // ff0000 -> 00ffff
-    TetradicC,     // ff0000 -> 8000ff
-  };
-
   enum Origin : uint8_t
   {
     TopLeft,
@@ -34,6 +21,28 @@ namespace glow
     Horizontal,
     Vertical,
     Diagonal
+  };
+
+  enum ColorShift : uint8_t
+  {
+    ShiftNone = 0,
+    ShiftHue = 1,
+    ShiftSaturation = 2,
+    ShiftValue = 4,
+  };
+
+  enum ColorTransform : uint8_t
+  {
+    AsIs,          // ff0000 -> ff0000
+    Complementary, // ff0000 -> 00ffff (hue+128%255)
+    Monochromatic, // ff0000 -> ff3333 (sat gradient)
+    AnalogousA,    // ff0000 -> ff8000 (hue+)
+    AnalogousB,    // ff0000 -> ff007f (hue+)
+    TriadicA,      // ff0000 -> 00ff00
+    TriadicB,      // ff0000 -> 0000ff
+    TetradicA,     // ff0000 -> 7fff00
+    TetradicB,     // ff0000 -> 00ffff
+    TetradicC,     // ff0000 -> 8000ff
   };
 
   struct Properties

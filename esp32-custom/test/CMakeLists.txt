@@ -25,6 +25,9 @@ add_library(GlowLib
   ../src/glow/Grid.h
   ../src/glow/Chroma.cpp
   ../src/glow/Chroma.h
+  ../src/glow/TestTimer.h
+  ../src/glow/TestLight.h
+  ../src/glow/TestLight.cpp
   ../src/glow/TestSpinner.h
 )
 
@@ -37,10 +40,13 @@ if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME AND BUILD_TESTING)
   add_subdirectory(tests)
 endif()
 
-add_executable(glow glow.cpp ../src/glow/Grid.cpp)
+add_executable(glow 
+glow.cpp 
+../src/esphome/components/light/esp_hsv_color.cpp
+../src/glow/Chroma.cpp
+../src/glow/Grid.cpp
+../src/glow/base.cpp
+../src/glow/TestLight.cpp
+)
 
 target_link_libraries(glow)
-
-# target_include_directories(Glow PUBLIC
-# ${PROJECT_SOURCE_DIR}/include
-# )

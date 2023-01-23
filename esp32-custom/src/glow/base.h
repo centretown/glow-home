@@ -2,8 +2,6 @@
 
 #ifdef USE_ESP32
 #include "esphome.h"
-using namespace esphome;
-using namespace light;
 #else
 #include <stdint.h>
 #include <stdlib.h>

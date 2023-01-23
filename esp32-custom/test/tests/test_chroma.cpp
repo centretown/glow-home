@@ -41,16 +41,19 @@ TEST_CASE("Chroma Basic", "[chroma_basic]")
   Chroma chroma;
 
   properties.current_color = Color{0, 255, 0};
-  ESPHSVColor target(0, 255, 255);
+  ESPHSVColor target(128, 255, 255);
+  properties.gradient_hue = target.hue;
+  properties.gradient_saturation = target.saturation;
+  properties.gradient_value = target.value;
 
   chroma.setup(properties);
-  char buffer[80];
+  static char buffer[512];
   chroma.log_buffer(buffer, sizeof(buffer));
   printf("%s\n", buffer);
 
-  REQUIRE(0 == chroma.hsv_target.hue);
-  REQUIRE(255 == chroma.hsv_target.saturation);
-  REQUIRE(255 == chroma.hsv_target.value);
+  REQUIRE(properties.gradient_hue == chroma.hsv_target.hue);
+  REQUIRE(properties.gradient_saturation == chroma.hsv_target.saturation);
+  REQUIRE(properties.gradient_value == chroma.hsv_target.value);
 
   for (int i = 0; i < sizeof(rgbColors) / sizeof(rgbColors[0]); i++)
   {
@@ -74,14 +77,14 @@ TEST_CASE("Chroma Basic", "[chroma_basic]")
     CHECK((val_diff <= 1 && val_diff >= -1));
   }
 
-  Color rgbBench(0, 242, 14);
-  BENCHMARK("slow")
-  {
-    return Chroma::old_color_to_hsv(rgbBench);
-  };
+  // Color rgbBench(0, 242, 14);
+  // BENCHMARK("slow")
+  // {
+  //   return Chroma::old_color_to_hsv(rgbBench);
+  // };
 
-  BENCHMARK("quick")
-  {
-    return Chroma::color_to_hsv(rgbBench);
-  };
+  // BENCHMARK("quick")
+  // {
+  //   return Chroma::color_to_hsv(rgbBench);
+  // };
 }

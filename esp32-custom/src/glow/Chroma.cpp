@@ -2,6 +2,16 @@
 
 namespace glow
 {
+  void Chroma::setup(Properties &properties)
+  {
+    rgb_source = static_cast<Color>(properties.current_color);
+    hsv_source = color_to_hsv(rgb_source);
+    hsv_target = ESPHSVColor(static_cast<uint8_t>(properties.gradient_hue),
+                             static_cast<uint8_t>(properties.gradient_saturation),
+                             static_cast<uint8_t>(properties.gradient_value));
+    rgb_target = hsv_target.to_rgb();
+  }
+
   ESPHSVColor Chroma::color_to_hsv(Color color)
   {
     const uint16_t red = color.red;
@@ -10,7 +20,7 @@ namespace glow
 
     const uint16_t value = std::max(red, std::max(green, blue));
     const uint16_t color_range = value -
-                           std::min(red, std::min(green, blue));
+                                 std::min(red, std::min(green, blue));
     const uint16_t saturation =
         (value == 0) ? 0
                      : (color_range * byte_limit) / value;
@@ -31,7 +41,7 @@ namespace glow
       }
     }
 
-    return ESPHSVColor(static_cast<uint8_t>(hue/6),
+    return ESPHSVColor(static_cast<uint8_t>(hue / 6),
                        static_cast<uint8_t>(saturation),
                        static_cast<uint8_t>(value));
   }
@@ -57,16 +67,6 @@ namespace glow
                        static_cast<uint8_t>(value));
   }
 #endif
-
-  void Chroma::setup(Properties &properties)
-  {
-    rgb_source = static_cast<Color>(properties.current_color);
-    hsv_source = color_to_hsv(rgb_source);
-    hsv_target = ESPHSVColor(static_cast<uint8_t>(properties.gradient_hue),
-                             static_cast<uint8_t>(properties.gradient_saturation),
-                             static_cast<uint8_t>(properties.gradient_value));
-    rgb_target = hsv_target.to_rgb();
-  }
 
   void Chroma::log_buffer(char *buffer, size_t buffer_size) const
   {

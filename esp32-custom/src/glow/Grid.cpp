@@ -129,7 +129,7 @@ namespace glow
   void Grid::log_buffer(char *buffer, size_t buffer_size) const
   {
     snprintf(buffer, buffer_size,
-             "rows=%u columns=%u length=%u first=%u last=%u offset=%u",
+             "rows=%u columns=%u length=%u first=%u last=%u offset=%u\n",
              rows, columns, length,
              pivot.first, pivot.last, pivot.offset);
   }

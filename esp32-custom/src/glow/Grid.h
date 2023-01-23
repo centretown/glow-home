@@ -12,6 +12,12 @@ namespace glow
     uint16_t offset = 0;
   };
 
+  struct Coordinates
+  {
+    uint16_t row;
+    uint16_t column;
+  };
+
   class Grid
   {
   private:
@@ -40,6 +46,14 @@ namespace glow
     uint16_t Offset() const ALWAYS_INLINE
     {
       return pivot.offset;
+    }
+
+    Coordinates map_coordinates(uint16_t offset)
+    {
+      Coordinates coord{0, 0};
+      div_t result = div(offset, columns);
+      return Coordinates{static_cast<uint16_t>(result.quot),
+                         static_cast<uint16_t>(result.rem)};
     }
 
     uint16_t map(uint16_t index);

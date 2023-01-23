@@ -51,27 +51,45 @@ namespace glow
       return false;
     }
 
-    template <typename COLOR_MAPPER>
-    void spin(uint16_t begin, uint16_t end,
-              COLOR_MAPPER &color_mapper)
+    void spin() ALWAYS_INLINE
+    {
+      spin(0, grid.length);
+    }
+
+    void spin(uint16_t begin, uint16_t end) ALWAYS_INLINE
     {
       for (uint16_t i = begin; i < end; ++i)
       {
-        light->get(i) = color_mapper(i);
+        uint16_t offset = grid.map(i);
+        light->get(offset) = chroma.map(i);
       }
       chroma.update_hue();
     }
 
-    template <typename MAPPER, typename COLOR_MAPPER>
-    void spin(uint16_t begin, uint16_t end,
-              MAPPER &mapper, COLOR_MAPPER &color_mapper)
+    template <typename PRESENTER>
+    void spin(PRESENTER &p)
+    {
+      spin(0, grid.length, p);
+    }
+
+    template <typename PRESENTER>
+    void spin(uint16_t begin, uint16_t end, PRESENTER &p)
     {
       for (uint16_t i = begin; i < end; ++i)
       {
-        uint16_t offset = mapper(i);
-        light->get(offset) = color_mapper(i);
+        Coordinates coord = grid.map_coordinates(grid.map(i));
+        p.present(coord.row, coord.column, chroma.map(i));
       }
       chroma.update_hue();
+    }
+
+    void log_buffer(char *buffer, size_t buffer_size) const
+    {
+      snprintf(buffer, buffer_size, "interval=%u\n", interval);
+      auto l = strlen(buffer);
+      grid.log_buffer(buffer + l, buffer_size - l);
+      l = strlen(buffer);
+      chroma.log_buffer(buffer + l, buffer_size - l);
     }
   };
 }

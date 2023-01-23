@@ -27,9 +27,15 @@ namespace glow
     ESPHSVColor hsv_target;
 
     int16_t delta = 1;
+    uint8_t gradient_amount = 1;
 
   public:
     void setup(Properties &properties);
+
+    Color map(uint16_t index)
+    {
+      return step_gradient(index * gradient_amount);
+    }
 
     void update_hue() ALWAYS_INLINE
     {
@@ -51,7 +57,7 @@ namespace glow
 
     static ESPHSVColor color_to_hsv(Color color);
 #ifndef USE_ESP32
-    // keep original for testing
+    // keep original for testing and benchmarking
     static ESPHSVColor old_color_to_hsv(Color color);
 #endif
     void log_buffer(char *buffer, size_t buffer_size) const;

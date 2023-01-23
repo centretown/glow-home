@@ -111,9 +111,9 @@ void hsv_to_rgb(int hue, float saturation, float value, float &red, float &green
   blue += delta;
 }
 
-uint16_t millis_rate = 10;
+uint16_t millis_rate = 48;
 uint64_t millis_now = 0;
-bool real_time = false;
+bool real_time = true;
 
 void set_millis_rate(uint16_t r)
 {
@@ -127,9 +127,14 @@ uint32_t micros32()
 
 uint32_t millis32()
 {
-  clock_t lms = clock();
-  lms /= clocks_ms;
-  return static_cast<uint32_t>(lms);
+  if (real_time)
+  {
+    clock_t lms = clock();
+    lms /= clocks_ms;
+    return static_cast<uint32_t>(lms);
+  }
+  millis_now += millis_rate;
+  return static_cast<uint32_t>(millis_now);
 }
 
 #endif

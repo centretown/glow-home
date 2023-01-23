@@ -1,16 +1,22 @@
 #pragma once
 
+#include "base.h"
+#include "../esphome/core/color.h"
+
+using esphome::Color;
+
 namespace glow
 {
   class TestLight
   {
   private:
-    Color dummy;
+    static const size_t MAX_LIGHT_SIZE = 100;
+    static Color colors[MAX_LIGHT_SIZE];
 
   public:
-    Color &get(uint16_t)
+    Color &get(uint16_t index)
     {
-      return dummy;
+      return colors[index % MAX_LIGHT_SIZE];
     }
   };
 
