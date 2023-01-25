@@ -13,15 +13,21 @@ namespace glow
   public:
     bool split(char *buffer)
     {
-      char *pequals = strchr(buffer, '=');
-      if (!pequals)
+      const char *delim = " =\n";
+      char *pch = strtok(buffer, delim);
+      if (pch == NULL)
       {
         return false;
       }
-      size_t key_len = pequals - buffer;
-      strncpy(key, buffer, key_len);
-      key[key_len] = 0;
-      strcpy(value, pequals + 1);
+      strncpy(key, pch, sizeof(key));
+
+      pch = strtok(NULL, delim);
+      if (pch == NULL)
+      {
+        return false;
+      }
+      strncpy(value, pch, sizeof(value));
+
       return true;
     }
 
@@ -72,5 +78,4 @@ namespace glow
       fclose(handle);
     }
   };
-
 }
