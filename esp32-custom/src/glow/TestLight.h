@@ -10,7 +10,7 @@ namespace glow
   class TestLight
   {
   private:
-    static const size_t MAX_LIGHT_SIZE = 100;
+    static const size_t MAX_LIGHT_SIZE = 4096;
     static Color colors[MAX_LIGHT_SIZE];
 
   public:

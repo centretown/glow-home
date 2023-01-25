@@ -22,10 +22,14 @@ add_executable(testchromalib
 add_executable(testspinnerlib
   test_spinner.cpp)
 
+add_executable(testpropertieslib
+  test_properties.cpp)
+
 # Should be linked to the main library, as well as the Catch2 testing library
 target_link_libraries(testgridlib PRIVATE GlowLib Catch2::Catch2)
 target_link_libraries(testchromalib PRIVATE GlowLib Catch2::Catch2)
 target_link_libraries(testspinnerlib PRIVATE GlowLib Catch2::Catch2)
+target_link_libraries(testpropertieslib PRIVATE GlowLib Catch2::Catch2)
 
 # enable testing functionality
 enable_testing()
@@ -35,3 +39,4 @@ enable_testing()
 add_test(NAME gridtest COMMAND testgridlib) # Command can be a target
 add_test(NAME chromatest COMMAND testchromalib) # Command can be a target
 add_test(NAME spinnertest COMMAND testspinnerlib) # Command can be a target
+add_test(NAME propertytest COMMAND testpropertieslib) # Command can be a target

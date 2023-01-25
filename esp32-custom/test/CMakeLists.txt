@@ -5,7 +5,7 @@ cmake_minimum_required(VERSION 3.14)
 
 project(
   Glow
-  VERSION 0.1
+  VERSION 0.2
   LANGUAGES CXX)
 
 configure_file(GlowConfig.h.in GlowConfig.h)
@@ -20,6 +20,7 @@ add_library(GlowLib
   ../src/esphome/core/optional.h
   ../src/glow/base.cpp
   ../src/glow/base.h
+  ../src/glow/Properties.cpp
   ../src/glow/Properties.h
   ../src/glow/Grid.cpp
   ../src/glow/Grid.h
@@ -40,13 +41,8 @@ if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME AND BUILD_TESTING)
   add_subdirectory(tests)
 endif()
 
-add_executable(glow 
-glow.cpp 
-../src/esphome/components/light/esp_hsv_color.cpp
-../src/glow/Chroma.cpp
-../src/glow/Grid.cpp
-../src/glow/base.cpp
-../src/glow/TestLight.cpp
+add_executable(glow
+  glow.cpp
 )
 
-target_link_libraries(glow)
+target_link_libraries(glow GlowLib)

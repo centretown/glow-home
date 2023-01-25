@@ -19,3 +19,9 @@ esp32-custom/test/libGlowLib.a
 esp32-custom/test/tests/testgridlib
 esp32-custom/test/tests/testchromalib
 esp32-custom/test/tests/testspinnerlib
+esp32-custom/test/tests/testchromalib
+esp32-custom/test/tests/testgridlib
+esp32-custom/test/tests/testpropertieslib
+esp32-custom/test/tests/testchromalib
+esp32-custom/test/tests/testgridlib
+esp32-custom/test/tests/testchromalib

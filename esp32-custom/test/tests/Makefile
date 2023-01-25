@@ -122,6 +122,21 @@ depend:
 .PHONY : depend
 
 # Convenience name for target.
+tests/CMakeFiles/testpropertieslib.dir/rule:
+	cd /home/dave/src/glow-home/esp32-custom/test && $(MAKE) -f CMakeFiles/Makefile2 tests/CMakeFiles/testpropertieslib.dir/rule
+.PHONY : tests/CMakeFiles/testpropertieslib.dir/rule
+
+# Convenience name for target.
+testpropertieslib: tests/CMakeFiles/testpropertieslib.dir/rule
+
+.PHONY : testpropertieslib
+
+# fast build rule for target.
+testpropertieslib/fast:
+	cd /home/dave/src/glow-home/esp32-custom/test && $(MAKE) -f tests/CMakeFiles/testpropertieslib.dir/build.make tests/CMakeFiles/testpropertieslib.dir/build
+.PHONY : testpropertieslib/fast
+
+# Convenience name for target.
 tests/CMakeFiles/testspinnerlib.dir/rule:
 	cd /home/dave/src/glow-home/esp32-custom/test && $(MAKE) -f CMakeFiles/Makefile2 tests/CMakeFiles/testspinnerlib.dir/rule
 .PHONY : tests/CMakeFiles/testspinnerlib.dir/rule
@@ -220,6 +235,33 @@ test_grid.cpp.s:
 	cd /home/dave/src/glow-home/esp32-custom/test && $(MAKE) -f tests/CMakeFiles/testgridlib.dir/build.make tests/CMakeFiles/testgridlib.dir/test_grid.cpp.s
 .PHONY : test_grid.cpp.s
 
+test_properties.o: test_properties.cpp.o
+
+.PHONY : test_properties.o
+
+# target to build an object file
+test_properties.cpp.o:
+	cd /home/dave/src/glow-home/esp32-custom/test && $(MAKE) -f tests/CMakeFiles/testpropertieslib.dir/build.make tests/CMakeFiles/testpropertieslib.dir/test_properties.cpp.o
+.PHONY : test_properties.cpp.o
+
+test_properties.i: test_properties.cpp.i
+
+.PHONY : test_properties.i
+
+# target to preprocess a source file
+test_properties.cpp.i:
+	cd /home/dave/src/glow-home/esp32-custom/test && $(MAKE) -f tests/CMakeFiles/testpropertieslib.dir/build.make tests/CMakeFiles/testpropertieslib.dir/test_properties.cpp.i
+.PHONY : test_properties.cpp.i
+
+test_properties.s: test_properties.cpp.s
+
+.PHONY : test_properties.s
+
+# target to generate assembly for a file
+test_properties.cpp.s:
+	cd /home/dave/src/glow-home/esp32-custom/test && $(MAKE) -f tests/CMakeFiles/testpropertieslib.dir/build.make tests/CMakeFiles/testpropertieslib.dir/test_properties.cpp.s
+.PHONY : test_properties.cpp.s
+
 test_spinner.o: test_spinner.cpp.o
 
 .PHONY : test_spinner.o
@@ -254,6 +296,7 @@ help:
 	@echo "... clean"
 	@echo "... depend"
 	@echo "... rebuild_cache"
+	@echo "... testpropertieslib"
 	@echo "... testspinnerlib"
 	@echo "... edit_cache"
 	@echo "... test"
@@ -265,6 +308,9 @@ help:
 	@echo "... test_grid.o"
 	@echo "... test_grid.i"
 	@echo "... test_grid.s"
+	@echo "... test_properties.o"
+	@echo "... test_properties.i"
+	@echo "... test_properties.s"
 	@echo "... test_spinner.o"
 	@echo "... test_spinner.i"
 	@echo "... test_spinner.s"
