@@ -81,7 +81,7 @@ namespace glow
         return;
       }
 
-      interval = static_cast<uint32_t>(properties.update_interval);
+      interval = static_cast<uint32_t>(properties.interval);
 
       grid.setup(static_cast<uint16_t>(properties.length),
                  static_cast<uint16_t>(grid_rows->state),
@@ -91,7 +91,7 @@ namespace glow
                    ESPHSVColor(static_cast<uint8_t>(properties.gradient_hue),
                                static_cast<uint8_t>(properties.gradient_saturation),
                                static_cast<uint8_t>(properties.gradient_value)),
-                   static_cast<int16_t>(properties.hue_delta));
+                   static_cast<int16_t>(properties.shift));
 
       scanner.setup(scan_width->state);
       is_setup = 1;

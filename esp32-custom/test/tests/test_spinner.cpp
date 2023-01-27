@@ -12,7 +12,7 @@ char print_buffer[1024];
 
 void log_colors(TestLight &light, Properties &properties)
 {
-  const uint16_t columns = properties.length / properties.grid_rows;
+  const uint16_t columns = properties.length / properties.rows;
 
   for (auto i = 0; i < properties.length; i++)
   {
@@ -34,14 +34,12 @@ TEST_CASE("Spinner Basic", "[spinner_basic]")
 
   Properties properties;
   properties.length = 36;
-  properties.grid_rows = 4;
+  properties.rows = 4;
 
-  Color source(255, 0, 0);
+  ESPHSVColor source(0, 255, 255);
   ESPHSVColor target(170, 0, 255);
-  properties.current_color = source;
-  properties.gradient_hue = target.hue;
-  properties.gradient_saturation = target.saturation;
-  properties.gradient_value = target.value;
+  properties.source = source;
+  properties.target = target;
 
   spinner.setup(&light, properties);
 
@@ -51,12 +49,12 @@ TEST_CASE("Spinner Basic", "[spinner_basic]")
   spinner.spin();
   log_colors(light, properties);
 
-  properties.orientation = Vertical;
+  properties.orientation = Properties::Vertical;
   spinner.setup(&light, properties);
   spinner.spin();
   log_colors(light, properties);
 
-  properties.orientation = Diagonal;
+  properties.orientation = Properties::Diagonal;
   spinner.setup(&light, properties);
   spinner.spin();
   log_colors(light, properties);

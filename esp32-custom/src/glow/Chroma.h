@@ -5,36 +5,24 @@
 
 namespace glow
 {
-  constexpr uint16_t byte_limit = 0xff;
-  constexpr uint16_t hue_limit = 1530;
-  constexpr uint16_t hue_segment = hue_limit / 6;
-
-  constexpr uint16_t hue_red = 0;
-  constexpr uint16_t hue_yellow = hue_segment;
-  constexpr uint16_t hue_green = hue_limit / 3;
-  constexpr uint16_t hue_cyan = hue_limit / 2;
-  constexpr uint16_t hue_blue = hue_limit * 2 / 3;
-  constexpr uint16_t hue_magenta = hue_limit * 5 / 6;
-
   class Chroma
   {
     // private:
   public:
     Color rgb_source;
-    ESPHSVColor hsv_source;
-
     Color rgb_target;
+    ESPHSVColor hsv_source;
     ESPHSVColor hsv_target;
 
     int16_t delta = 1;
-    uint8_t gradient_amount = 1;
+    float gradient_amount = 1.0;
 
   public:
     void setup(Properties &properties);
 
     Color map(uint16_t index)
     {
-      return step_gradient(index * gradient_amount);
+      return step_gradient(static_cast<float>(index) * gradient_amount);
     }
 
     void update_hue() ALWAYS_INLINE
@@ -43,23 +31,33 @@ namespace glow
         return;
       hsv_source.hue += delta;
       rgb_source = hsv_source.to_rgb();
+      hsv_target.hue += delta;
+      rgb_target = hsv_target.to_rgb();
     }
 
-    Color step_gradient(uint8_t amnt) ALWAYS_INLINE
+    Color step_gradient(float shift_amount) ALWAYS_INLINE
     {
-      Color step;
-      float amnt_f = static_cast<float>(amnt) / 255.0f;
-      step.r = rgb_source.r + amnt_f * (rgb_target.r - rgb_source.r);
-      step.g = rgb_source.g + amnt_f * (rgb_target.g - rgb_source.g);
-      step.b = rgb_source.b + amnt_f * (rgb_target.b - rgb_source.b);
-      return step;
+      return Color(red_shift(shift_amount),
+                   green_shift(shift_amount),
+                   blue_shift(shift_amount));
     }
 
-    static ESPHSVColor color_to_hsv(Color color);
-#ifndef USE_ESP32
-    // keep original for testing and benchmarking
-    static ESPHSVColor old_color_to_hsv(Color color);
-#endif
+    uint8_t red_shift(float shift_amount) ALWAYS_INLINE
+    {
+      shift_amount *= static_cast<float>(rgb_target.red - rgb_source.red);
+      return rgb_source.red + static_cast<uint8_t>(shift_amount);
+    }
+    uint8_t green_shift(float shift_amount) ALWAYS_INLINE
+    {
+      shift_amount *= static_cast<float>(rgb_target.green - rgb_source.green);
+      return rgb_source.green + static_cast<uint8_t>(shift_amount);
+    }
+    uint8_t blue_shift(float shift_amount) ALWAYS_INLINE
+    {
+      shift_amount *= static_cast<float>(rgb_target.blue - rgb_source.blue);
+      return rgb_source.blue + static_cast<uint8_t>(shift_amount);
+    }
+
     void log_buffer(char *buffer, size_t buffer_size) const;
     static char *log_hsv(char *buffer, size_t buffer_size, ESPHSVColor hsv);
     static char *log_rgb(char *buffer, size_t buffer_size, Color rgb);

@@ -3,82 +3,90 @@
 namespace glow
 {
   std::string Properties::property_names[] = {
-      "current_color",
+      "interval",
+      "scan_width",
       "origin",
       "orientation",
       "length",
-      "color_transform",
-      "grid_rows",
-      "hue_delta",
-      "gradient_hue",
-      "gradient_saturation",
-      "gradient_value",
-      "scan_width",
+      "rows",
+      "source",
+      "target",
+      "shift",
+      "transform",
   };
 
   std::unordered_map<std::string, uint8_t> Properties::property_map = {
-      {property_names[CURRENT_COLOR], CURRENT_COLOR},
+      {property_names[INTERVAL], INTERVAL},
+      {property_names[SCAN_WIDTH], SCAN_WIDTH},
       {property_names[ORIGIN], ORIGIN},
       {property_names[ORIENTATION], ORIENTATION},
       {property_names[LENGTH], LENGTH},
-      {property_names[COLOR_TRANSFORM], COLOR_TRANSFORM},
-      {property_names[GRID_ROWS], GRID_ROWS},
-      {property_names[HUE_DELTA], HUE_DELTA},
-      {property_names[GRADIENT_HUE], GRADIENT_HUE},
-      {property_names[GRADIENT_SATURATION], GRADIENT_SATURATION},
-      {property_names[GRADIENT_VALUE], GRADIENT_VALUE},
-      {property_names[SCAN_WIDTH], SCAN_WIDTH},
+      {property_names[ROWS], ROWS},
+      {property_names[SOURCE], SOURCE},
+      {property_names[TARGET], TARGET},
+      {property_names[SHIFT], SHIFT},
+      {property_names[TRANSFORM], TRANSFORM},
   };
 
-  void Properties::set(const char *key, char *value)
+  bool Properties::set(const char *key, char *value)
   {
     auto iter = property_map.find(key);
+    if (iter == property_map.end())
+    {
+      return false;
+    }
     auto val = *iter;
     set(val.second, value);
+    return true;
   }
 
-  void Properties::get(const char *key, char *value, size_t value_length)
+  bool Properties::get(const char *key, char *value, size_t value_length)
   {
     auto iter = property_map.find(key);
+    if (iter == property_map.end())
+    {
+      return false;
+    }
     auto val = *iter;
     get(val.second, value, value_length);
+    return true;
   }
 
   void Properties::set(uint8_t key, char *value)
   {
+    uint32_t hsv_raw = 0;
     switch (key)
     {
-    case CURRENT_COLOR:
-      sscanf(value, "%16u", &current_color.raw_32);
-      break;
-    case ORIGIN:
-      sscanf(value, "%16hhu", &origin);
-      break;
-    case ORIENTATION:
-      sscanf(value, "%16hhu", &orientation);
-      break;
-    case LENGTH:
-      sscanf(value, "%16hu", &length);
-      break;
-    case COLOR_TRANSFORM:
-      break;
-    case GRID_ROWS:
-      sscanf(value, "%16f", &grid_rows);
-      break;
-    case HUE_DELTA:
-      sscanf(value, "%16f", &hue_delta);
-      break;
-    case GRADIENT_HUE:
-      sscanf(value, "%16f", &gradient_hue);
-      break;
-    case GRADIENT_SATURATION:
-      sscanf(value, "%16f", &gradient_saturation);
-      break;
-    case GRADIENT_VALUE:
-      sscanf(value, "%16f", &gradient_value);
+    case INTERVAL:
+      sscanf(value, "%8u", &interval);
       break;
     case SCAN_WIDTH:
-      sscanf(value, "%16f", &scan_width);
+      sscanf(value, "%8hu", &scan_width);
+      break;
+    case ORIGIN:
+      sscanf(value, "%8hhu", &origin);
+      break;
+    case ORIENTATION:
+      sscanf(value, "%8hhu", &orientation);
+      break;
+    case LENGTH:
+      sscanf(value, "%8hu", &length);
+      break;
+    case ROWS:
+      sscanf(value, "%8hu", &rows);
+      break;
+    case SOURCE:
+      sscanf(value, "%8u", &hsv_raw);
+      source = u32_to_hsv(hsv_raw);
+      break;
+    case TARGET:
+      sscanf(value, "%8u", &hsv_raw);
+      target = u32_to_hsv(hsv_raw);
+      break;
+    case SHIFT:
+      sscanf(value, "%8hd", &shift);
+      break;
+    case TRANSFORM:
       break;
     default:
       break;
@@ -89,8 +97,11 @@ namespace glow
   {
     switch (key)
     {
-    case CURRENT_COLOR:
-      snprintf(value, value_length, "%u", current_color.raw_32);
+    case INTERVAL:
+      snprintf(value, value_length, "%u", interval);
+      break;
+    case SCAN_WIDTH:
+      snprintf(value, value_length, "%u", scan_width);
       break;
     case ORIGIN:
       snprintf(value, value_length, "%u", origin);
@@ -101,30 +112,89 @@ namespace glow
     case LENGTH:
       snprintf(value, value_length, "%u", length);
       break;
-    case COLOR_TRANSFORM:
-      snprintf(value, value_length, "%u", color_transform);
+    case ROWS:
+      snprintf(value, value_length, "%u", rows);
       break;
-    case GRID_ROWS:
-      snprintf(value, value_length, "%.1f", grid_rows);
+    case SOURCE:
+      snprintf(value, value_length, "%u", hsv_to_u32(source));
       break;
-    case HUE_DELTA:
-      snprintf(value, value_length, "%.1f", hue_delta);
+    case TARGET:
+      snprintf(value, value_length, "%u", hsv_to_u32(target));
       break;
-    case GRADIENT_HUE:
-      snprintf(value, value_length, "%.1f", gradient_hue);
+    case SHIFT:
+      snprintf(value, value_length, "%d", shift);
       break;
-    case GRADIENT_SATURATION:
-      snprintf(value, value_length, "%.1f", gradient_saturation);
-      break;
-    case GRADIENT_VALUE:
-      snprintf(value, value_length, "%.1f", gradient_value);
-      break;
-    case SCAN_WIDTH:
-      snprintf(value, value_length, "%.1f", scan_width);
-      break;
-    default:
-      snprintf(value, value_length, "-999.99");
+    case TRANSFORM:
+      snprintf(value, value_length, "%u", transform);
       break;
     }
   }
+
+  constexpr uint16_t byte_limit = 0xff;
+  constexpr uint16_t hue_limit = 1530;
+  constexpr uint16_t hue_segment = hue_limit / 6;
+
+  constexpr uint16_t hue_red = 0;
+  constexpr uint16_t hue_yellow = hue_segment;
+  constexpr uint16_t hue_green = hue_limit / 3;
+  constexpr uint16_t hue_cyan = hue_limit / 2;
+  constexpr uint16_t hue_blue = hue_limit * 2 / 3;
+  constexpr uint16_t hue_magenta = hue_limit * 5 / 6;
+
+  ESPHSVColor Properties::color_to_hsv(Color color)
+  {
+    const uint16_t red = color.red;
+    const uint16_t green = color.green;
+    const uint16_t blue = color.blue;
+
+    const uint16_t value = std::max(red, std::max(green, blue));
+    const uint16_t color_range = value -
+                                 std::min(red, std::min(green, blue));
+    const uint16_t saturation =
+        (value == 0) ? 0
+                     : (color_range * byte_limit) / value;
+    uint16_t hue = 0;
+    if (color_range != 0)
+    {
+      if (value == red)
+      {
+        hue = (hue_segment * (green - blue) / color_range) + hue_limit;
+      }
+      else if (value == green)
+      {
+        hue = (hue_segment * (blue - red) / color_range) + hue_green;
+      }
+      else // if (value == blue)
+      {
+        hue = (hue_segment * (red - green) / color_range) + hue_blue;
+      }
+    }
+
+    return ESPHSVColor(static_cast<uint8_t>(hue / 6),
+                       static_cast<uint8_t>(saturation),
+                       static_cast<uint8_t>(value));
+  }
+
+#ifndef USE_ESP32
+  // keep original for testing
+  ESPHSVColor Properties::old_color_to_hsv(Color color)
+  {
+    float red = static_cast<float>(color.red) / 255.0;
+    float green = static_cast<float>(color.green) / 255.0;
+    float blue = static_cast<float>(color.blue) / 255.0;
+    float saturation, value;
+    int hue;
+
+    rgb_to_hsv(red, green, blue, hue, saturation, value);
+
+    hue *= 255;
+    hue /= 360;
+    saturation *= 255;
+    value *= 255;
+    return ESPHSVColor(static_cast<uint8_t>(hue),
+                       static_cast<uint8_t>(saturation),
+                       static_cast<uint8_t>(value));
+  }
+#endif
+
 }

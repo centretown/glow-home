@@ -7,8 +7,7 @@ namespace glow
     origin = properties.origin;
     orientation = properties.orientation;
     length = properties.length;
-
-    rows = static_cast<uint16_t>(properties.grid_rows);
+    rows = properties.rows;
     columns = length / rows;
     uint16_t lesser = (rows > columns) ? columns : rows;
 
@@ -29,11 +28,11 @@ namespace glow
   uint16_t Grid::map(uint16_t index)
   {
     uint16_t offset = index;
-    if (orientation == Diagonal)
+    if (orientation == Properties::Diagonal)
     {
       offset = map_diagonal(index);
     }
-    else if (orientation == Vertical)
+    else if (orientation == Properties::Vertical)
     {
       offset = map_columns(index, point);
     }
@@ -104,20 +103,20 @@ namespace glow
 
   uint16_t Grid::map_to_origin(uint16_t offset)
   {
-    if (origin == BottomRight)
+    if (origin == Properties::BottomRight)
     {
       return length - offset - 1;
     }
 
     point = div(offset, columns);
 
-    if (origin == BottomLeft)
+    if (origin == Properties::BottomLeft)
     {
       return (rows - point.quot - 1) * columns +
              point.rem;
     }
 
-    if (origin == TopRight)
+    if (origin == Properties::TopRight)
     {
       return point.quot * columns +
              (columns - point.rem - 1);
@@ -129,8 +128,8 @@ namespace glow
   void Grid::log_buffer(char *buffer, size_t buffer_size) const
   {
     snprintf(buffer, buffer_size,
-             "rows=%u columns=%u length=%u first=%u last=%u offset=%u\n",
-             rows, columns, length,
+             "Grid:\n\tlength=%u rows=%u columns=%u\n\tfirst=%u last=%u offset=%u\n",
+             length, rows, columns,
              pivot.first, pivot.last, pivot.offset);
   }
 }

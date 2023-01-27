@@ -11,94 +11,114 @@ using esphome::light::ESPHSVColor;
 
 namespace glow
 {
-  enum : uint8_t
+  struct GlowHSVColor
   {
-    TopLeft,
-    TopRight,
-    BottomLeft,
-    BottomRight,
-  };
-
-  enum : uint8_t
-  {
-    Horizontal,
-    Vertical,
-    Diagonal
-  };
-
-  enum : uint8_t
-  {
-    ShiftNone = 0,
-    ShiftHue = 1,
-    ShiftSaturation = 2,
-    ShiftValue = 4,
-  };
-
-  enum : uint8_t
-  {
-    AsIs,          // ff0000 -> ff0000
-    Complementary, // ff0000 -> 00ffff (hue+128%255)
-    Monochromatic, // ff0000 -> ff3333 (sat gradient)
-    AnalogousA,    // ff0000 -> ff8000 (hue+)
-    AnalogousB,    // ff0000 -> ff007f (hue+)
-    TriadicA,      // ff0000 -> 00ff00
-    TriadicB,      // ff0000 -> 0000ff
-    TetradicA,     // ff0000 -> 7fff00
-    TetradicB,     // ff0000 -> 00ffff
-    TetradicC,     // ff0000 -> 8000ff
-  };
-
-  enum : uint8_t
-  {
-    CURRENT_COLOR,
-    ORIGIN,
-    ORIENTATION,
-    LENGTH,
-    COLOR_TRANSFORM,
-    GRID_ROWS,
-    HUE_DELTA,
-    GRADIENT_HUE,
-    GRADIENT_SATURATION,
-    GRADIENT_VALUE,
-    SCAN_WIDTH,
-    PROPERTY_COUNT,
+    union
+    {
+      struct
+      {
+        uint8_t h;
+        uint8_t s;
+        uint8_t v;
+        uint8_t u;
+      };
+      uint32_t raw_32 = 0;
+    };
+    GlowHSVColor(uint32_t raw_32) ALWAYS_INLINE : raw_32(raw_32) {}
+    GlowHSVColor(uint8_t h = 0, uint8_t s = 0, uint8_t v = 0) ALWAYS_INLINE : h(h), s(s), v(v) {}
+    GlowHSVColor(ESPHSVColor hsv) ALWAYS_INLINE : h(hsv.h), s(hsv.s), v(hsv.v), u(0) {}
+    ESPHSVColor esp_hsv() ALWAYS_INLINE { return ESPHSVColor(h, s, v); }
   };
 
   struct Properties
   {
-    Color current_color{255, 0, 0};
+    enum : uint8_t
+    {
+      TopLeft,
+      TopRight,
+      BottomLeft,
+      BottomRight,
+    };
+
+    enum : uint8_t
+    {
+      Horizontal,
+      Vertical,
+      Diagonal
+    };
+
+    enum : uint8_t
+    {
+      ShiftNone = 0,
+      ShiftHue = 1,
+      ShiftSaturation = 2,
+      ShiftValue = 4,
+    };
+
+    enum : uint8_t
+    {
+      AsIs,          // ff0000 -> ff0000
+      Complementary, // ff0000 -> 00ffff (hue+128%255)
+      Monochromatic, // ff0000 -> ff3333 (sat gradient)
+      AnalogousA,    // ff0000 -> ff8000 (hue+)
+      AnalogousB,    // ff0000 -> ff007f (hue+)
+      TriadicA,      // ff0000 -> 00ff00
+      TriadicB,      // ff0000 -> 0000ff
+      TetradicA,     // ff0000 -> 7fff00
+      TetradicB,     // ff0000 -> 00ffff
+      TetradicC,     // ff0000 -> 8000ff
+    };
+
+    enum : uint8_t
+    {
+      INTERVAL,
+      SCAN_WIDTH,
+      ORIGIN,
+      ORIENTATION,
+      LENGTH,
+      ROWS,
+      SOURCE,
+      TARGET,
+      SHIFT,
+      TRANSFORM,
+      PROPERTY_COUNT,
+    };
+
+    uint32_t interval = 48;
+    uint16_t scan_width = 0;
     uint8_t origin = TopLeft;
     uint8_t orientation = Horizontal;
     uint16_t length = 36;
-    uint8_t color_transform = AsIs;
+    uint16_t rows = 4;
+    ESPHSVColor source{0, 255, 255};
+    ESPHSVColor target{127, 0, 255};
+    int16_t shift = -1;
+    uint8_t transform = AsIs;
 
-    float update_interval = 48.0;
-    float grid_rows = 4.0;
-    float hue_delta = -1.0;
-
-    float gradient_hue = 0.0;
-    float gradient_saturation = 255.0;
-    float gradient_value = 255.0;
-
-    float scan_hue = 85.0;
-    float scan_saturation = 255.0;
-    float scan_value = 255.0;
-    float scan_width = 1.0;
-
-    void operator()(uint16_t len, float rows, uint8_t org, uint8_t orient)
+    void set_grid(uint16_t len, uint16_t row_count, uint8_t org, uint8_t orient)
     {
       length = len;
-      grid_rows = rows;
+      rows = row_count;
       origin = org;
       orientation = orient;
     }
 
-    void operator()(Color rgb, float hue, float saturation, float value, float delta)
+    void set_chroma(Color s, Color t) ALWAYS_INLINE
     {
-      current_color = rgb;
-      gradient_hue = hue;
-      gradient_saturation = saturation;
-      gradient_value = value;
+      source = color_to_hsv(s);
+      target = color_to_hsv(t);
+    }
+
+    void set_chroma(ESPHSVColor s, ESPHSVColor t) ALWAYS_INLINE
+    {
+      source = s;
+      target = t;
+    }
+
+    void set_chroma(Color rgb, ESPHSVColor t) ALWAYS_INLINE
+    {
+      source = color_to_hsv(rgb);
+      target = t;
     }
 
     bool get_key(uint8_t key, char *buffer, size_t buffer_length)
@@ -113,9 +133,9 @@ namespace glow
     }
 
     // generic property interface
-    void set(const char *key, char *value);
+    bool set(const char *key, char *value);
     void set(uint8_t key, char *value);
-    void get(const char *key, char *value, size_t value_length);
+    bool get(const char *key, char *value, size_t value_length);
     void get(uint8_t key, char *value, size_t value_length);
 
     static bool check(const char *key)
@@ -134,5 +154,21 @@ namespace glow
 
     static std::string property_names[];
     static std::unordered_map<std::string, uint8_t> property_map;
+
+    static uint32_t hsv_to_u32(ESPHSVColor hsv) ALWAYS_INLINE
+    {
+      return GlowHSVColor(hsv).raw_32;
+    }
+
+    static ESPHSVColor u32_to_hsv(uint32_t hsv32) ALWAYS_INLINE
+    {
+      return GlowHSVColor(hsv32).esp_hsv();
+    }
+
+#ifndef USE_ESP32
+    // keep original for testing and benchmarking
+    static ESPHSVColor old_color_to_hsv(Color color);
+#endif
+    static ESPHSVColor color_to_hsv(Color color);
   };
 }

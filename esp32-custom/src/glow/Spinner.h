@@ -1,13 +1,10 @@
 #pragma once
 
+#include "base.h"
 #include "Properties.h"
 #include "Grid.h"
 #include "Chroma.h"
 #include "Scanner.h"
-
-#ifndef ALWAYS_INLINE
-#define ALWAYS_INLINE __attribute__((always_inline))
-#endif
 
 namespace glow
 {
@@ -34,7 +31,7 @@ namespace glow
         return;
       }
 
-      interval = static_cast<uint32_t>(properties.update_interval);
+      interval = properties.interval;
       grid.setup(properties);
       chroma.setup(properties);
       scanner.setup(properties.scan_width);
@@ -85,7 +82,7 @@ namespace glow
 
     void log_buffer(char *buffer, size_t buffer_size) const
     {
-      snprintf(buffer, buffer_size, "interval=%u\n", interval);
+      snprintf(buffer, buffer_size, "Spinner:\n\tinterval=%u\n", interval);
       auto l = strlen(buffer);
       grid.log_buffer(buffer + l, buffer_size - l);
       l = strlen(buffer);

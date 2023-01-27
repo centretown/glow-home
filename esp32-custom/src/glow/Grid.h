@@ -26,8 +26,8 @@ namespace glow
     uint16_t columns = 0;
     uint16_t length = 0;
 
-    uint8_t origin = TopLeft;
-    uint8_t orientation = Horizontal;
+    uint8_t origin = Properties::TopLeft;
+    uint8_t orientation = Properties::Horizontal;
 
     div_t point{0, 0};
     Pivot pivot;

@@ -15,65 +15,70 @@ TEST_CASE("Properties Basic", "[properties_basic]")
 
   char buffer[80];
 
-  properties.current_color = current_color;
-  properties.get("current_color", buffer, sizeof(buffer));
-  uint32_t colorraw = atoi(buffer);
-  printf("current_color=%s\n", buffer);
-  REQUIRE(current_color.raw_32 == colorraw);
+  properties.interval = 84;
+  REQUIRE(properties.get("interval", buffer, sizeof(buffer)));
+  printf("interval=%s\n", buffer);
+  uint32_t interval = atoi(buffer);
+  REQUIRE(properties.interval == interval);
 
-  properties.origin = BottomRight;
-  properties.get("origin", buffer, sizeof(buffer));
-  uint32_t origin = atoi(buffer);
+  properties.scan_width = 5.0;
+  REQUIRE(properties.get("scan_width", buffer, sizeof(buffer)));
+  printf("scan_width=%s\n", buffer);
+  uint16_t scan_width = atoi(buffer);
+  REQUIRE(properties.scan_width == scan_width);
+
+  properties.origin = Properties::BottomRight;
+  REQUIRE(properties.get("origin", buffer, sizeof(buffer)));
+  uint8_t origin = atoi(buffer);
   printf("origin=%s\n", buffer);
-  REQUIRE(origin == BottomRight);
+  REQUIRE(origin == Properties::BottomRight);
 
-  properties.orientation = Diagonal;
-  properties.get("orientation", buffer, sizeof(buffer));
-  uint32_t orientation = atoi(buffer);
+  properties.orientation = Properties::Diagonal;
+  REQUIRE(properties.get("orientation", buffer, sizeof(buffer)));
+  uint8_t orientation = atoi(buffer);
   printf("orientation=%s\n", buffer);
-  REQUIRE(orientation == Diagonal);
+  REQUIRE(orientation == Properties::Diagonal);
 
   properties.length = 40;
-  properties.get("length", buffer, sizeof(buffer));
+  REQUIRE(properties.get("length", buffer, sizeof(buffer)));
   printf("length=%s\n", buffer);
   uint16_t length = atoi(buffer);
   REQUIRE(properties.length == length);
 
-  properties.grid_rows = 4;
-  properties.get("grid_rows", buffer, sizeof(buffer));
-  printf("grid_rows=%s\n", buffer);
-  float grid_rows = atof(buffer);
-  REQUIRE(properties.grid_rows == grid_rows);
+  properties.rows = 8;
+  REQUIRE(properties.get("rows", buffer, sizeof(buffer)));
+  printf("rows=%s\n", buffer);
+  uint16_t rows = atoi(buffer);
+  REQUIRE(properties.rows == rows);
 
-  properties.hue_delta = -2.0;
-  properties.get("hue_delta", buffer, sizeof(buffer));
-  printf("hue_delta=%s\n", buffer);
-  float hue_delta = atof(buffer);
-  REQUIRE(properties.hue_delta == hue_delta);
+  properties.source = ESPHSVColor(0, 255, 127);
+  REQUIRE(properties.get("source", buffer, sizeof(buffer)));
+  printf("source=%s\n", buffer);
+  uint32_t source = atoi(buffer);
+  REQUIRE(properties.hsv_to_u32(properties.source) == source);
 
-  properties.gradient_hue = 180.0;
-  properties.get("gradient_hue", buffer, sizeof(buffer));
-  printf("gradient_hue=%s\n", buffer);
-  float gradient_hue = atof(buffer);
-  REQUIRE(properties.gradient_hue == gradient_hue);
+  properties.target = ESPHSVColor(85, 0, 255);
+  REQUIRE(properties.get("target", buffer, sizeof(buffer)));
+  printf("target=%s\n", buffer);
+  uint32_t target = atoi(buffer);
+  REQUIRE(properties.hsv_to_u32(properties.target) == target);
 
-  properties.gradient_saturation = 127.0;
-  properties.get("gradient_saturation", buffer, sizeof(buffer));
-  printf("gradient_saturation=%s\n", buffer);
-  float gradient_saturation = atof(buffer);
-  REQUIRE(properties.gradient_saturation == gradient_saturation);
+  properties.shift = -2;
+  REQUIRE(properties.get("shift", buffer, sizeof(buffer)));
+  printf("shift=%s\n", buffer);
+  int16_t shift = atoi(buffer);
+  REQUIRE(properties.shift == shift);
 
-  properties.gradient_value = 67.0;
-  properties.get("gradient_value", buffer, sizeof(buffer));
-  printf("gradient_value=%s\n", buffer);
-  float gradient_value = atof(buffer);
-  REQUIRE(properties.gradient_value == gradient_value);
+  properties.transform = Properties::Monochromatic;
+  REQUIRE(properties.get("transform", buffer, sizeof(buffer)));
+  uint8_t transform = atoi(buffer);
+  printf("transform=%s\n", buffer);
+  REQUIRE(transform == Properties::Monochromatic);
 
-  properties.scan_width = 5.0;
-  properties.get("scan_width", buffer, sizeof(buffer));
-  printf("scan_width=%s\n", buffer);
-  float scan_width = atof(buffer);
-  REQUIRE(properties.scan_width == scan_width);
+  REQUIRE(false == properties.get("", buffer, sizeof(buffer)));
+  REQUIRE(false == properties.get("\n", buffer, sizeof(buffer)));
+  REQUIRE(false == properties.get("2", buffer, sizeof(buffer)));
+  REQUIRE(false == properties.get("can_width", buffer, sizeof(buffer)));
 
   puts("");
 }
@@ -83,7 +88,7 @@ TEST_CASE("Properties GetKey", "[properties_get_key]")
   Properties properties;
   char buffer[80];
 
-  for (uint8_t key = 0; key < PROPERTY_COUNT; key++)
+  for (uint8_t key = 0; key < properties.count(); key++)
   {
     properties.get_key(key, buffer, sizeof(buffer));
     printf("%s=", buffer);
@@ -94,35 +99,35 @@ TEST_CASE("Properties GetKey", "[properties_get_key]")
 
 #include "../../src/glow/Filer.h"
 
-TEST_CASE("Properties Write", "[properties_write]")
+TEST_CASE("Filer Write/Read Properties", "[filer_write_read_properties]")
 {
-  Color current_color(15, 236, 7);
   Properties properties;
-  properties.current_color = current_color;
-  properties.origin = BottomRight;
-  properties.orientation = Diagonal;
+  properties.interval = 22;
+  properties.scan_width = 5;
+  properties.origin = Properties::BottomRight;
+  properties.orientation = Properties::Diagonal;
   properties.length = 40;
-  properties.grid_rows = 4;
-  properties.hue_delta = -2.0;
-  properties.gradient_hue = 180.0;
-  properties.gradient_saturation = 127.0;
-  properties.gradient_value = 67.0;
-  properties.scan_width = 5.0;
+  properties.rows = 4;
+  properties.source = ESPHSVColor(127, 63, 255);
+  properties.target = ESPHSVColor(255, 63, 255);
+  properties.shift = -2;
 
   Filer filer;
-  filer.write("test.cfg", properties);
+  REQUIRE(filer.write("test.cfg", properties));
 
-  Properties target;
-  filer.read("test.cfg", target);
+  Properties alternate;
+  REQUIRE(filer.read("test.cfg", alternate));
 
-  REQUIRE(properties.current_color.raw_32 == target.current_color.raw_32);
-  REQUIRE(properties.origin == target.origin);
-  REQUIRE(properties.orientation == target.orientation);
-  REQUIRE(properties.length == target.length);
-  REQUIRE(properties.grid_rows == target.grid_rows);
-  REQUIRE(properties.hue_delta == target.hue_delta);
-  REQUIRE(properties.gradient_hue == target.gradient_hue);
-  REQUIRE(properties.gradient_saturation == target.gradient_saturation);
-  REQUIRE(properties.gradient_value == target.gradient_value);
-  REQUIRE(properties.scan_width == target.scan_width);
+  REQUIRE(properties.interval == alternate.interval);
+  REQUIRE(properties.scan_width == alternate.scan_width);
+  REQUIRE(properties.origin == alternate.origin);
+  REQUIRE(properties.orientation == alternate.orientation);
+  REQUIRE(properties.length == alternate.length);
+  REQUIRE(Properties::hsv_to_u32(properties.source) ==
+          Properties::hsv_to_u32(alternate.source));
+  REQUIRE(Properties::hsv_to_u32(properties.target) ==
+          Properties::hsv_to_u32(alternate.target));
+  REQUIRE(properties.rows == alternate.rows);
+  REQUIRE(properties.shift == alternate.shift);
+  REQUIRE(properties.transform == alternate.transform);
 }

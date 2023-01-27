@@ -5,12 +5,17 @@
 
 using namespace glow;
 
+char print_buffer[1024];
+
 TEST_CASE("Grid Map Diagonal 2x2", "[map_2x2]")
 {
   Properties properties;
-  properties(4, 2.0, TopLeft, Diagonal);
+  properties.set_grid(4, 2, Properties::TopLeft, Properties::Diagonal);
   Grid grid;
   grid.setup(properties);
+
+  grid.log_buffer(print_buffer, sizeof(print_buffer));
+  puts(print_buffer);
 
   REQUIRE(1 == grid.First());
   REQUIRE(1 == grid.Offset());
@@ -24,7 +29,7 @@ TEST_CASE("Grid Map Diagonal 2x2", "[map_2x2]")
 TEST_CASE("Grid Map Diagonal 2x3", "[map_2x3]")
 {
   Properties properties;
-  properties(6.0, 2.0, TopLeft, Diagonal);
+  properties.set_grid(6, 2, Properties::TopLeft, Properties::Diagonal);
   Grid grid;
   grid.setup(properties);
 
@@ -43,7 +48,7 @@ TEST_CASE("Grid Map Diagonal 2x3", "[map_2x3]")
 TEST_CASE("Grid Map Diagonal 3x2", "[map_3x2]")
 {
   Properties properties;
-  properties(6, 3.0, TopLeft, Diagonal);
+  properties.set_grid(6, 3, Properties::TopLeft, Properties::Diagonal);
   Grid grid;
   grid.setup(properties);
 
@@ -61,7 +66,7 @@ TEST_CASE("Grid Map Diagonal 3x2", "[map_3x2]")
 TEST_CASE("Grid Map Diagonal 3x4", "[map_3x4]")
 {
   Properties properties;
-  properties(12, 3.0, TopLeft, Diagonal);
+  properties.set_grid(12, 3, Properties::TopLeft, Properties::Diagonal);
   Grid grid;
   grid.setup(properties);
 
@@ -86,7 +91,7 @@ TEST_CASE("Grid Map Diagonal 3x4", "[map_3x4]")
 TEST_CASE("Grid Map Diagonal 4x5", "[map_4x5]")
 {
   Properties properties;
-  properties(20, 4.0, TopLeft, Diagonal);
+  properties.set_grid(20, 4, Properties::TopLeft, Properties::Diagonal);
   Grid grid;
   grid.setup(properties);
 
@@ -119,7 +124,7 @@ TEST_CASE("Grid Map Diagonal 4x5", "[map_4x5]")
 TEST_CASE("Grid Map Diagonal 4x9", "[map_49]")
 {
   Properties properties;
-  properties(36, 4.0, TopLeft, Diagonal);
+  properties.set_grid(36, 4, Properties::TopLeft, Properties::Diagonal);
   Grid grid;
   grid.setup(properties);
 
@@ -176,7 +181,7 @@ TEST_CASE("Grid Map Diagonal 4x9", "[map_49]")
 TEST_CASE("Grid Map Diagonal-TopRight 4x9", "[map_mirror_49]")
 {
   Properties properties;
-  properties(36, 4.0, TopRight, Diagonal);
+  properties.set_grid(36, 4, Properties::TopRight, Properties::Diagonal);
   Grid grid;
   grid.setup(properties);
 
@@ -208,7 +213,7 @@ TEST_CASE("Grid Map Diagonal-TopRight 4x9", "[map_mirror_49]")
 TEST_CASE("Grid Map Diagonal-BottomRight 4x9", "[map_49]")
 {
   Properties properties;
-  properties(36, 4.0, BottomRight, Diagonal);
+  properties.set_grid(36, 4, Properties::BottomRight, Properties::Diagonal);
   Grid grid;
   grid.setup(properties);
 
@@ -259,7 +264,7 @@ TEST_CASE("Grid Map Diagonal-BottomRight 4x9", "[map_49]")
 TEST_CASE("Grid Map Diagonal-BottomLeft 4x9", "[map_49]")
 {
   Properties properties;
-  properties(36, 4.0, BottomLeft, Diagonal);
+  properties.set_grid(36, 4, Properties::BottomLeft, Properties::Diagonal);
   Grid grid;
   grid.setup(properties);
 

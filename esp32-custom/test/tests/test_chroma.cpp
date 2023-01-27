@@ -7,6 +7,8 @@
 
 using namespace glow;
 
+static char print_buffer[512];
+
 Color rgbColors[] = {
     Color(254, 255, 255),
     Color(255, 255, 0),
@@ -37,35 +39,32 @@ Color rgbColors[] = {
 TEST_CASE("Chroma Basic", "[chroma_basic]")
 {
   Properties properties;
-  properties(36.0, 4.0, TopLeft, Diagonal);
+  properties.set_grid(36, 4, Properties::TopLeft, Properties::Diagonal);
   Chroma chroma;
 
-  properties.current_color = Color{0, 255, 0};
-  ESPHSVColor target(128, 255, 255);
-  properties.gradient_hue = target.hue;
-  properties.gradient_saturation = target.saturation;
-  properties.gradient_value = target.value;
+  ESPHSVColor source(0, 255, 255);
+  ESPHSVColor target(128, 0, 127);
+  properties.source = source;
+  properties.target = target;
 
   chroma.setup(properties);
-  static char buffer[512];
-  chroma.log_buffer(buffer, sizeof(buffer));
-  printf("%s\n", buffer);
+  chroma.log_buffer(print_buffer, sizeof(print_buffer));
+  puts(print_buffer);
 
-  REQUIRE(properties.gradient_hue == chroma.hsv_target.hue);
-  REQUIRE(properties.gradient_saturation == chroma.hsv_target.saturation);
-  REQUIRE(properties.gradient_value == chroma.hsv_target.value);
+  REQUIRE(Properties::hsv_to_u32(properties.target) ==
+          Properties::hsv_to_u32(chroma.hsv_target));
 
   for (int i = 0; i < sizeof(rgbColors) / sizeof(rgbColors[0]); i++)
   {
     Color &color = rgbColors[i];
-    ESPHSVColor quick = Chroma::color_to_hsv(color);
-    ESPHSVColor slow = Chroma::old_color_to_hsv(color);
-    chroma.log_rgb(buffer, sizeof(buffer), color);
-    printf("%s", buffer);
-    chroma.log_hsv(buffer, sizeof(buffer), slow);
-    printf("%s", buffer);
-    chroma.log_hsv(buffer, sizeof(buffer), quick);
-    printf("%s", buffer);
+    ESPHSVColor quick = Properties::color_to_hsv(color);
+    ESPHSVColor slow = Properties::old_color_to_hsv(color);
+    chroma.log_rgb(print_buffer, sizeof(print_buffer), color);
+    printf("%s", print_buffer);
+    chroma.log_hsv(print_buffer, sizeof(print_buffer), slow);
+    printf("%s", print_buffer);
+    chroma.log_hsv(print_buffer, sizeof(print_buffer), quick);
+    printf("%s", print_buffer);
     int8_t hue_diff = slow.hue - quick.hue;
     int8_t sat_diff = slow.saturation - quick.saturation;
     int8_t val_diff = slow.value - quick.value;
