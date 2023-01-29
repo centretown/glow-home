@@ -56,17 +56,6 @@ CMAKE_BINARY_DIR = /home/dave/src/glow-home/esp32-custom/test
 #=============================================================================
 # Targets provided globally by CMake.
 
-# Special rule for the target rebuild_cache
-rebuild_cache:
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running CMake to regenerate build system..."
-	/usr/bin/cmake -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR)
-.PHONY : rebuild_cache
-
-# Special rule for the target rebuild_cache
-rebuild_cache/fast: rebuild_cache
-
-.PHONY : rebuild_cache/fast
-
 # Special rule for the target edit_cache
 edit_cache:
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running CMake cache editor..."
@@ -88,6 +77,17 @@ test:
 test/fast: test
 
 .PHONY : test/fast
+
+# Special rule for the target rebuild_cache
+rebuild_cache:
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running CMake to regenerate build system..."
+	/usr/bin/cmake -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR)
+.PHONY : rebuild_cache
+
+# Special rule for the target rebuild_cache
+rebuild_cache/fast: rebuild_cache
+
+.PHONY : rebuild_cache/fast
 
 # The main all target
 all: cmake_check_build_system
@@ -122,64 +122,64 @@ depend:
 .PHONY : depend
 
 # Convenience name for target.
-tests/CMakeFiles/testpropertieslib.dir/rule:
-	cd /home/dave/src/glow-home/esp32-custom/test && $(MAKE) -f CMakeFiles/Makefile2 tests/CMakeFiles/testpropertieslib.dir/rule
-.PHONY : tests/CMakeFiles/testpropertieslib.dir/rule
+tests/CMakeFiles/test_properties.dir/rule:
+	cd /home/dave/src/glow-home/esp32-custom/test && $(MAKE) -f CMakeFiles/Makefile2 tests/CMakeFiles/test_properties.dir/rule
+.PHONY : tests/CMakeFiles/test_properties.dir/rule
 
 # Convenience name for target.
-testpropertieslib: tests/CMakeFiles/testpropertieslib.dir/rule
+test_properties: tests/CMakeFiles/test_properties.dir/rule
 
-.PHONY : testpropertieslib
+.PHONY : test_properties
 
 # fast build rule for target.
-testpropertieslib/fast:
-	cd /home/dave/src/glow-home/esp32-custom/test && $(MAKE) -f tests/CMakeFiles/testpropertieslib.dir/build.make tests/CMakeFiles/testpropertieslib.dir/build
-.PHONY : testpropertieslib/fast
+test_properties/fast:
+	cd /home/dave/src/glow-home/esp32-custom/test && $(MAKE) -f tests/CMakeFiles/test_properties.dir/build.make tests/CMakeFiles/test_properties.dir/build
+.PHONY : test_properties/fast
 
 # Convenience name for target.
-tests/CMakeFiles/testspinnerlib.dir/rule:
-	cd /home/dave/src/glow-home/esp32-custom/test && $(MAKE) -f CMakeFiles/Makefile2 tests/CMakeFiles/testspinnerlib.dir/rule
-.PHONY : tests/CMakeFiles/testspinnerlib.dir/rule
+tests/CMakeFiles/test_spinner.dir/rule:
+	cd /home/dave/src/glow-home/esp32-custom/test && $(MAKE) -f CMakeFiles/Makefile2 tests/CMakeFiles/test_spinner.dir/rule
+.PHONY : tests/CMakeFiles/test_spinner.dir/rule
 
 # Convenience name for target.
-testspinnerlib: tests/CMakeFiles/testspinnerlib.dir/rule
+test_spinner: tests/CMakeFiles/test_spinner.dir/rule
 
-.PHONY : testspinnerlib
+.PHONY : test_spinner
 
 # fast build rule for target.
-testspinnerlib/fast:
-	cd /home/dave/src/glow-home/esp32-custom/test && $(MAKE) -f tests/CMakeFiles/testspinnerlib.dir/build.make tests/CMakeFiles/testspinnerlib.dir/build
-.PHONY : testspinnerlib/fast
+test_spinner/fast:
+	cd /home/dave/src/glow-home/esp32-custom/test && $(MAKE) -f tests/CMakeFiles/test_spinner.dir/build.make tests/CMakeFiles/test_spinner.dir/build
+.PHONY : test_spinner/fast
 
 # Convenience name for target.
-tests/CMakeFiles/testchromalib.dir/rule:
-	cd /home/dave/src/glow-home/esp32-custom/test && $(MAKE) -f CMakeFiles/Makefile2 tests/CMakeFiles/testchromalib.dir/rule
-.PHONY : tests/CMakeFiles/testchromalib.dir/rule
+tests/CMakeFiles/test_chroma.dir/rule:
+	cd /home/dave/src/glow-home/esp32-custom/test && $(MAKE) -f CMakeFiles/Makefile2 tests/CMakeFiles/test_chroma.dir/rule
+.PHONY : tests/CMakeFiles/test_chroma.dir/rule
 
 # Convenience name for target.
-testchromalib: tests/CMakeFiles/testchromalib.dir/rule
+test_chroma: tests/CMakeFiles/test_chroma.dir/rule
 
-.PHONY : testchromalib
+.PHONY : test_chroma
 
 # fast build rule for target.
-testchromalib/fast:
-	cd /home/dave/src/glow-home/esp32-custom/test && $(MAKE) -f tests/CMakeFiles/testchromalib.dir/build.make tests/CMakeFiles/testchromalib.dir/build
-.PHONY : testchromalib/fast
+test_chroma/fast:
+	cd /home/dave/src/glow-home/esp32-custom/test && $(MAKE) -f tests/CMakeFiles/test_chroma.dir/build.make tests/CMakeFiles/test_chroma.dir/build
+.PHONY : test_chroma/fast
 
 # Convenience name for target.
-tests/CMakeFiles/testgridlib.dir/rule:
-	cd /home/dave/src/glow-home/esp32-custom/test && $(MAKE) -f CMakeFiles/Makefile2 tests/CMakeFiles/testgridlib.dir/rule
-.PHONY : tests/CMakeFiles/testgridlib.dir/rule
+tests/CMakeFiles/test_grid.dir/rule:
+	cd /home/dave/src/glow-home/esp32-custom/test && $(MAKE) -f CMakeFiles/Makefile2 tests/CMakeFiles/test_grid.dir/rule
+.PHONY : tests/CMakeFiles/test_grid.dir/rule
 
 # Convenience name for target.
-testgridlib: tests/CMakeFiles/testgridlib.dir/rule
+test_grid: tests/CMakeFiles/test_grid.dir/rule
 
-.PHONY : testgridlib
+.PHONY : test_grid
 
 # fast build rule for target.
-testgridlib/fast:
-	cd /home/dave/src/glow-home/esp32-custom/test && $(MAKE) -f tests/CMakeFiles/testgridlib.dir/build.make tests/CMakeFiles/testgridlib.dir/build
-.PHONY : testgridlib/fast
+test_grid/fast:
+	cd /home/dave/src/glow-home/esp32-custom/test && $(MAKE) -f tests/CMakeFiles/test_grid.dir/build.make tests/CMakeFiles/test_grid.dir/build
+.PHONY : test_grid/fast
 
 test_chroma.o: test_chroma.cpp.o
 
@@ -187,7 +187,7 @@ test_chroma.o: test_chroma.cpp.o
 
 # target to build an object file
 test_chroma.cpp.o:
-	cd /home/dave/src/glow-home/esp32-custom/test && $(MAKE) -f tests/CMakeFiles/testchromalib.dir/build.make tests/CMakeFiles/testchromalib.dir/test_chroma.cpp.o
+	cd /home/dave/src/glow-home/esp32-custom/test && $(MAKE) -f tests/CMakeFiles/test_chroma.dir/build.make tests/CMakeFiles/test_chroma.dir/test_chroma.cpp.o
 .PHONY : test_chroma.cpp.o
 
 test_chroma.i: test_chroma.cpp.i
@@ -196,7 +196,7 @@ test_chroma.i: test_chroma.cpp.i
 
 # target to preprocess a source file
 test_chroma.cpp.i:
-	cd /home/dave/src/glow-home/esp32-custom/test && $(MAKE) -f tests/CMakeFiles/testchromalib.dir/build.make tests/CMakeFiles/testchromalib.dir/test_chroma.cpp.i
+	cd /home/dave/src/glow-home/esp32-custom/test && $(MAKE) -f tests/CMakeFiles/test_chroma.dir/build.make tests/CMakeFiles/test_chroma.dir/test_chroma.cpp.i
 .PHONY : test_chroma.cpp.i
 
 test_chroma.s: test_chroma.cpp.s
@@ -205,7 +205,7 @@ test_chroma.s: test_chroma.cpp.s
 
 # target to generate assembly for a file
 test_chroma.cpp.s:
-	cd /home/dave/src/glow-home/esp32-custom/test && $(MAKE) -f tests/CMakeFiles/testchromalib.dir/build.make tests/CMakeFiles/testchromalib.dir/test_chroma.cpp.s
+	cd /home/dave/src/glow-home/esp32-custom/test && $(MAKE) -f tests/CMakeFiles/test_chroma.dir/build.make tests/CMakeFiles/test_chroma.dir/test_chroma.cpp.s
 .PHONY : test_chroma.cpp.s
 
 test_grid.o: test_grid.cpp.o
@@ -214,7 +214,7 @@ test_grid.o: test_grid.cpp.o
 
 # target to build an object file
 test_grid.cpp.o:
-	cd /home/dave/src/glow-home/esp32-custom/test && $(MAKE) -f tests/CMakeFiles/testgridlib.dir/build.make tests/CMakeFiles/testgridlib.dir/test_grid.cpp.o
+	cd /home/dave/src/glow-home/esp32-custom/test && $(MAKE) -f tests/CMakeFiles/test_grid.dir/build.make tests/CMakeFiles/test_grid.dir/test_grid.cpp.o
 .PHONY : test_grid.cpp.o
 
 test_grid.i: test_grid.cpp.i
@@ -223,7 +223,7 @@ test_grid.i: test_grid.cpp.i
 
 # target to preprocess a source file
 test_grid.cpp.i:
-	cd /home/dave/src/glow-home/esp32-custom/test && $(MAKE) -f tests/CMakeFiles/testgridlib.dir/build.make tests/CMakeFiles/testgridlib.dir/test_grid.cpp.i
+	cd /home/dave/src/glow-home/esp32-custom/test && $(MAKE) -f tests/CMakeFiles/test_grid.dir/build.make tests/CMakeFiles/test_grid.dir/test_grid.cpp.i
 .PHONY : test_grid.cpp.i
 
 test_grid.s: test_grid.cpp.s
@@ -232,7 +232,7 @@ test_grid.s: test_grid.cpp.s
 
 # target to generate assembly for a file
 test_grid.cpp.s:
-	cd /home/dave/src/glow-home/esp32-custom/test && $(MAKE) -f tests/CMakeFiles/testgridlib.dir/build.make tests/CMakeFiles/testgridlib.dir/test_grid.cpp.s
+	cd /home/dave/src/glow-home/esp32-custom/test && $(MAKE) -f tests/CMakeFiles/test_grid.dir/build.make tests/CMakeFiles/test_grid.dir/test_grid.cpp.s
 .PHONY : test_grid.cpp.s
 
 test_properties.o: test_properties.cpp.o
@@ -241,7 +241,7 @@ test_properties.o: test_properties.cpp.o
 
 # target to build an object file
 test_properties.cpp.o:
-	cd /home/dave/src/glow-home/esp32-custom/test && $(MAKE) -f tests/CMakeFiles/testpropertieslib.dir/build.make tests/CMakeFiles/testpropertieslib.dir/test_properties.cpp.o
+	cd /home/dave/src/glow-home/esp32-custom/test && $(MAKE) -f tests/CMakeFiles/test_properties.dir/build.make tests/CMakeFiles/test_properties.dir/test_properties.cpp.o
 .PHONY : test_properties.cpp.o
 
 test_properties.i: test_properties.cpp.i
@@ -250,7 +250,7 @@ test_properties.i: test_properties.cpp.i
 
 # target to preprocess a source file
 test_properties.cpp.i:
-	cd /home/dave/src/glow-home/esp32-custom/test && $(MAKE) -f tests/CMakeFiles/testpropertieslib.dir/build.make tests/CMakeFiles/testpropertieslib.dir/test_properties.cpp.i
+	cd /home/dave/src/glow-home/esp32-custom/test && $(MAKE) -f tests/CMakeFiles/test_properties.dir/build.make tests/CMakeFiles/test_properties.dir/test_properties.cpp.i
 .PHONY : test_properties.cpp.i
 
 test_properties.s: test_properties.cpp.s
@@ -259,7 +259,7 @@ test_properties.s: test_properties.cpp.s
 
 # target to generate assembly for a file
 test_properties.cpp.s:
-	cd /home/dave/src/glow-home/esp32-custom/test && $(MAKE) -f tests/CMakeFiles/testpropertieslib.dir/build.make tests/CMakeFiles/testpropertieslib.dir/test_properties.cpp.s
+	cd /home/dave/src/glow-home/esp32-custom/test && $(MAKE) -f tests/CMakeFiles/test_properties.dir/build.make tests/CMakeFiles/test_properties.dir/test_properties.cpp.s
 .PHONY : test_properties.cpp.s
 
 test_spinner.o: test_spinner.cpp.o
@@ -268,7 +268,7 @@ test_spinner.o: test_spinner.cpp.o
 
 # target to build an object file
 test_spinner.cpp.o:
-	cd /home/dave/src/glow-home/esp32-custom/test && $(MAKE) -f tests/CMakeFiles/testspinnerlib.dir/build.make tests/CMakeFiles/testspinnerlib.dir/test_spinner.cpp.o
+	cd /home/dave/src/glow-home/esp32-custom/test && $(MAKE) -f tests/CMakeFiles/test_spinner.dir/build.make tests/CMakeFiles/test_spinner.dir/test_spinner.cpp.o
 .PHONY : test_spinner.cpp.o
 
 test_spinner.i: test_spinner.cpp.i
@@ -277,7 +277,7 @@ test_spinner.i: test_spinner.cpp.i
 
 # target to preprocess a source file
 test_spinner.cpp.i:
-	cd /home/dave/src/glow-home/esp32-custom/test && $(MAKE) -f tests/CMakeFiles/testspinnerlib.dir/build.make tests/CMakeFiles/testspinnerlib.dir/test_spinner.cpp.i
+	cd /home/dave/src/glow-home/esp32-custom/test && $(MAKE) -f tests/CMakeFiles/test_spinner.dir/build.make tests/CMakeFiles/test_spinner.dir/test_spinner.cpp.i
 .PHONY : test_spinner.cpp.i
 
 test_spinner.s: test_spinner.cpp.s
@@ -286,7 +286,7 @@ test_spinner.s: test_spinner.cpp.s
 
 # target to generate assembly for a file
 test_spinner.cpp.s:
-	cd /home/dave/src/glow-home/esp32-custom/test && $(MAKE) -f tests/CMakeFiles/testspinnerlib.dir/build.make tests/CMakeFiles/testspinnerlib.dir/test_spinner.cpp.s
+	cd /home/dave/src/glow-home/esp32-custom/test && $(MAKE) -f tests/CMakeFiles/test_spinner.dir/build.make tests/CMakeFiles/test_spinner.dir/test_spinner.cpp.s
 .PHONY : test_spinner.cpp.s
 
 # Help Target
@@ -295,13 +295,13 @@ help:
 	@echo "... all (the default if no target is provided)"
 	@echo "... clean"
 	@echo "... depend"
-	@echo "... rebuild_cache"
-	@echo "... testpropertieslib"
-	@echo "... testspinnerlib"
 	@echo "... edit_cache"
 	@echo "... test"
-	@echo "... testchromalib"
-	@echo "... testgridlib"
+	@echo "... test_properties"
+	@echo "... test_spinner"
+	@echo "... test_chroma"
+	@echo "... rebuild_cache"
+	@echo "... test_grid"
 	@echo "... test_chroma.o"
 	@echo "... test_chroma.i"
 	@echo "... test_chroma.s"

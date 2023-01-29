@@ -94,7 +94,9 @@ namespace glow
     {
       for (uint16_t i = begin; i < end; ++i)
       {
-        Coordinates coord = grid.map_coordinates(grid.map(i));
+        uint16_t offset = grid.map(i);
+        light->get(offset) = chroma.map(i);
+        Coordinates coord = grid.map_coordinates(offset);
         p.present(coord.row, coord.column, chroma.map(i));
       }
       chroma.update_hue();
@@ -102,7 +104,8 @@ namespace glow
 
     void log_buffer(char *buffer, size_t buffer_size) const
     {
-      snprintf(buffer, buffer_size, "Spinner:\n\tinterval=%u\n", interval);
+      snprintf(buffer, buffer_size, "Spinner:\n\tinterval=%ums\tbegin=%u\tend=%u\n",
+       interval, begin, end);
       auto l = strlen(buffer);
       grid.log_buffer(buffer + l, buffer_size - l);
       l = strlen(buffer);

@@ -13,30 +13,30 @@ FetchContent_MakeAvailable(catch)
 # Adds Catch2::Catch2
 
 # Tests need to be added as executables first
-add_executable(testgridlib
+add_executable(test_grid
   test_grid.cpp)
 
-add_executable(testchromalib
+add_executable(test_chroma
   test_chroma.cpp)
 
-add_executable(testspinnerlib
+add_executable(test_spinner
   test_spinner.cpp)
 
-add_executable(testpropertieslib
+add_executable(test_properties
   test_properties.cpp)
 
 # Should be linked to the main library, as well as the Catch2 testing library
-target_link_libraries(testgridlib PRIVATE GlowLib Catch2::Catch2)
-target_link_libraries(testchromalib PRIVATE GlowLib Catch2::Catch2)
-target_link_libraries(testspinnerlib PRIVATE GlowLib Catch2::Catch2)
-target_link_libraries(testpropertieslib PRIVATE GlowLib Catch2::Catch2)
+target_link_libraries(test_grid PRIVATE GlowLib Catch2::Catch2)
+target_link_libraries(test_chroma PRIVATE GlowLib Catch2::Catch2)
+target_link_libraries(test_spinner PRIVATE GlowLib Catch2::Catch2)
+target_link_libraries(test_properties PRIVATE GlowLib Catch2::Catch2)
 
 # enable testing functionality
 enable_testing()
 
 # If you register a test, then ctest and make test will run it.
 # You can also run examples and check the output, as well.
-add_test(NAME gridtest COMMAND testgridlib) # Command can be a target
-add_test(NAME chromatest COMMAND testchromalib) # Command can be a target
-add_test(NAME spinnertest COMMAND testspinnerlib) # Command can be a target
-add_test(NAME propertytest COMMAND testpropertieslib) # Command can be a target
+add_test(NAME GRID COMMAND test_grid) # Command can be a target
+add_test(NAME CHROMA COMMAND test_chroma) # Command can be a target
+add_test(NAME SPINNER COMMAND test_spinner) # Command can be a target
+add_test(NAME PROPERTIES COMMAND test_properties) # Command can be a target

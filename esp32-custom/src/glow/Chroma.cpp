@@ -16,11 +16,13 @@ namespace glow
   void Chroma::log_buffer(char *buffer, size_t buffer_size) const
   {
     snprintf(buffer, buffer_size,
-             "Chroma:\n\tdelta=%d\n\trgb source=r%u g%u b%u target=r%u g%u b%u\n\thsv source=h%u s%u v%u target=h%u s%u v%u\n",
+             "Chroma:\n\tdelta=%d\n"
+             "\tsource=r%u g%u b%u\th%u s%u v%u\n"
+             "\ttarget=r%u g%u b%u\th%u s%u v%u\n",
              delta,
              rgb_source.red, rgb_source.green, rgb_source.blue,
-             rgb_target.red, rgb_target.green, rgb_target.blue,
              hsv_source.hue, hsv_source.saturation, hsv_source.value,
+             rgb_target.red, rgb_target.green, rgb_target.blue,
              hsv_target.hue, hsv_target.saturation, hsv_target.value);
   }
 

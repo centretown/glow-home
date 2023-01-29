@@ -33,7 +33,7 @@ namespace glow
       {property_names[TRANSFORM], TRANSFORM},
   };
 
-  PropertyItem Properties::io_items[PROPERTY_COUNT] = {
+  ExchangeItem<Properties> Properties::exchange[PROPERTY_COUNT] = {
       {"# update interval in ms",
        [](Properties &p, char *value, size_t value_length)
        { snprintf(value, value_length, "%u", p.interval); },
@@ -123,7 +123,7 @@ namespace glow
       return false;
     }
     auto val = *iter;
-    io_items[val.second].set(*this, value);
+    exchange[val.second].set(*this, value);
     return true;
   }
 
@@ -135,7 +135,7 @@ namespace glow
       return false;
     }
     auto val = *iter;
-    io_items[val.second].get(*this, value, value_length);
+    exchange[val.second].get(*this, value, value_length);
     return true;
   }
 

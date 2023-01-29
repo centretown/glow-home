@@ -21,7 +21,7 @@ TEST_CASE("Properties Basic", "[properties_basic]")
   uint32_t interval = atoi(buffer);
   REQUIRE(properties.interval == interval);
 
-  properties.scan = 5.0;
+  properties.scan = 5;
   REQUIRE(properties.get("scan", buffer, sizeof(buffer)));
   printf("scan=%s\n", buffer);
   uint16_t scan_width = atoi(buffer);
@@ -106,8 +106,8 @@ TEST_CASE("Properties GetKey", "[properties_get_key]")
   {
     properties.get_key(key, buffer, sizeof(buffer));
     printf("%s=", buffer);
-    auto io = properties.get_io(key);
-    io.get(properties, buffer, sizeof(buffer));
+    auto exchanger = properties.get_exchanger(key);
+    exchanger.get(properties, buffer, sizeof(buffer));
     printf("%s\n", buffer);
   }
 }

@@ -70,9 +70,6 @@ TEST_CASE("Chroma Basic", "[chroma_basic]")
     int8_t hue_diff = slow.hue - quick.hue;
     int8_t sat_diff = slow.saturation - quick.saturation;
     int8_t val_diff = slow.value - quick.value;
-    // CHECK((hue_diff == 0));
-    // CHECK((sat_diff == 0));
-    // CHECK((val_diff == 0));
     CHECK((hue_diff <= 1 && hue_diff >= -1));
     CHECK((sat_diff <= 1 && sat_diff >= -1));
     CHECK((val_diff <= 1 && val_diff >= -1));

@@ -128,7 +128,8 @@ namespace glow
   void Grid::log_buffer(char *buffer, size_t buffer_size) const
   {
     snprintf(buffer, buffer_size,
-             "Grid:\n\tlength=%u rows=%u columns=%u\n\tfirst=%u last=%u offset=%u\n",
+             "Grid:\n\tlength=%u\trows=%u  \tcolumns=%u\n"
+             "\tfirst=%u\tlast=%u\toffset=%u\n",
              length, rows, columns,
              pivot.first, pivot.last, pivot.offset);
   }

@@ -512,56 +512,56 @@ ContinuousSubmit/fast:
 .PHONY : ContinuousSubmit/fast
 
 #=============================================================================
-# Target rules for targets named testpropertieslib
+# Target rules for targets named test_properties
 
 # Build rule for target.
-testpropertieslib: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 testpropertieslib
-.PHONY : testpropertieslib
+test_properties: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 test_properties
+.PHONY : test_properties
 
 # fast build rule for target.
-testpropertieslib/fast:
-	$(MAKE) -f tests/CMakeFiles/testpropertieslib.dir/build.make tests/CMakeFiles/testpropertieslib.dir/build
-.PHONY : testpropertieslib/fast
+test_properties/fast:
+	$(MAKE) -f tests/CMakeFiles/test_properties.dir/build.make tests/CMakeFiles/test_properties.dir/build
+.PHONY : test_properties/fast
 
 #=============================================================================
-# Target rules for targets named testspinnerlib
+# Target rules for targets named test_spinner
 
 # Build rule for target.
-testspinnerlib: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 testspinnerlib
-.PHONY : testspinnerlib
+test_spinner: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 test_spinner
+.PHONY : test_spinner
 
 # fast build rule for target.
-testspinnerlib/fast:
-	$(MAKE) -f tests/CMakeFiles/testspinnerlib.dir/build.make tests/CMakeFiles/testspinnerlib.dir/build
-.PHONY : testspinnerlib/fast
+test_spinner/fast:
+	$(MAKE) -f tests/CMakeFiles/test_spinner.dir/build.make tests/CMakeFiles/test_spinner.dir/build
+.PHONY : test_spinner/fast
 
 #=============================================================================
-# Target rules for targets named testchromalib
+# Target rules for targets named test_chroma
 
 # Build rule for target.
-testchromalib: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 testchromalib
-.PHONY : testchromalib
+test_chroma: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 test_chroma
+.PHONY : test_chroma
 
 # fast build rule for target.
-testchromalib/fast:
-	$(MAKE) -f tests/CMakeFiles/testchromalib.dir/build.make tests/CMakeFiles/testchromalib.dir/build
-.PHONY : testchromalib/fast
+test_chroma/fast:
+	$(MAKE) -f tests/CMakeFiles/test_chroma.dir/build.make tests/CMakeFiles/test_chroma.dir/build
+.PHONY : test_chroma/fast
 
 #=============================================================================
-# Target rules for targets named testgridlib
+# Target rules for targets named test_grid
 
 # Build rule for target.
-testgridlib: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 testgridlib
-.PHONY : testgridlib
+test_grid: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 test_grid
+.PHONY : test_grid
 
 # fast build rule for target.
-testgridlib/fast:
-	$(MAKE) -f tests/CMakeFiles/testgridlib.dir/build.make tests/CMakeFiles/testgridlib.dir/build
-.PHONY : testgridlib/fast
+test_grid/fast:
+	$(MAKE) -f tests/CMakeFiles/test_grid.dir/build.make tests/CMakeFiles/test_grid.dir/build
+.PHONY : test_grid/fast
 
 glow.o: glow.cpp.o
 
@@ -752,33 +752,6 @@ home/dave/src/glow-home/esp32-custom/src/glow/Properties.cpp.s:
 	$(MAKE) -f CMakeFiles/GlowLib.dir/build.make CMakeFiles/GlowLib.dir/home/dave/src/glow-home/esp32-custom/src/glow/Properties.cpp.s
 .PHONY : home/dave/src/glow-home/esp32-custom/src/glow/Properties.cpp.s
 
-home/dave/src/glow-home/esp32-custom/src/glow/TestLight.o: home/dave/src/glow-home/esp32-custom/src/glow/TestLight.cpp.o
-
-.PHONY : home/dave/src/glow-home/esp32-custom/src/glow/TestLight.o
-
-# target to build an object file
-home/dave/src/glow-home/esp32-custom/src/glow/TestLight.cpp.o:
-	$(MAKE) -f CMakeFiles/GlowLib.dir/build.make CMakeFiles/GlowLib.dir/home/dave/src/glow-home/esp32-custom/src/glow/TestLight.cpp.o
-.PHONY : home/dave/src/glow-home/esp32-custom/src/glow/TestLight.cpp.o
-
-home/dave/src/glow-home/esp32-custom/src/glow/TestLight.i: home/dave/src/glow-home/esp32-custom/src/glow/TestLight.cpp.i
-
-.PHONY : home/dave/src/glow-home/esp32-custom/src/glow/TestLight.i
-
-# target to preprocess a source file
-home/dave/src/glow-home/esp32-custom/src/glow/TestLight.cpp.i:
-	$(MAKE) -f CMakeFiles/GlowLib.dir/build.make CMakeFiles/GlowLib.dir/home/dave/src/glow-home/esp32-custom/src/glow/TestLight.cpp.i
-.PHONY : home/dave/src/glow-home/esp32-custom/src/glow/TestLight.cpp.i
-
-home/dave/src/glow-home/esp32-custom/src/glow/TestLight.s: home/dave/src/glow-home/esp32-custom/src/glow/TestLight.cpp.s
-
-.PHONY : home/dave/src/glow-home/esp32-custom/src/glow/TestLight.s
-
-# target to generate assembly for a file
-home/dave/src/glow-home/esp32-custom/src/glow/TestLight.cpp.s:
-	$(MAKE) -f CMakeFiles/GlowLib.dir/build.make CMakeFiles/GlowLib.dir/home/dave/src/glow-home/esp32-custom/src/glow/TestLight.cpp.s
-.PHONY : home/dave/src/glow-home/esp32-custom/src/glow/TestLight.cpp.s
-
 home/dave/src/glow-home/esp32-custom/src/glow/base.o: home/dave/src/glow-home/esp32-custom/src/glow/base.cpp.o
 
 .PHONY : home/dave/src/glow-home/esp32-custom/src/glow/base.o
@@ -845,10 +818,10 @@ help:
 	@echo "... ContinuousMemCheck"
 	@echo "... ContinuousTest"
 	@echo "... ContinuousSubmit"
-	@echo "... testpropertieslib"
-	@echo "... testspinnerlib"
-	@echo "... testchromalib"
-	@echo "... testgridlib"
+	@echo "... test_properties"
+	@echo "... test_spinner"
+	@echo "... test_chroma"
+	@echo "... test_grid"
 	@echo "... glow.o"
 	@echo "... glow.i"
 	@echo "... glow.s"
@@ -870,9 +843,6 @@ help:
 	@echo "... home/dave/src/glow-home/esp32-custom/src/glow/Properties.o"
 	@echo "... home/dave/src/glow-home/esp32-custom/src/glow/Properties.i"
 	@echo "... home/dave/src/glow-home/esp32-custom/src/glow/Properties.s"
-	@echo "... home/dave/src/glow-home/esp32-custom/src/glow/TestLight.o"
-	@echo "... home/dave/src/glow-home/esp32-custom/src/glow/TestLight.i"
-	@echo "... home/dave/src/glow-home/esp32-custom/src/glow/TestLight.s"
 	@echo "... home/dave/src/glow-home/esp32-custom/src/glow/base.o"
 	@echo "... home/dave/src/glow-home/esp32-custom/src/glow/base.i"
 	@echo "... home/dave/src/glow-home/esp32-custom/src/glow/base.s"

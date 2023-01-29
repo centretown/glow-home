@@ -11,22 +11,15 @@ using esphome::Color;
 using esphome::light::ESPHSVColor;
 
 #include "HSVColor.h"
+#include "ExchangeItem.h"
 
 namespace glow
 {
-  struct Properties;
-  struct PropertyItem
-  {
-    std::string comment;
-    void (*get)(Properties &p, char *value, size_t value_length);
-    void (*set)(Properties &p, char *value);
-  };
-
   struct Properties
   {
 #ifndef USE_ESP32
   private:
-    static PropertyItem io_items[];
+    static ExchangeItem<Properties> exchange[];
 #endif
 
   public:
@@ -164,19 +157,19 @@ namespace glow
     static std::string property_names[];
     static std::unordered_map<std::string, uint8_t> property_map;
 
-    static PropertyItem &get_io(uint8_t id)
+    static ExchangeItem<Properties> &get_exchanger(uint8_t id)
     {
       if (id < PROPERTY_COUNT)
       {
-        return io_items[id];
+        return exchange[id];
       }
-      return io_items[0];
+      return exchange[0];
     }
     static std::string get_comment(uint8_t id)
     {
       if (id < PROPERTY_COUNT)
       {
-        return io_items[id].comment;
+        return exchange[id].comment;
       }
       return "";
     }

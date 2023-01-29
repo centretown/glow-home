@@ -11,10 +11,10 @@ namespace glow
   {
   private:
     static const size_t MAX_LIGHT_SIZE = 4096;
-    static Color colors[MAX_LIGHT_SIZE];
+    Color colors[MAX_LIGHT_SIZE] = {{0, 0, 0}};
 
   public:
-    Color &get(uint16_t index)
+    Color &get(uint16_t index) ALWAYS_INLINE
     {
       return colors[index % MAX_LIGHT_SIZE];
     }

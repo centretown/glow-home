@@ -22,6 +22,7 @@ add_library(GlowLib
   ../src/glow/base.h
   ../src/glow/HSVColor.cpp
   ../src/glow/HSVColor.h
+  ../src/glow/ExchangeItem.h
   ../src/glow/Properties.cpp
   ../src/glow/Properties.h
   ../src/glow/Parser.cpp
@@ -33,7 +34,6 @@ add_library(GlowLib
   ../src/glow/Chroma.h
   ../src/glow/TestTimer.h
   ../src/glow/TestLight.h
-  ../src/glow/TestLight.cpp
   ../src/glow/TestSpinner.h
 )
 

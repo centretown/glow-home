@@ -76,7 +76,7 @@ namespace glow
       {
         properties.get_key(id, key, sizeof(key));
 
-        auto io = properties.get_io(id);
+        auto io = properties.get_exchanger(id);
         io.get(properties, value, sizeof(value));
         fprintf(handle, "%s\n%s=%s\n\n",
                 io.comment.c_str(), key, value);
