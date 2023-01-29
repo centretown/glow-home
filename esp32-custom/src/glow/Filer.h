@@ -1,6 +1,8 @@
 #pragma once
 
 #include "base.h"
+#include "Parser.h"
+// #include "Properties.h"
 
 namespace glow
 {
@@ -8,27 +10,18 @@ namespace glow
   {
   private:
     char key[40];
-    char value[20];
+    char value[40];
+    Parser parser;
 
   public:
-    bool split(char *buffer)
+    template <typename PROPERTIES>
+    bool read_create(const char *filename, PROPERTIES &properties)
     {
-      const char *delim = " ,=:{}'\"\n\t";
-      char *pch = strtok(buffer, delim);
-      if (pch == NULL)
+      if (read(filename, properties))
       {
-        return false;
+        return true;
       }
-      strncpy(key, pch, sizeof(key));
-
-      pch = strtok(NULL, delim);
-      if (pch == NULL)
-      {
-        return false;
-      }
-      strncpy(value, pch, sizeof(value));
-
-      return true;
+      return write(filename, properties);
     }
 
     template <typename PROPERTIES>
@@ -37,16 +30,32 @@ namespace glow
       FILE *handle = fopen(filename, "r");
       if (handle == NULL)
       {
-        return write(filename, properties);
+        return false;
       }
 
       char buffer[60] = {0};
       while (fgets(buffer, sizeof(buffer), handle))
       {
-        if (split(buffer))
+        auto status = parser.parse(buffer,
+                                   key, sizeof(key),
+                                   value, sizeof(value));
+        switch (status)
         {
-          // printf("key=%s value=%s\n", key, value);
+        case Parser::Value:
           properties.set(key, value);
+          break;
+
+        case Parser::Layer:
+          printf("add layer %s\n", value);
+          break;
+
+        case Parser::Incomplete:
+          printf("Incomplete %s\n", key);
+          break;
+
+        case Parser::Ignore:
+        default:
+          break;
         }
       }
 
@@ -66,8 +75,11 @@ namespace glow
       for (uint8_t id = 0; id < properties.count(); id++)
       {
         properties.get_key(id, key, sizeof(key));
-        properties.get(id, value, sizeof(value));
-        fprintf(handle, "%s=%s\n", key, value);
+
+        auto io = properties.get_io(id);
+        io.get(properties, value, sizeof(value));
+        fprintf(handle, "%s\n%s=%s\n\n",
+                io.comment.c_str(), key, value);
       }
 
       fclose(handle);

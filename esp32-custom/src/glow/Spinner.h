@@ -13,6 +13,9 @@ namespace glow
   {
   private:
     LIGHT *light = nullptr;
+    // Spinner<LIGHT, TIMER> *next = nullptr;
+    uint16_t begin = 0;
+    uint16_t end = 0;
 
   public:
     Grid grid;
@@ -32,9 +35,37 @@ namespace glow
       }
 
       interval = properties.interval;
+      set_range(properties);
+
       grid.setup(properties);
       chroma.setup(properties);
-      scanner.setup(properties.scan_width);
+      scanner.setup(properties.scan);
+    }
+
+    void set_range(Properties &properties)
+    {
+      begin = properties.begin;
+      end = properties.end;
+
+      if (end < begin)
+      {
+        std::swap(begin, end);
+      }
+
+      if (end == 0 || end > properties.length)
+      {
+        end = properties.length;
+      }
+
+      if (begin >= properties.length)
+      {
+        begin = properties.length - 1;
+      }
+    }
+
+    bool add_layer(Properties &properties)
+    {
+      return false;
     }
 
     bool is_ready() ALWAYS_INLINE
@@ -50,11 +81,6 @@ namespace glow
 
     void spin() ALWAYS_INLINE
     {
-      spin(0, grid.length);
-    }
-
-    void spin(uint16_t begin, uint16_t end) ALWAYS_INLINE
-    {
       for (uint16_t i = begin; i < end; ++i)
       {
         uint16_t offset = grid.map(i);
@@ -65,12 +91,6 @@ namespace glow
 
     template <typename PRESENTER>
     void spin(PRESENTER &p)
-    {
-      spin(0, grid.length, p);
-    }
-
-    template <typename PRESENTER>
-    void spin(uint16_t begin, uint16_t end, PRESENTER &p)
     {
       for (uint16_t i = begin; i < end; ++i)
       {

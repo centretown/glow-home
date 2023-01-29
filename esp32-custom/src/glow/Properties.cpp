@@ -2,13 +2,16 @@
 
 namespace glow
 {
+#ifndef USE_ESP32
   std::string Properties::property_names[] = {
       "interval",
-      "scan_width",
+      "scan",
       "origin",
       "orientation",
       "length",
       "rows",
+      "begin",
+      "end",
       "source",
       "target",
       "shift",
@@ -17,15 +20,99 @@ namespace glow
 
   std::unordered_map<std::string, uint8_t> Properties::property_map = {
       {property_names[INTERVAL], INTERVAL},
-      {property_names[SCAN_WIDTH], SCAN_WIDTH},
+      {property_names[SCAN], SCAN},
       {property_names[ORIGIN], ORIGIN},
       {property_names[ORIENTATION], ORIENTATION},
       {property_names[LENGTH], LENGTH},
       {property_names[ROWS], ROWS},
+      {property_names[BEGIN], BEGIN},
+      {property_names[END], END},
       {property_names[SOURCE], SOURCE},
       {property_names[TARGET], TARGET},
       {property_names[SHIFT], SHIFT},
       {property_names[TRANSFORM], TRANSFORM},
+  };
+
+  PropertyItem Properties::io_items[PROPERTY_COUNT] = {
+      {"# update interval in ms",
+       [](Properties &p, char *value, size_t value_length)
+       { snprintf(value, value_length, "%u", p.interval); },
+       [](Properties &p, char *value)
+       { sscanf(value, "%12u", &p.interval); }},
+
+      {"# don't scan=0, otherwise scan=n pixels",
+       [](Properties &p, char *value, size_t value_length)
+       { snprintf(value, value_length, "%u", p.scan); },
+       [](Properties &p, char *value)
+       { sscanf(value, "%12hu", &p.scan); }},
+
+      {"# top-left=0, top-right=1, bottom-left=2, bottom-right=3",
+       [](Properties &p, char *value, size_t value_length)
+       { snprintf(value, value_length, "%u", p.origin); },
+       [](Properties &p, char *value)
+       { sscanf(value, "%12hhu", &p.origin); }},
+
+      {"# horizontal=0, vertical=1, diagonal=2",
+       [](Properties &p, char *value, size_t value_length)
+       { snprintf(value, value_length, "%u", p.orientation); },
+       [](Properties &p, char *value)
+       { sscanf(value, "%12hhu", &p.orientation); }},
+
+      {"# number of pixel led's",
+       [](Properties &p, char *value, size_t value_length)
+       { snprintf(value, value_length, "%u", p.length); },
+       [](Properties &p, char *value)
+       { sscanf(value, "%12hu", &p.length); }},
+
+      {"# number of rows in grid",
+       [](Properties &p, char *value, size_t value_length)
+       { snprintf(value, value_length, "%u", p.rows); },
+       [](Properties &p, char *value)
+       { sscanf(value, "%12hu", &p.rows); }},
+
+      {"# where to begin",
+       [](Properties &p, char *value, size_t value_length)
+       { snprintf(value, value_length, "%u", p.begin); },
+       [](Properties &p, char *value)
+       { sscanf(value, "%12hu", &p.begin); }},
+
+      {"# where to end",
+       [](Properties &p, char *value, size_t value_length)
+       { snprintf(value, value_length, "%u", p.end); },
+       [](Properties &p, char *value)
+       { sscanf(value, "%12hu", &p.end); }},
+
+      {"# gradient source: 0xVVSSHH (V-value, S-saturation, H-hue)",
+       [](Properties &p, char *value, size_t value_length)
+       { snprintf(value, value_length, "0x%x", p.hsv_to_u32(p.source)); },
+       [](Properties &p, char *value)
+       {
+         uint32_t hsv_raw = 0;
+         sscanf(value, "%12x", &hsv_raw);
+         p.source = p.u32_to_hsv(hsv_raw);
+       }},
+
+      {"# gradient target: 0xVVSSHH (V-value, S-saturation, H-hue)",
+       [](Properties &p, char *value, size_t value_length)
+       { snprintf(value, value_length, "0x%x", p.hsv_to_u32(p.target)); },
+       [](Properties &p, char *value)
+       {
+         uint32_t hsv_raw = 0;
+         sscanf(value, "%12x", &hsv_raw);
+         p.target = p.u32_to_hsv(hsv_raw);
+       }},
+
+      {"# amount to shift hue",
+       [](Properties &p, char *value, size_t value_length)
+       { snprintf(value, value_length, "%d", p.shift); },
+       [](Properties &p, char *value)
+       { sscanf(value, "%12hd", &p.shift); }},
+
+      {"# transform",
+       [](Properties &p, char *value, size_t value_length)
+       { snprintf(value, value_length, "%u", p.transform); },
+       [](Properties &p, char *value)
+       { sscanf(value, "%12hhu", &p.transform); }},
   };
 
   bool Properties::set(const char *key, char *value)
@@ -36,7 +123,8 @@ namespace glow
       return false;
     }
     auto val = *iter;
-    set(val.second, value);
+    // set(val.second, value);
+    io_items[val.second].set(*this, value);
     return true;
   }
 
@@ -48,86 +136,28 @@ namespace glow
       return false;
     }
     auto val = *iter;
-    get(val.second, value, value_length);
+    io_items[val.second].get(*this, value, value_length);
+    // get(val.second, value, value_length);
     return true;
   }
 
-  void Properties::set(uint8_t key, char *value)
-  {
-    uint32_t hsv_raw = 0;
-    switch (key)
-    {
-    case INTERVAL:
-      sscanf(value, "%8u", &interval);
-      break;
-    case SCAN_WIDTH:
-      sscanf(value, "%8hu", &scan_width);
-      break;
-    case ORIGIN:
-      sscanf(value, "%8hhu", &origin);
-      break;
-    case ORIENTATION:
-      sscanf(value, "%8hhu", &orientation);
-      break;
-    case LENGTH:
-      sscanf(value, "%8hu", &length);
-      break;
-    case ROWS:
-      sscanf(value, "%8hu", &rows);
-      break;
-    case SOURCE:
-      sscanf(value, "%8u", &hsv_raw);
-      source = u32_to_hsv(hsv_raw);
-      break;
-    case TARGET:
-      sscanf(value, "%8u", &hsv_raw);
-      target = u32_to_hsv(hsv_raw);
-      break;
-    case SHIFT:
-      sscanf(value, "%8hd", &shift);
-      break;
-    case TRANSFORM:
-      break;
-    default:
-      break;
-    }
-  }
+#endif
 
-  void Properties::get(uint8_t key, char *value, size_t value_length)
+  Properties &Properties::copy(Properties &p)
   {
-    switch (key)
-    {
-    case INTERVAL:
-      snprintf(value, value_length, "%u", interval);
-      break;
-    case SCAN_WIDTH:
-      snprintf(value, value_length, "%u", scan_width);
-      break;
-    case ORIGIN:
-      snprintf(value, value_length, "%u", origin);
-      break;
-    case ORIENTATION:
-      snprintf(value, value_length, "%u", orientation);
-      break;
-    case LENGTH:
-      snprintf(value, value_length, "%u", length);
-      break;
-    case ROWS:
-      snprintf(value, value_length, "%u", rows);
-      break;
-    case SOURCE:
-      snprintf(value, value_length, "%u", hsv_to_u32(source));
-      break;
-    case TARGET:
-      snprintf(value, value_length, "%u", hsv_to_u32(target));
-      break;
-    case SHIFT:
-      snprintf(value, value_length, "%d", shift);
-      break;
-    case TRANSFORM:
-      snprintf(value, value_length, "%u", transform);
-      break;
-    }
+    interval = p.interval;
+    scan = p.scan;
+    origin = p.origin;
+    orientation = p.orientation;
+    length = p.length;
+    rows = p.rows;
+    begin = p.begin;
+    end = p.end;
+    source = p.source;
+    target = p.target;
+    shift = p.shift;
+    transform = p.transform;
+    return *this;
   }
 
   constexpr uint16_t byte_limit = 0xff;
@@ -135,11 +165,11 @@ namespace glow
   constexpr uint16_t hue_segment = hue_limit / 6;
 
   constexpr uint16_t hue_red = 0;
-  constexpr uint16_t hue_yellow = hue_segment;
+  // constexpr uint16_t hue_yellow = hue_segment;
   constexpr uint16_t hue_green = hue_limit / 3;
-  constexpr uint16_t hue_cyan = hue_limit / 2;
+  // constexpr uint16_t hue_cyan = hue_limit / 2;
   constexpr uint16_t hue_blue = hue_limit * 2 / 3;
-  constexpr uint16_t hue_magenta = hue_limit * 5 / 6;
+  // constexpr uint16_t hue_magenta = hue_limit * 5 / 6;
 
   ESPHSVColor Properties::color_to_hsv(Color color)
   {

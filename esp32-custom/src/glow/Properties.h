@@ -1,5 +1,6 @@
 #pragma once
 #include <unordered_map>
+#include <array>
 #include <string>
 
 #include "base.h"
@@ -22,16 +23,29 @@ namespace glow
         uint8_t v;
         uint8_t u;
       };
-      uint32_t raw_32 = 0;
+      uint32_t raw_32;
     };
-    GlowHSVColor(uint32_t raw_32) ALWAYS_INLINE : raw_32(raw_32) {}
-    GlowHSVColor(uint8_t h = 0, uint8_t s = 0, uint8_t v = 0) ALWAYS_INLINE : h(h), s(s), v(v) {}
+    GlowHSVColor(uint32_t raw_32 = 0) ALWAYS_INLINE : raw_32(raw_32) {}
     GlowHSVColor(ESPHSVColor hsv) ALWAYS_INLINE : h(hsv.h), s(hsv.s), v(hsv.v), u(0) {}
     ESPHSVColor esp_hsv() ALWAYS_INLINE { return ESPHSVColor(h, s, v); }
   };
 
+  struct Properties;
+  struct PropertyItem
+  {
+    std::string comment;
+    void (*get)(Properties &p, char *value, size_t value_length);
+    void (*set)(Properties &p, char *value);
+  };
+
   struct Properties
   {
+#ifndef USE_ESP32
+  private:
+    static PropertyItem io_items[];
+#endif
+
+  public:
     enum : uint8_t
     {
       TopLeft,
@@ -69,14 +83,17 @@ namespace glow
       TetradicC,     // ff0000 -> 8000ff
     };
 
+#ifndef USE_ESP32
     enum : uint8_t
     {
       INTERVAL,
-      SCAN_WIDTH,
+      SCAN,
       ORIGIN,
       ORIENTATION,
       LENGTH,
       ROWS,
+      BEGIN,
+      END,
       SOURCE,
       TARGET,
       SHIFT,
@@ -84,16 +101,23 @@ namespace glow
       PROPERTY_COUNT,
     };
 
+#endif
+
     uint32_t interval = 48;
-    uint16_t scan_width = 0;
+    uint16_t scan = 0;
     uint8_t origin = TopLeft;
     uint8_t orientation = Horizontal;
     uint16_t length = 36;
     uint16_t rows = 4;
+    uint16_t begin = 0;
+    uint16_t end = 36;
     ESPHSVColor source{0, 255, 255};
     ESPHSVColor target{127, 0, 255};
     int16_t shift = -1;
     uint8_t transform = AsIs;
+
+  public:
+    Properties &copy(Properties &p);
 
     void set_grid(uint16_t len, uint16_t row_count, uint8_t org, uint8_t orient)
     {
@@ -121,6 +145,7 @@ namespace glow
       target = t;
     }
 
+#ifndef USE_ESP32
     bool get_key(uint8_t key, char *buffer, size_t buffer_length)
     {
       if (key >= PROPERTY_COUNT)
@@ -134,9 +159,9 @@ namespace glow
 
     // generic property interface
     bool set(const char *key, char *value);
-    void set(uint8_t key, char *value);
+    // void set(uint8_t key, char *value);
     bool get(const char *key, char *value, size_t value_length);
-    void get(uint8_t key, char *value, size_t value_length);
+    // void get(uint8_t key, char *value, size_t value_length);
 
     static bool check(const char *key)
     {
@@ -155,6 +180,25 @@ namespace glow
     static std::string property_names[];
     static std::unordered_map<std::string, uint8_t> property_map;
 
+    static PropertyItem &get_io(uint8_t id)
+    {
+      if (id < PROPERTY_COUNT)
+      {
+        return io_items[id];
+      }
+      return io_items[0];
+    }
+    static std::string get_comment(uint8_t id)
+    {
+      if (id < PROPERTY_COUNT)
+      {
+        return io_items[id].comment;
+      }
+      return "";
+    }
+    // static std::string comments[];
+#endif
+
     static uint32_t hsv_to_u32(ESPHSVColor hsv) ALWAYS_INLINE
     {
       return GlowHSVColor(hsv).raw_32;
@@ -170,5 +214,20 @@ namespace glow
     static ESPHSVColor old_color_to_hsv(Color color);
 #endif
     static ESPHSVColor color_to_hsv(Color color);
+
+    // static std::forward_list<Properties>
+
+    // void add_layer(Properties &properties)
+    // {
+    //   auto link = this;
+    //   for (; link->next != nullptr; link = link->next)
+    //     ;
+    //   link->next = &properties;
+    // }
+
+    // Properties* next_layer() {
+    //   return next;
+    // }
   };
+
 }

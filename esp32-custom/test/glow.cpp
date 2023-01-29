@@ -1,5 +1,7 @@
 #include <iostream>
 #include <signal.h>
+#include <chrono>
+#include <thread>
 
 #include "GlowConfig.h"
 
@@ -25,10 +27,11 @@ void spin(Properties &properties)
 
   while (true)
   {
-    if (spinner.is_ready())
-    {
+    // if (spinner.is_ready())
+    // {
       spinner.spin(presenter);
-    }
+    // }
+    std::this_thread::sleep_for(std::chrono::milliseconds(spinner.interval));
   }
 }
 
@@ -75,7 +78,7 @@ int main(int argc, char **argv)
 
   Properties properties;
   Filer filer;
-  filer.read(file_name, properties);
+  filer.read_create(file_name, properties);
 
   spin(properties);
 

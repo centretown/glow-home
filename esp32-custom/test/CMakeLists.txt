@@ -22,6 +22,9 @@ add_library(GlowLib
   ../src/glow/base.h
   ../src/glow/Properties.cpp
   ../src/glow/Properties.h
+  ../src/glow/Parser.cpp
+  ../src/glow/Parser.h
+  ../src/glow/Filer.h
   ../src/glow/Grid.cpp
   ../src/glow/Grid.h
   ../src/glow/Chroma.cpp

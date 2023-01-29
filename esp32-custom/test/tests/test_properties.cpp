@@ -21,11 +21,11 @@ TEST_CASE("Properties Basic", "[properties_basic]")
   uint32_t interval = atoi(buffer);
   REQUIRE(properties.interval == interval);
 
-  properties.scan_width = 5.0;
-  REQUIRE(properties.get("scan_width", buffer, sizeof(buffer)));
-  printf("scan_width=%s\n", buffer);
+  properties.scan = 5.0;
+  REQUIRE(properties.get("scan", buffer, sizeof(buffer)));
+  printf("scan=%s\n", buffer);
   uint16_t scan_width = atoi(buffer);
-  REQUIRE(properties.scan_width == scan_width);
+  REQUIRE(properties.scan == scan_width);
 
   properties.origin = Properties::BottomRight;
   REQUIRE(properties.get("origin", buffer, sizeof(buffer)));
@@ -51,16 +51,30 @@ TEST_CASE("Properties Basic", "[properties_basic]")
   uint16_t rows = atoi(buffer);
   REQUIRE(properties.rows == rows);
 
+  properties.begin = 2;
+  REQUIRE(properties.get("begin", buffer, sizeof(buffer)));
+  printf("begin=%s\n", buffer);
+  uint16_t begin = atoi(buffer);
+  REQUIRE(properties.begin == begin);
+
+  properties.begin = 35;
+  REQUIRE(properties.get("end", buffer, sizeof(buffer)));
+  printf("end=%s\n", buffer);
+  uint16_t end = atoi(buffer);
+  REQUIRE(properties.end == end);
+
   properties.source = ESPHSVColor(0, 255, 127);
   REQUIRE(properties.get("source", buffer, sizeof(buffer)));
   printf("source=%s\n", buffer);
-  uint32_t source = atoi(buffer);
+  uint32_t source = 0;
+  sscanf(buffer, "%8x", &source);
   REQUIRE(properties.hsv_to_u32(properties.source) == source);
 
   properties.target = ESPHSVColor(85, 0, 255);
   REQUIRE(properties.get("target", buffer, sizeof(buffer)));
   printf("target=%s\n", buffer);
-  uint32_t target = atoi(buffer);
+  uint32_t target = 0;
+  sscanf(buffer, "%8x", &target);
   REQUIRE(properties.hsv_to_u32(properties.target) == target);
 
   properties.shift = -2;
@@ -92,7 +106,8 @@ TEST_CASE("Properties GetKey", "[properties_get_key]")
   {
     properties.get_key(key, buffer, sizeof(buffer));
     printf("%s=", buffer);
-    properties.get(key, buffer, sizeof(buffer));
+    auto io = properties.get_io(key);
+    io.get(properties, buffer, sizeof(buffer));
     printf("%s\n", buffer);
   }
 }
@@ -103,7 +118,7 @@ TEST_CASE("Filer Write/Read Properties", "[filer_write_read_properties]")
 {
   Properties properties;
   properties.interval = 22;
-  properties.scan_width = 5;
+  properties.scan = 5;
   properties.origin = Properties::BottomRight;
   properties.orientation = Properties::Diagonal;
   properties.length = 40;
@@ -119,7 +134,7 @@ TEST_CASE("Filer Write/Read Properties", "[filer_write_read_properties]")
   REQUIRE(filer.read("test.cfg", alternate));
 
   REQUIRE(properties.interval == alternate.interval);
-  REQUIRE(properties.scan_width == alternate.scan_width);
+  REQUIRE(properties.scan == alternate.scan);
   REQUIRE(properties.origin == alternate.origin);
   REQUIRE(properties.orientation == alternate.orientation);
   REQUIRE(properties.length == alternate.length);
@@ -128,6 +143,41 @@ TEST_CASE("Filer Write/Read Properties", "[filer_write_read_properties]")
   REQUIRE(Properties::hsv_to_u32(properties.target) ==
           Properties::hsv_to_u32(alternate.target));
   REQUIRE(properties.rows == alternate.rows);
+  REQUIRE(properties.begin == alternate.begin);
+  REQUIRE(properties.end == alternate.end);
   REQUIRE(properties.shift == alternate.shift);
   REQUIRE(properties.transform == alternate.transform);
+
+  Properties copies;
+  copies.copy(properties);
+  REQUIRE(properties.interval == copies.interval);
+  REQUIRE(properties.scan == copies.scan);
+  REQUIRE(properties.origin == copies.origin);
+  REQUIRE(properties.orientation == copies.orientation);
+  REQUIRE(properties.length == copies.length);
+  REQUIRE(Properties::hsv_to_u32(properties.source) ==
+          Properties::hsv_to_u32(copies.source));
+  REQUIRE(Properties::hsv_to_u32(properties.target) ==
+          Properties::hsv_to_u32(copies.target));
+  REQUIRE(properties.rows == copies.rows);
+  REQUIRE(properties.begin == copies.begin);
+  REQUIRE(properties.end == copies.end);
+  REQUIRE(properties.shift == copies.shift);
+  REQUIRE(properties.transform == copies.transform);
+
+  REQUIRE(alternate.interval == copies.interval);
+  REQUIRE(alternate.scan == copies.scan);
+  REQUIRE(alternate.origin == copies.origin);
+  REQUIRE(alternate.orientation == copies.orientation);
+  REQUIRE(alternate.length == copies.length);
+  REQUIRE(Properties::hsv_to_u32(alternate.source) ==
+          Properties::hsv_to_u32(copies.source));
+  REQUIRE(Properties::hsv_to_u32(alternate.target) ==
+          Properties::hsv_to_u32(copies.target));
+  REQUIRE(alternate.rows == copies.rows);
+  REQUIRE(alternate.begin == copies.begin);
+  REQUIRE(alternate.end == copies.end);
+  REQUIRE(alternate.shift == copies.shift);
+
+  REQUIRE(alternate.transform == copies.transform);
 }
