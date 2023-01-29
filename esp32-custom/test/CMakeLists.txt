@@ -20,6 +20,8 @@ add_library(GlowLib
   ../src/esphome/core/optional.h
   ../src/glow/base.cpp
   ../src/glow/base.h
+  ../src/glow/HSVColor.cpp
+  ../src/glow/HSVColor.h
   ../src/glow/Properties.cpp
   ../src/glow/Properties.h
   ../src/glow/Parser.cpp

@@ -68,14 +68,14 @@ TEST_CASE("Properties Basic", "[properties_basic]")
   printf("source=%s\n", buffer);
   uint32_t source = 0;
   sscanf(buffer, "%8x", &source);
-  REQUIRE(properties.hsv_to_u32(properties.source) == source);
+  REQUIRE(hsv_to_u32(properties.source) == source);
 
   properties.target = ESPHSVColor(85, 0, 255);
   REQUIRE(properties.get("target", buffer, sizeof(buffer)));
   printf("target=%s\n", buffer);
   uint32_t target = 0;
   sscanf(buffer, "%8x", &target);
-  REQUIRE(properties.hsv_to_u32(properties.target) == target);
+  REQUIRE(hsv_to_u32(properties.target) == target);
 
   properties.shift = -2;
   REQUIRE(properties.get("shift", buffer, sizeof(buffer)));
@@ -138,10 +138,10 @@ TEST_CASE("Filer Write/Read Properties", "[filer_write_read_properties]")
   REQUIRE(properties.origin == alternate.origin);
   REQUIRE(properties.orientation == alternate.orientation);
   REQUIRE(properties.length == alternate.length);
-  REQUIRE(Properties::hsv_to_u32(properties.source) ==
-          Properties::hsv_to_u32(alternate.source));
-  REQUIRE(Properties::hsv_to_u32(properties.target) ==
-          Properties::hsv_to_u32(alternate.target));
+  REQUIRE(hsv_to_u32(properties.source) ==
+          hsv_to_u32(alternate.source));
+  REQUIRE(hsv_to_u32(properties.target) ==
+          hsv_to_u32(alternate.target));
   REQUIRE(properties.rows == alternate.rows);
   REQUIRE(properties.begin == alternate.begin);
   REQUIRE(properties.end == alternate.end);
@@ -155,10 +155,10 @@ TEST_CASE("Filer Write/Read Properties", "[filer_write_read_properties]")
   REQUIRE(properties.origin == copies.origin);
   REQUIRE(properties.orientation == copies.orientation);
   REQUIRE(properties.length == copies.length);
-  REQUIRE(Properties::hsv_to_u32(properties.source) ==
-          Properties::hsv_to_u32(copies.source));
-  REQUIRE(Properties::hsv_to_u32(properties.target) ==
-          Properties::hsv_to_u32(copies.target));
+  REQUIRE(hsv_to_u32(properties.source) ==
+          hsv_to_u32(copies.source));
+  REQUIRE(hsv_to_u32(properties.target) ==
+          hsv_to_u32(copies.target));
   REQUIRE(properties.rows == copies.rows);
   REQUIRE(properties.begin == copies.begin);
   REQUIRE(properties.end == copies.end);
@@ -170,10 +170,10 @@ TEST_CASE("Filer Write/Read Properties", "[filer_write_read_properties]")
   REQUIRE(alternate.origin == copies.origin);
   REQUIRE(alternate.orientation == copies.orientation);
   REQUIRE(alternate.length == copies.length);
-  REQUIRE(Properties::hsv_to_u32(alternate.source) ==
-          Properties::hsv_to_u32(copies.source));
-  REQUIRE(Properties::hsv_to_u32(alternate.target) ==
-          Properties::hsv_to_u32(copies.target));
+  REQUIRE(hsv_to_u32(alternate.source) ==
+          hsv_to_u32(copies.source));
+  REQUIRE(hsv_to_u32(alternate.target) ==
+          hsv_to_u32(copies.target));
   REQUIRE(alternate.rows == copies.rows);
   REQUIRE(alternate.begin == copies.begin);
   REQUIRE(alternate.end == copies.end);

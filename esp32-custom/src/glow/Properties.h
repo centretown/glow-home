@@ -4,32 +4,16 @@
 #include <string>
 
 #include "base.h"
+
 #include "../esphome/core/color.h"
 #include "../esphome/components/light/esp_hsv_color.h"
-
 using esphome::Color;
 using esphome::light::ESPHSVColor;
 
+#include "HSVColor.h"
+
 namespace glow
 {
-  struct GlowHSVColor
-  {
-    union
-    {
-      struct
-      {
-        uint8_t h;
-        uint8_t s;
-        uint8_t v;
-        uint8_t u;
-      };
-      uint32_t raw_32;
-    };
-    GlowHSVColor(uint32_t raw_32 = 0) ALWAYS_INLINE : raw_32(raw_32) {}
-    GlowHSVColor(ESPHSVColor hsv) ALWAYS_INLINE : h(hsv.h), s(hsv.s), v(hsv.v), u(0) {}
-    ESPHSVColor esp_hsv() ALWAYS_INLINE { return ESPHSVColor(h, s, v); }
-  };
-
   struct Properties;
   struct PropertyItem
   {
@@ -198,22 +182,6 @@ namespace glow
     }
     // static std::string comments[];
 #endif
-
-    static uint32_t hsv_to_u32(ESPHSVColor hsv) ALWAYS_INLINE
-    {
-      return GlowHSVColor(hsv).raw_32;
-    }
-
-    static ESPHSVColor u32_to_hsv(uint32_t hsv32) ALWAYS_INLINE
-    {
-      return GlowHSVColor(hsv32).esp_hsv();
-    }
-
-#ifndef USE_ESP32
-    // keep original for testing and benchmarking
-    static ESPHSVColor old_color_to_hsv(Color color);
-#endif
-    static ESPHSVColor color_to_hsv(Color color);
 
     // static std::forward_list<Properties>
 

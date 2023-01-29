@@ -84,22 +84,22 @@ namespace glow
 
       {"# gradient source: 0xVVSSHH (V-value, S-saturation, H-hue)",
        [](Properties &p, char *value, size_t value_length)
-       { snprintf(value, value_length, "0x%x", p.hsv_to_u32(p.source)); },
+       { snprintf(value, value_length, "0x%x", hsv_to_u32(p.source)); },
        [](Properties &p, char *value)
        {
          uint32_t hsv_raw = 0;
          sscanf(value, "%12x", &hsv_raw);
-         p.source = p.u32_to_hsv(hsv_raw);
+         p.source = u32_to_hsv(hsv_raw);
        }},
 
       {"# gradient target: 0xVVSSHH (V-value, S-saturation, H-hue)",
        [](Properties &p, char *value, size_t value_length)
-       { snprintf(value, value_length, "0x%x", p.hsv_to_u32(p.target)); },
+       { snprintf(value, value_length, "0x%x", hsv_to_u32(p.target)); },
        [](Properties &p, char *value)
        {
          uint32_t hsv_raw = 0;
          sscanf(value, "%12x", &hsv_raw);
-         p.target = p.u32_to_hsv(hsv_raw);
+         p.target = u32_to_hsv(hsv_raw);
        }},
 
       {"# amount to shift hue",
@@ -123,7 +123,6 @@ namespace glow
       return false;
     }
     auto val = *iter;
-    // set(val.second, value);
     io_items[val.second].set(*this, value);
     return true;
   }
@@ -137,7 +136,6 @@ namespace glow
     }
     auto val = *iter;
     io_items[val.second].get(*this, value, value_length);
-    // get(val.second, value, value_length);
     return true;
   }
 
@@ -160,71 +158,5 @@ namespace glow
     return *this;
   }
 
-  constexpr uint16_t byte_limit = 0xff;
-  constexpr uint16_t hue_limit = 1530;
-  constexpr uint16_t hue_segment = hue_limit / 6;
-
-  constexpr uint16_t hue_red = 0;
-  // constexpr uint16_t hue_yellow = hue_segment;
-  constexpr uint16_t hue_green = hue_limit / 3;
-  // constexpr uint16_t hue_cyan = hue_limit / 2;
-  constexpr uint16_t hue_blue = hue_limit * 2 / 3;
-  // constexpr uint16_t hue_magenta = hue_limit * 5 / 6;
-
-  ESPHSVColor Properties::color_to_hsv(Color color)
-  {
-    const uint16_t red = color.red;
-    const uint16_t green = color.green;
-    const uint16_t blue = color.blue;
-
-    const uint16_t value = std::max(red, std::max(green, blue));
-    const uint16_t color_range = value -
-                                 std::min(red, std::min(green, blue));
-    const uint16_t saturation =
-        (value == 0) ? 0
-                     : (color_range * byte_limit) / value;
-    uint16_t hue = 0;
-    if (color_range != 0)
-    {
-      if (value == red)
-      {
-        hue = (hue_segment * (green - blue) / color_range) + hue_limit;
-      }
-      else if (value == green)
-      {
-        hue = (hue_segment * (blue - red) / color_range) + hue_green;
-      }
-      else // if (value == blue)
-      {
-        hue = (hue_segment * (red - green) / color_range) + hue_blue;
-      }
-    }
-
-    return ESPHSVColor(static_cast<uint8_t>(hue / 6),
-                       static_cast<uint8_t>(saturation),
-                       static_cast<uint8_t>(value));
-  }
-
-#ifndef USE_ESP32
-  // keep original for testing
-  ESPHSVColor Properties::old_color_to_hsv(Color color)
-  {
-    float red = static_cast<float>(color.red) / 255.0;
-    float green = static_cast<float>(color.green) / 255.0;
-    float blue = static_cast<float>(color.blue) / 255.0;
-    float saturation, value;
-    int hue;
-
-    rgb_to_hsv(red, green, blue, hue, saturation, value);
-
-    hue *= 255;
-    hue /= 360;
-    saturation *= 255;
-    value *= 255;
-    return ESPHSVColor(static_cast<uint8_t>(hue),
-                       static_cast<uint8_t>(saturation),
-                       static_cast<uint8_t>(value));
-  }
-#endif
-
+  
 }

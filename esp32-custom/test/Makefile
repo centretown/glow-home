@@ -671,6 +671,33 @@ home/dave/src/glow-home/esp32-custom/src/glow/Grid.cpp.s:
 	$(MAKE) -f CMakeFiles/GlowLib.dir/build.make CMakeFiles/GlowLib.dir/home/dave/src/glow-home/esp32-custom/src/glow/Grid.cpp.s
 .PHONY : home/dave/src/glow-home/esp32-custom/src/glow/Grid.cpp.s
 
+home/dave/src/glow-home/esp32-custom/src/glow/HSVColor.o: home/dave/src/glow-home/esp32-custom/src/glow/HSVColor.cpp.o
+
+.PHONY : home/dave/src/glow-home/esp32-custom/src/glow/HSVColor.o
+
+# target to build an object file
+home/dave/src/glow-home/esp32-custom/src/glow/HSVColor.cpp.o:
+	$(MAKE) -f CMakeFiles/GlowLib.dir/build.make CMakeFiles/GlowLib.dir/home/dave/src/glow-home/esp32-custom/src/glow/HSVColor.cpp.o
+.PHONY : home/dave/src/glow-home/esp32-custom/src/glow/HSVColor.cpp.o
+
+home/dave/src/glow-home/esp32-custom/src/glow/HSVColor.i: home/dave/src/glow-home/esp32-custom/src/glow/HSVColor.cpp.i
+
+.PHONY : home/dave/src/glow-home/esp32-custom/src/glow/HSVColor.i
+
+# target to preprocess a source file
+home/dave/src/glow-home/esp32-custom/src/glow/HSVColor.cpp.i:
+	$(MAKE) -f CMakeFiles/GlowLib.dir/build.make CMakeFiles/GlowLib.dir/home/dave/src/glow-home/esp32-custom/src/glow/HSVColor.cpp.i
+.PHONY : home/dave/src/glow-home/esp32-custom/src/glow/HSVColor.cpp.i
+
+home/dave/src/glow-home/esp32-custom/src/glow/HSVColor.s: home/dave/src/glow-home/esp32-custom/src/glow/HSVColor.cpp.s
+
+.PHONY : home/dave/src/glow-home/esp32-custom/src/glow/HSVColor.s
+
+# target to generate assembly for a file
+home/dave/src/glow-home/esp32-custom/src/glow/HSVColor.cpp.s:
+	$(MAKE) -f CMakeFiles/GlowLib.dir/build.make CMakeFiles/GlowLib.dir/home/dave/src/glow-home/esp32-custom/src/glow/HSVColor.cpp.s
+.PHONY : home/dave/src/glow-home/esp32-custom/src/glow/HSVColor.cpp.s
+
 home/dave/src/glow-home/esp32-custom/src/glow/Parser.o: home/dave/src/glow-home/esp32-custom/src/glow/Parser.cpp.o
 
 .PHONY : home/dave/src/glow-home/esp32-custom/src/glow/Parser.o
@@ -834,6 +861,9 @@ help:
 	@echo "... home/dave/src/glow-home/esp32-custom/src/glow/Grid.o"
 	@echo "... home/dave/src/glow-home/esp32-custom/src/glow/Grid.i"
 	@echo "... home/dave/src/glow-home/esp32-custom/src/glow/Grid.s"
+	@echo "... home/dave/src/glow-home/esp32-custom/src/glow/HSVColor.o"
+	@echo "... home/dave/src/glow-home/esp32-custom/src/glow/HSVColor.i"
+	@echo "... home/dave/src/glow-home/esp32-custom/src/glow/HSVColor.s"
 	@echo "... home/dave/src/glow-home/esp32-custom/src/glow/Parser.o"
 	@echo "... home/dave/src/glow-home/esp32-custom/src/glow/Parser.i"
 	@echo "... home/dave/src/glow-home/esp32-custom/src/glow/Parser.s"

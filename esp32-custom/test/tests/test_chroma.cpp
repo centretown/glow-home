@@ -3,6 +3,8 @@
 
 #include <catch2/catch.hpp>
 
+#include "../../src/glow/HSVColor.h"
+#include "../../src/glow/Properties.h"
 #include "../../src/glow/Chroma.h"
 
 using namespace glow;
@@ -51,14 +53,14 @@ TEST_CASE("Chroma Basic", "[chroma_basic]")
   chroma.log_buffer(print_buffer, sizeof(print_buffer));
   puts(print_buffer);
 
-  REQUIRE(Properties::hsv_to_u32(properties.target) ==
-          Properties::hsv_to_u32(chroma.hsv_target));
+  REQUIRE(hsv_to_u32(properties.target) ==
+          hsv_to_u32(chroma.hsv_target));
 
   for (int i = 0; i < sizeof(rgbColors) / sizeof(rgbColors[0]); i++)
   {
     Color &color = rgbColors[i];
-    ESPHSVColor quick = Properties::color_to_hsv(color);
-    ESPHSVColor slow = Properties::old_color_to_hsv(color);
+    ESPHSVColor quick = color_to_hsv(color);
+    ESPHSVColor slow = old_color_to_hsv(color);
     chroma.log_rgb(print_buffer, sizeof(print_buffer), color);
     printf("%s", print_buffer);
     chroma.log_hsv(print_buffer, sizeof(print_buffer), slow);
@@ -79,11 +81,11 @@ TEST_CASE("Chroma Basic", "[chroma_basic]")
   // Color rgbBench(0, 242, 14);
   // BENCHMARK("slow")
   // {
-  //   return Chroma::old_color_to_hsv(rgbBench);
+  //   return old_color_to_hsv(rgbBench);
   // };
 
   // BENCHMARK("quick")
   // {
-  //   return Chroma::color_to_hsv(rgbBench);
+  //   return color_to_hsv(rgbBench);
   // };
 }
