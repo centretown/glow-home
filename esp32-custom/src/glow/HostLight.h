@@ -7,7 +7,7 @@ using esphome::Color;
 
 namespace glow
 {
-  class TestLight
+  class HostLight
   {
   private:
     static const size_t MAX_LIGHT_SIZE = 4096;

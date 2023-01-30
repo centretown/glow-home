@@ -123,72 +123,19 @@ namespace glow
     }
 
 #ifndef USE_ESP32
-    bool get_key(uint8_t key, char *buffer, size_t buffer_length)
-    {
-      if (key >= PROPERTY_COUNT)
-      {
-        return false;
-      }
-
-      strncpy(buffer, property_names[key].c_str(), buffer_length);
-      return true;
-    }
-
     // generic property interface
     bool set(const char *key, char *value);
-    // void set(uint8_t key, char *value);
     bool get(const char *key, char *value, size_t value_length);
-    // void get(uint8_t key, char *value, size_t value_length);
-
-    static bool check(const char *key)
-    {
-      if (property_map.find(key) == property_map.end())
-      {
-        return false;
-      }
-      return true;
-    }
-
-    static uint8_t count()
+    inline static uint8_t count()
     {
       return PROPERTY_COUNT;
     }
-
-    static std::string property_names[];
     static std::unordered_map<std::string, uint8_t> property_map;
-
-    static ExchangeItem<Properties> &get_exchanger(uint8_t id)
+    static ExchangeItem<Properties> &exchange_item(uint8_t id)
     {
-      if (id < PROPERTY_COUNT)
-      {
-        return exchange[id];
-      }
-      return exchange[0];
+      return exchange[id % count()];
     }
-    static std::string get_comment(uint8_t id)
-    {
-      if (id < PROPERTY_COUNT)
-      {
-        return exchange[id].comment;
-      }
-      return "";
-    }
-    // static std::string comments[];
 #endif
-
-    // static std::forward_list<Properties>
-
-    // void add_layer(Properties &properties)
-    // {
-    //   auto link = this;
-    //   for (; link->next != nullptr; link = link->next)
-    //     ;
-    //   link->next = &properties;
-    // }
-
-    // Properties* next_layer() {
-    //   return next;
-    // }
   };
 
 }

@@ -3,7 +3,7 @@
 #include "base.h"
 namespace glow
 {
-  class TestTimer
+  class HostTimer
   {
   public:
     uint32_t now() ALWAYS_INLINE

@@ -3,6 +3,7 @@
 namespace glow
 {
   std::unordered_map<std::string, uint8_t> Parser::keywords = {
+      {"scene", Scene},
       {"layer", Layer},
   };
 

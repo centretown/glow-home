@@ -2,15 +2,15 @@
 #include <catch2/catch.hpp>
 
 #include "../../src/glow/Properties.h"
-#include "../../src/glow/TestLight.h"
-#include "../../src/glow/TestSpinner.h"
+#include "../../src/glow/HostLight.h"
+#include "../../src/glow/HostSpinner.h"
 #include "../../src/glow/DisplayANSI.h"
 
 using namespace glow;
 
 char print_buffer[1024];
 
-void log_colors(TestLight &light, Properties &properties)
+void log_colors(HostLight &light, Properties &properties)
 {
   const uint16_t columns = properties.length / properties.rows;
 
@@ -29,8 +29,8 @@ void log_colors(TestLight &light, Properties &properties)
 
 TEST_CASE("Spinner Basic", "[spinner_basic]")
 {
-  TestLight light;
-  TestSpinner spinner;
+  HostLight light;
+  HostSpinner spinner;
 
   Properties properties;
   properties.length = 36;

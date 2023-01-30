@@ -64,5 +64,6 @@
     "typeinfo": "cpp",
     "variant": "cpp",
     "forward_list": "cpp"
-  }
+  },
+  "cmake.sourceDirectory": "${workspaceFolder}/esp32-custom/test"
 }

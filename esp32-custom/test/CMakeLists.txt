@@ -1,11 +1,11 @@
 # CMakeLists files in this project can
 # refer to the root source directory of the project as ${HELLO_SOURCE_DIR} and
 # to the root binary directory of the project as ${HELLO_BINARY_DIR}.
-cmake_minimum_required(VERSION 3.14)
+cmake_minimum_required(VERSION 3.25)
 
 project(
   Glow
-  VERSION 0.2
+  VERSION 0.3
   LANGUAGES CXX)
 
 configure_file(GlowConfig.h.in GlowConfig.h)
@@ -32,9 +32,9 @@ add_library(GlowLib
   ../src/glow/Grid.h
   ../src/glow/Chroma.cpp
   ../src/glow/Chroma.h
-  ../src/glow/TestTimer.h
-  ../src/glow/TestLight.h
-  ../src/glow/TestSpinner.h
+  ../src/glow/HostTimer.h
+  ../src/glow/HostLight.h
+  ../src/glow/HostSpinner.h
 )
 
 if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)

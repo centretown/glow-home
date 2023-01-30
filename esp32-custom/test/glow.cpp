@@ -7,8 +7,8 @@
 
 #include "../src/glow/Properties.h"
 #include "../src/glow/Filer.h"
-#include "../src/glow/TestLight.h"
-#include "../src/glow/TestSpinner.h"
+#include "../src/glow/HostLight.h"
+#include "../src/glow/HostSpinner.h"
 #include "../src/glow/DisplayANSI.h"
 
 using namespace glow;
@@ -17,8 +17,8 @@ char print_buffer[1024];
 
 void spin(Properties &properties)
 {
-  TestLight light;
-  TestSpinner spinner;
+  HostLight light;
+  HostSpinner spinner;
   spinner.setup(&light, properties);
   spinner.log_buffer(print_buffer, sizeof(print_buffer));
 

@@ -104,11 +104,9 @@ TEST_CASE("Properties GetKey", "[properties_get_key]")
 
   for (uint8_t key = 0; key < properties.count(); key++)
   {
-    properties.get_key(key, buffer, sizeof(buffer));
-    printf("%s=", buffer);
-    auto exchanger = properties.get_exchanger(key);
+    auto exchanger = properties.exchange_item(key);
     exchanger.get(properties, buffer, sizeof(buffer));
-    printf("%s\n", buffer);
+    printf("%s: %s\n", exchanger.name.c_str(), buffer);
   }
 }
 
@@ -123,6 +121,8 @@ TEST_CASE("Filer Write/Read Properties", "[filer_write_read_properties]")
   properties.orientation = Properties::Diagonal;
   properties.length = 40;
   properties.rows = 4;
+  properties.begin = 11;
+  properties.end = 35;
   properties.source = ESPHSVColor(127, 63, 255);
   properties.target = ESPHSVColor(255, 63, 255);
   properties.shift = -2;

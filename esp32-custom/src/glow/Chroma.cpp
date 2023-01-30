@@ -17,8 +17,8 @@ namespace glow
   {
     snprintf(buffer, buffer_size,
              "Chroma:\n\tdelta=%d\n"
-             "\tsource=r%u g%u b%u\th%u s%u v%u\n"
-             "\ttarget=r%u g%u b%u\th%u s%u v%u\n",
+             "\tsource: RGB(%3u,%3u,%3u)\tHSV(%3u,%3u,%3u)\n"
+             "\ttarget: RGB(%3u,%3u,%3u)\tHSV(%3u,%3u,%3u)\n",
              delta,
              rgb_source.red, rgb_source.green, rgb_source.blue,
              hsv_source.hue, hsv_source.saturation, hsv_source.value,

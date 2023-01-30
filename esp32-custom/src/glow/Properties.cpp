@@ -3,86 +3,65 @@
 namespace glow
 {
 #ifndef USE_ESP32
-  std::string Properties::property_names[] = {
-      "interval",
-      "scan",
-      "origin",
-      "orientation",
-      "length",
-      "rows",
-      "begin",
-      "end",
-      "source",
-      "target",
-      "shift",
-      "transform",
-  };
-
-  std::unordered_map<std::string, uint8_t> Properties::property_map = {
-      {property_names[INTERVAL], INTERVAL},
-      {property_names[SCAN], SCAN},
-      {property_names[ORIGIN], ORIGIN},
-      {property_names[ORIENTATION], ORIENTATION},
-      {property_names[LENGTH], LENGTH},
-      {property_names[ROWS], ROWS},
-      {property_names[BEGIN], BEGIN},
-      {property_names[END], END},
-      {property_names[SOURCE], SOURCE},
-      {property_names[TARGET], TARGET},
-      {property_names[SHIFT], SHIFT},
-      {property_names[TRANSFORM], TRANSFORM},
-  };
-
   ExchangeItem<Properties> Properties::exchange[PROPERTY_COUNT] = {
-      {"# update interval in ms",
+      {INTERVAL, "interval",
+       "# update interval in ms",
        [](Properties &p, char *value, size_t value_length)
        { snprintf(value, value_length, "%u", p.interval); },
        [](Properties &p, char *value)
        { sscanf(value, "%12u", &p.interval); }},
 
-      {"# don't scan=0, otherwise scan=n pixels",
+      {SCAN, "scan",
+       "# don't scan=0, otherwise scan=n pixels",
        [](Properties &p, char *value, size_t value_length)
        { snprintf(value, value_length, "%u", p.scan); },
        [](Properties &p, char *value)
        { sscanf(value, "%12hu", &p.scan); }},
 
-      {"# top-left=0, top-right=1, bottom-left=2, bottom-right=3",
+      {ORIGIN, "origin",
+       "# top-left=0, top-right=1, bottom-left=2, bottom-right=3",
        [](Properties &p, char *value, size_t value_length)
        { snprintf(value, value_length, "%u", p.origin); },
        [](Properties &p, char *value)
        { sscanf(value, "%12hhu", &p.origin); }},
 
-      {"# horizontal=0, vertical=1, diagonal=2",
+      {ORIENTATION, "orientation",
+       "# horizontal=0, vertical=1, diagonal=2",
        [](Properties &p, char *value, size_t value_length)
        { snprintf(value, value_length, "%u", p.orientation); },
        [](Properties &p, char *value)
        { sscanf(value, "%12hhu", &p.orientation); }},
 
-      {"# number of pixel led's",
+      {LENGTH, "length",
+       "# number of pixel led's",
        [](Properties &p, char *value, size_t value_length)
        { snprintf(value, value_length, "%u", p.length); },
        [](Properties &p, char *value)
        { sscanf(value, "%12hu", &p.length); }},
 
-      {"# number of rows in grid",
+      {ROWS, "rows",
+       "# number of rows in grid",
        [](Properties &p, char *value, size_t value_length)
        { snprintf(value, value_length, "%u", p.rows); },
        [](Properties &p, char *value)
        { sscanf(value, "%12hu", &p.rows); }},
 
-      {"# where to begin",
+      {BEGIN, "begin",
+       "# where to begin",
        [](Properties &p, char *value, size_t value_length)
        { snprintf(value, value_length, "%u", p.begin); },
        [](Properties &p, char *value)
        { sscanf(value, "%12hu", &p.begin); }},
 
-      {"# where to end",
+      {END, "end",
+       "# where to end",
        [](Properties &p, char *value, size_t value_length)
        { snprintf(value, value_length, "%u", p.end); },
        [](Properties &p, char *value)
        { sscanf(value, "%12hu", &p.end); }},
 
-      {"# gradient source: 0xVVSSHH (V-value, S-saturation, H-hue)",
+      {SOURCE, "source",
+       "# gradient source: 0xVVSSHH (V-value, S-saturation, H-hue)",
        [](Properties &p, char *value, size_t value_length)
        { snprintf(value, value_length, "0x%x", hsv_to_u32(p.source)); },
        [](Properties &p, char *value)
@@ -92,7 +71,8 @@ namespace glow
          p.source = u32_to_hsv(hsv_raw);
        }},
 
-      {"# gradient target: 0xVVSSHH (V-value, S-saturation, H-hue)",
+      {TARGET, "target",
+       "# gradient target: 0xVVSSHH (V-value, S-saturation, H-hue)",
        [](Properties &p, char *value, size_t value_length)
        { snprintf(value, value_length, "0x%x", hsv_to_u32(p.target)); },
        [](Properties &p, char *value)
@@ -102,17 +82,34 @@ namespace glow
          p.target = u32_to_hsv(hsv_raw);
        }},
 
-      {"# amount to shift hue",
+      {SHIFT, "shift",
+       "# amount to shift hue",
        [](Properties &p, char *value, size_t value_length)
        { snprintf(value, value_length, "%d", p.shift); },
        [](Properties &p, char *value)
        { sscanf(value, "%12hd", &p.shift); }},
 
-      {"# transform",
+      {TRANSFORM, "transform",
+       "# transform",
        [](Properties &p, char *value, size_t value_length)
        { snprintf(value, value_length, "%u", p.transform); },
        [](Properties &p, char *value)
        { sscanf(value, "%12hhu", &p.transform); }},
+  };
+
+  std::unordered_map<std::string, uint8_t> Properties::property_map = {
+      {exchange[INTERVAL].name, INTERVAL},
+      {exchange[SCAN].name, SCAN},
+      {exchange[ORIGIN].name, ORIGIN},
+      {exchange[ORIENTATION].name, ORIENTATION},
+      {exchange[LENGTH].name, LENGTH},
+      {exchange[ROWS].name, ROWS},
+      {exchange[BEGIN].name, BEGIN},
+      {exchange[END].name, END},
+      {exchange[SOURCE].name, SOURCE},
+      {exchange[TARGET].name, TARGET},
+      {exchange[SHIFT].name, SHIFT},
+      {exchange[TRANSFORM].name, TRANSFORM},
   };
 
   bool Properties::set(const char *key, char *value)
@@ -158,5 +155,4 @@ namespace glow
     return *this;
   }
 
-  
 }

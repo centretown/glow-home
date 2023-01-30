@@ -45,8 +45,12 @@ namespace glow
           properties.set(key, value);
           break;
 
+        case Parser::Scene:
+          printf("add Scene %s\n", value);
+          break;
+
         case Parser::Layer:
-          printf("add layer %s\n", value);
+          printf("add Layer %s\n", value);
           break;
 
         case Parser::Incomplete:
@@ -74,12 +78,11 @@ namespace glow
 
       for (uint8_t id = 0; id < properties.count(); id++)
       {
-        properties.get_key(id, key, sizeof(key));
-
-        auto io = properties.get_exchanger(id);
-        io.get(properties, value, sizeof(value));
+        auto exchanger = properties.exchange_item(id);
+        exchanger.get(properties, value, sizeof(value));
         fprintf(handle, "%s\n%s=%s\n\n",
-                io.comment.c_str(), key, value);
+                exchanger.comment.c_str(),
+                exchanger.name.c_str(), value);
       }
 
       fclose(handle);
