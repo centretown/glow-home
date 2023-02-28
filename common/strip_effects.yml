@@ -1,40 +1,64 @@
 
-  - addressable_scan:
-  - addressable_scan:
-      name: Scan Effect With Custom Values
-      move_interval: 100ms
-      scan_width: 1
+      - addressable_lambda: 
+          name: "SPOTLIGHT"
+          update_interval: 48ms
+          lambda: |-
+            #include "glow/catalog.h"
+            static glow::Frame frame(glow::from_catalog(glow::SPOTLIGHT));
+            static glow::Light light;
+            if (initial_run) {
+              light.setup(&it);
+              frame.setup(it.size(), 1, 500);
+            }
 
-  - addressable_twinkle:
-  - addressable_twinkle:
-      name: Twinkle Effect With Custom Values
-      twinkle_probability: 5%
-      progress_interval: 4ms
+            if (frame.is_ready()) {
+              frame.spin(&it);
+            }
+            
+      - addressable_lambda: 
+          name: "DOUBLE_SCANNER"
+          update_interval: 16ms
+          lambda: |-
+            #include "glow/catalog.h"
+            static glow::Frame frame(glow::from_catalog(glow::DOUBLE_SCANNER));
+            static glow::Light light;
+            if (initial_run) {
+              light.setup(&it);
+              frame.setup(it.size(), 1, 48);
+            }
 
-  - addressable_random_twinkle:
-  - addressable_random_twinkle:
-      name: Random Twinkle Effect With Custom Values
-      twinkle_probability: 5%
-      progress_interval: 32ms
+            if (frame.is_ready()) {
+              frame.spin(&it);
+            }
 
+      - addressable_lambda: 
+          name: "SPLIT_IN_TWO"
+          update_interval: 16ms
+          lambda: |-
+            #include "glow/catalog.h"
+            static glow::Frame frame(glow::from_catalog(glow::SPLIT_IN_TWO));
+            static glow::Light light;
+            if (initial_run) {
+              light.setup(&it);
+              frame.setup(it.size(), 1, 48);
+            }
 
-  - addressable_fireworks:
-  - addressable_fireworks:
-      name: Fireworks Effect With Custom Values
-      update_interval: 32ms
-      spark_probability: 10%
-      use_random_color: false
-      fade_out_rate: 120      
+            if (frame.is_ready()) {
+              frame.spin(&it);
+            }
 
-  - addressable_flicker:
-  - addressable_flicker:
-      name: Flicker Effect With Custom Values
-      update_interval: 16ms
-      intensity: 5%
+      - addressable_lambda: 
+          name: "SPLIT_IN_THREE"
+          update_interval: 16ms
+          lambda: |-
+            #include "glow/catalog.h"
+            static glow::Frame frame(glow::from_catalog(glow::SPLIT_IN_THREE));
+            static glow::Light light;
+            if (initial_run) {
+              light.setup(&it);
+              frame.setup(it.size(), 1, 48);
+            }
 
-  - addressable_rainbow:
-  - addressable_rainbow:
-      name: Rainbow Effect With Custom Values
-      speed: 10
-      width: 50
-  
+            if (frame.is_ready()) {
+              frame.spin(&it);
+            }

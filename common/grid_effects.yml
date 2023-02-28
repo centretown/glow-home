@@ -1,200 +1,63 @@
 
       - addressable_lambda: 
-          name: "Gradient Rows"
+          name: "SPOTLIGHT"
+          update_interval: 48ms
+          lambda: |-
+            #include "glow/catalog.h"
+            static glow::Frame frame(glow::from_catalog(glow::SPOTLIGHT));
+            static glow::Light light;
+            if (initial_run) {
+              light.setup(&it);
+              frame.setup(it.size(), 4, 500);
+            }
+
+            if (frame.is_ready()) {
+              frame.spin(&it);
+            }
+      - addressable_lambda: 
+          name: "DOUBLE_SCANNER"
           update_interval: 16ms
           lambda: |-
-            #include "glow/Gradients.h"
-            static glow::RowsGradient gradient;
+            #include "glow/catalog.h"
+            static glow::Frame frame(glow::from_catalog(glow::DOUBLE_SCANNER));
+            static glow::Light light;
             if (initial_run) {
-              gradient.setup(&it, current_color);
+              light.setup(&it);
+              frame.setup(it.size(), 4, 48);
             }
-            gradient.apply();
+
+            if (frame.is_ready()) {
+              frame.spin(&it);
+            }
 
       - addressable_lambda: 
-          name: "Gradient Rows Flat"
+          name: "SPLIT_IN_TWO"
           update_interval: 16ms
           lambda: |-
-            #include "glow/Gradients.h"
-            static glow::RowsFlatGradient gradient;
+            #include "glow/catalog.h"
+            static glow::Frame frame(glow::from_catalog(glow::SPLIT_IN_TWO));
+            static glow::Light light;
             if (initial_run) {
-              gradient.setup(&it, current_color);
+              light.setup(&it);
+              frame.setup(it.size(), 4, 48);
             }
-            gradient.apply();
+
+            if (frame.is_ready()) {
+              frame.spin(&it);
+            }
 
       - addressable_lambda: 
-          name: "Gradient Columns"
+          name: "SPLIT_IN_THREE"
           update_interval: 16ms
           lambda: |-
-            #include "glow/Gradients.h"
-            static glow::ColumnsGradient gradient;
+            #include "glow/catalog.h"
+            static glow::Frame frame(glow::from_catalog(glow::SPLIT_IN_THREE));
+            static glow::Light light;
             if (initial_run) {
-              gradient.setup(&it, current_color);
+              light.setup(&it);
+              frame.setup(it.size(), 4, 48);
             }
-            gradient.apply();
 
-      - addressable_lambda: 
-          name: "Gradient Columns Flat"
-          update_interval: 16ms
-          lambda: |-
-            #include "glow/Gradients.h"
-            static glow::ColumnsFlatGradient gradient;
-            if (initial_run) {
-              gradient.setup(&it, current_color);
+            if (frame.is_ready()) {
+              frame.spin(&it);
             }
-            gradient.apply();
-
-      - addressable_lambda: 
-          name: "Gradient Diagonal"
-          update_interval: 16ms
-          lambda: |-
-            #include "glow/Gradients.h"
-            static glow::DiagonalGradient gradient;
-            if (initial_run) {
-              gradient.setup(&it, current_color);
-            }
-            gradient.apply();
-
-      - addressable_lambda: 
-          name: "Gradient Diagonal 1"
-          update_interval: 16ms
-          lambda: |-
-            #include "glow/Gradients.h"
-            static glow::DiagonalGradient gradient;
-            if (initial_run) {
-              gradient.setup(&it, current_color, glow::TopRight);
-            }
-            gradient.apply();
-
-      - addressable_lambda: 
-          name: "Gradient Diagonal 2"
-          update_interval: 16ms
-          lambda: |-
-            #include "glow/Gradients.h"
-            static glow::DiagonalGradient gradient;
-            if (initial_run) {
-              gradient.setup(&it, current_color, glow::BottomLeft);
-            }
-            gradient.apply();
-
-      - addressable_lambda: 
-          name: "Gradient Diagonal 3"
-          update_interval: 16ms
-          lambda: |-
-            #include "glow/Gradients.h"
-            static glow::DiagonalGradient gradient;
-            if (initial_run) {
-              gradient.setup(&it, current_color, glow::BottomRight);
-            }
-            gradient.apply();
-
-      - addressable_lambda: 
-          name: "Solid"
-          update_interval: 16ms
-          lambda: |-
-            #include "glow/Solid.h"
-            static glow::Solid solid;
-            if (initial_run) {
-              solid.setup(&it, current_color);
-            }
-            solid.apply();
-
-      - addressable_lambda: 
-          name: "Scanner"
-          update_interval: 16ms
-          lambda: |-
-            #include "glow/Scanner.h"
-            static glow::Scanner scanner;
-            if (initial_run) {
-              scanner.setup(&it, current_color);
-            }
-            scanner.apply();
-
-      - addressable_lambda: 
-          name: "Composite Columns Flat"
-          update_interval: 16ms
-          lambda: |-
-            #include "glow/Gradients.h"
-            #include "glow/Scanner.h"
-            #include "glow/Composite.h"
-            using namespace glow;
-            static ColumnsFlatGradient gradient;
-            static Scanner scanner;
-            static Composite<ColumnsFlatGradient, Scanner> composite(gradient, scanner);
-
-            if (initial_run) {
-              composite.setup(&it, current_color);
-            }
-            composite.apply();
-
-      - addressable_lambda: 
-          name: "Composite Rows"
-          update_interval: 16ms
-          lambda: |-
-            #include "glow/Gradients.h"
-            #include "glow/Scanner.h"
-            #include "glow/Composite.h"
-            using namespace glow;
-            static RowsGradient gradient;
-            static Scanner scanner;
-            static Composite<RowsGradient, Scanner> composite(gradient, scanner);
-
-            if (initial_run) {
-              composite.setup(&it, current_color);
-            }
-            composite.apply();
-
-
-      - addressable_lambda: 
-          name: "Solid Base Composite"
-          update_interval: 16ms
-          lambda: |-
-            #include "glow/Solid.h"
-            #include "glow/Scanner.h"
-            #include "glow/Composite.h"
-            using namespace glow;
-            static Solid solid;
-            static Scanner scanner;
-            static Composite<Solid, Scanner> composite(solid, scanner);
-
-            if (initial_run) {
-              composite.setup(&it, current_color);
-            }
-            composite.apply();
-
-      - addressable_lambda: 
-          name: "Solid Base Composite-1"
-          update_interval: 16ms
-          lambda: |-
-            #include "glow/Solid.h"
-            #include "glow/Scanner.h"
-            #include "glow/Composite.h"
-            using namespace glow;
-            static Solid solid;
-            static Scanner scanner;
-            static Composite<Solid, Scanner> composite(solid, scanner);
-
-            if (initial_run) {
-              composite.setup(&it, current_color, TopRight);
-            }
-            composite.apply();
-
-      - addressable_lambda: 
-          name: "Solid Base Composite-2"
-          update_interval: 16ms
-          lambda: |-
-            #include "glow/Solid.h"
-            #include "glow/Scanner.h"
-            #include "glow/Composite.h"
-            using namespace glow;
-            static Solid solid;
-            static Scanner scanner1;
-            static Scanner scanner2;
-            static Composite<Scanner, Scanner> foreground(scanner2, scanner1);
-            static Composite<Solid, Composite<Scanner, Scanner>> composite(solid, foreground);
-
-            if (initial_run) {
-              solid.setup(&it, current_color);
-              scanner2.setup(&it, current_color);
-              scanner1.setup(&it, current_color, TopRight);
-            }
-            composite.apply();

@@ -2,70 +2,122 @@
 
 namespace glow
 {
-  uint32_t hsv_to_u32(ESPHSVColor hsv)
+#ifndef MICRO_CONTROLLER
+  std::string HSVColor::keys[HSVColor::KEY_COUNT] = {
+      "hue",
+      "saturation",
+      "value",
+  };
+
+  std::string HSVColor::make_code()
   {
-    return HSVColor(hsv).raw_32;
-  }
-
-  ESPHSVColor u32_to_hsv(uint32_t hsv32)
-  {
-    return HSVColor(hsv32).esp_hsv();
-  }
-
-  ESPHSVColor color_to_hsv(Color color)
-  {
-    const uint16_t red = color.red;
-    const uint16_t green = color.green;
-    const uint16_t blue = color.blue;
-
-    const uint16_t value = std::max(red, std::max(green, blue));
-    const uint16_t color_range = value -
-                                 std::min(red, std::min(green, blue));
-    const uint16_t saturation =
-        (value == 0) ? 0
-                     : (color_range * byte_limit) / value;
-    uint16_t hue = 0;
-    if (color_range != 0)
-    {
-      if (value == red)
-      {
-        hue = (hue_segment * (green - blue) / color_range) + hue_limit;
-      }
-      else if (value == green)
-      {
-        hue = (hue_segment * (blue - red) / color_range) + hue_green;
-      }
-      else // if (value == blue)
-      {
-        hue = (hue_segment * (red - green) / color_range) + hue_blue;
-      }
-    }
-
-    return ESPHSVColor(static_cast<uint8_t>(hue / 6),
-                       static_cast<uint8_t>(saturation),
-                       static_cast<uint8_t>(value));
-  }
-
-#ifndef USE_ESP32
-  // keep original for testing
-  ESPHSVColor old_color_to_hsv(Color color)
-  {
-    float red = static_cast<float>(color.red) / 255.0;
-    float green = static_cast<float>(color.green) / 255.0;
-    float blue = static_cast<float>(color.blue) / 255.0;
-    float saturation, value;
-    int hue;
-
-    rgb_to_hsv(red, green, blue, hue, saturation, value);
-
-    hue *= 255;
-    hue /= 360;
-    saturation *= 255;
-    value *= 255;
-    return ESPHSVColor(static_cast<uint8_t>(hue),
-                       static_cast<uint8_t>(saturation),
-                       static_cast<uint8_t>(value));
+    std::stringstream s;
+    s << "{" << hue << ","
+      << (uint16_t)saturation << ","
+      << (uint16_t)value << "}";
+    return s.str();
   }
 #endif
 
-} // namespace name
+  Color HSVColor::to_rgb()
+  {
+    uint8_t red = 0;
+    uint8_t green = 0;
+    uint8_t blue = 0;
+
+    if (hue < hue_green)
+    {
+      if (hue < hue_yellow)
+      {
+        red = byte_limit;
+        green = hue;
+      }
+      else // yellow to green
+      {
+        red = hue_green - hue;
+        green = byte_limit;
+      }
+    }
+    else if (hue < hue_blue)
+    {
+      if (hue < hue_cyan)
+      {
+        green = byte_limit;
+        blue = hue - hue_green;
+      }
+      else // cyan to blue
+      {
+        green = hue_blue - hue;
+        blue = byte_limit;
+      }
+    }
+    else if (hue < hue_limit)
+    {
+      if (hue < hue_magenta)
+      {
+        blue = byte_limit;
+        red = hue - hue_blue;
+      }
+      else // magenta to red
+      {
+        blue = hue_limit - hue;
+        red = byte_limit;
+      }
+    }
+    else
+    {
+      red = byte_limit;
+    }
+
+    const uint16_t saturation_multiplier = 1 + saturation;
+    const uint16_t saturation_added = hue_segment - saturation;
+    const uint16_t value_multiplier = 1 + value;
+
+    Color rgbw;
+    uint16_t color_result = (red * saturation_multiplier) >> 8;
+    color_result += saturation_added;
+    rgbw.red = (color_result * value_multiplier) >> 8;
+
+    color_result = (green * saturation_multiplier) >> 8;
+    color_result += saturation_added;
+    rgbw.green = (color_result * value_multiplier) >> 8;
+
+    color_result = (blue * saturation_multiplier) >> 8;
+    color_result += saturation_added;
+    rgbw.blue = (color_result * value_multiplier) >> 8;
+    return rgbw;
+  }
+
+  void HSVColor::from_rgb(Color color)
+  {
+    const uint8_t red = color.red;
+    const uint8_t green = color.green;
+    const uint8_t blue = color.blue;
+
+    const uint8_t primary = std::max({red, green, blue});
+    const uint8_t color_range = primary -
+                                std::min({red, green, blue});
+    hue = 0;
+    if (color_range != 0)
+    {
+      if (primary == red)
+      {
+        hue = (hue_segment * (green - blue) / color_range) + hue_limit;
+      }
+      else if (primary == green)
+      {
+        hue = (hue_segment * (blue - red) / color_range) + hue_green;
+      }
+      else // if (primary == blue)
+      {
+        hue = (hue_segment * (red - green) / color_range) + hue_blue;
+      }
+      hue %= hue_limit;
+    }
+
+    uint16_t sat = (primary == 0) ? 0 : (color_range * byte_limit) / primary;
+    saturation = static_cast<uint8_t>(sat);
+    value = static_cast<uint8_t>(primary);
+  }
+
+} // namespace glow

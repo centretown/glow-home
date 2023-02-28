@@ -63,7 +63,11 @@
     "cinttypes": "cpp",
     "typeinfo": "cpp",
     "variant": "cpp",
-    "forward_list": "cpp"
+    "forward_list": "cpp",
+    "any": "cpp",
+    "unordered_set": "cpp",
+    "valarray": "cpp",
+    "ranges": "cpp"
   },
   "cmake.sourceDirectory": "${workspaceFolder}/esp32-custom/test"
 }

@@ -2,44 +2,93 @@
 
 namespace glow
 {
-  void Chroma::setup(Properties &properties)
+#ifndef MICRO_CONTROLLER
+  std::string Chroma::make_code()
   {
-    delta = static_cast<int16_t>(properties.shift);
-    hsv_source = properties.source;
+    std::stringstream s;
+    s << "{" << length << ","
+      << hsv_source.make_code() << ","
+      << hsv_target.make_code() << ","
+      << hue_shift << "}";
+    return s.str();
+  }
+
+  std::string Chroma::keys[Chroma::KEY_COUNT] = {
+      "length",
+      "source",
+      "target",
+      "hue_shift",
+  };
+  Palette Chroma::palette{};
+#endif
+
+  // bool Chroma::setup(uint16_t p_length,
+  //                    int16_t p_hue_shift,
+  //                    Color p_source,
+  //                    Color p_target)
+  // {
+  //   length = p_length;
+  //   hue_shift = p_hue_shift;
+  //   hsv_source.from_rgb(p_source);
+  //   hsv_target.from_rgb(p_target);
+  //   return setup();
+  // }
+
+  bool Chroma::setup(uint16_t p_length,
+                     HSVColor p_source,
+                     HSVColor p_target,
+                     int16_t p_hue_shift)
+  {
+    length = p_length;
+    hue_shift = p_hue_shift;
+    hsv_source = p_source;
+    hsv_target = p_target;
+    return setup();
+  }
+
+  bool Chroma::setup(uint16_t p_length,
+                     Color p_source,
+                     HSVColor p_target,
+                     int16_t p_hue_shift)
+  {
+    length = p_length;
+    hue_shift = p_hue_shift;
+    hsv_source.from_rgb(p_source);
+    hsv_target = p_target;
+    return setup();
+  }
+
+  bool Chroma::setup()
+  {
+    if (length == 0)
+    {
+      return false;
+    }
     rgb_source = hsv_source.to_rgb();
-    hsv_target = properties.target;
     rgb_target = hsv_target.to_rgb();
-    gradient_amount = 255.0 / static_cast<float>(properties.length);
-    gradient_amount /= 255.0;
+    gradient_amount = (static_cast<float>(byte_limit) /
+                       static_cast<float>(length)) /
+                      static_cast<float>(byte_limit);
+    return true;
   }
-
-  void Chroma::log_buffer(char *buffer, size_t buffer_size) const
+  
+  void Chroma::update()
   {
-    snprintf(buffer, buffer_size,
-             "Chroma:\n\tdelta=%d\n"
-             "\tsource: RGB(%3u,%3u,%3u)\tHSV(%3u,%3u,%3u)\n"
-             "\ttarget: RGB(%3u,%3u,%3u)\tHSV(%3u,%3u,%3u)\n",
-             delta,
-             rgb_source.red, rgb_source.green, rgb_source.blue,
-             hsv_source.hue, hsv_source.saturation, hsv_source.value,
-             rgb_target.red, rgb_target.green, rgb_target.blue,
-             hsv_target.hue, hsv_target.saturation, hsv_target.value);
-  }
+    if (hue_shift == 0)
+      return;
 
-  char *Chroma::log_hsv(char *buffer, size_t buffer_size, ESPHSVColor hsv)
-  {
-    snprintf(buffer, buffer_size,
-             "h%u s%u v%u\n",
-             hsv.hue, hsv.saturation, hsv.value);
-    return buffer;
-  }
+    auto update_hue = [&](HSVColor &hsv, Color &rgb)
+    {
+      hsv.hue += hue_shift;
+      if (hsv.hue > hue_limit)
+      {
+        hsv.hue = (hue_shift < 0) ? hue_limit : 0;
+      }
+      rgb = hsv.to_rgb();
+    };
 
-  char *Chroma::log_rgb(char *buffer, size_t buffer_size, Color rgb)
-  {
-    snprintf(buffer, buffer_size,
-             "r%u g%u b%u\n",
-             rgb.red, rgb.green, rgb.blue);
-    return buffer;
+    update_hue(hsv_source, rgb_source);
+    update_hue(hsv_target, rgb_target);
   }
 
 }

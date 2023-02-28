@@ -1,13 +1,82 @@
 #include "Grid.h"
+#include <math.h>
 
 namespace glow
 {
-  void Grid::setup(Properties &properties)
+#ifndef MICRO_CONTROLLER
+
+  std::string Grid::make_code()
   {
-    origin = properties.origin;
-    orientation = properties.orientation;
-    length = properties.length;
-    rows = properties.rows;
+    std::stringstream s;
+    s << "{" << length << ","
+      << rows << ","
+      << origin << ","
+      << orientation << "}";
+    return s.str();
+  }
+
+  std::string Grid::keys[Grid::KEY_COUNT] = {
+      "length",
+      "rows",
+      "origin",
+      "orientation",
+  };
+
+  std::string Grid::origin_keys[ORIGIN_COUNT] = {
+      "top left",
+      "top right",
+      "bottom left",
+      "bottom right",
+  };
+
+  std::unordered_map<std::string, uint16_t> Grid::origin_map = {
+      {origin_keys[TopLeft], TopLeft},
+      {origin_keys[TopRight], TopRight},
+      {origin_keys[BottomLeft], BottomLeft},
+      {origin_keys[BottomRight], BottomRight},
+  };
+
+  std::string Grid::orientation_keys[ORIENTATION_COUNT] = {
+      "horizontal",
+      "vertical",
+      "diagonal",
+  };
+
+  std::unordered_map<std::string, uint16_t> Grid::orientation_map = {
+      {orientation_keys[Horizontal], Horizontal},
+      {orientation_keys[Vertical], Vertical},
+      {orientation_keys[Diagonal], Diagonal},
+  };
+
+#endif
+  uint16_t Grid::adjust_bounds(float bound)
+  {
+    uint16_t scaled = static_cast<uint16_t>(round(bound));
+    if (orientation == Horizontal)
+    {
+      return (scaled / columns) * columns;
+    }
+
+    if (orientation == Vertical)
+    {
+      return (scaled / rows) * rows;
+    }
+
+    return (scaled / rows) * rows;
+  }
+
+  bool Grid::setup()
+  {
+    if (length == 0)
+    {
+      return false;
+    }
+
+    if (rows == 0)
+    {
+      rows = 1;
+    }
+
     columns = length / rows;
     uint16_t lesser = (rows > columns) ? columns : rows;
 
@@ -23,16 +92,26 @@ namespace glow
     pivot.offset = lesser - 1;
     pivot.last = pivot.first +
                  (columns - lesser) * rows + rows - 1;
+    return true;
+  }
+
+  bool Grid::setup(uint16_t p_length, uint16_t p_rows, uint8_t p_origin, uint8_t p_orientation)
+  {
+    length = p_length;
+    rows = p_rows;
+    origin = p_origin;
+    orientation = p_orientation;
+    return setup();
   }
 
   uint16_t Grid::map(uint16_t index)
   {
     uint16_t offset = index;
-    if (orientation == Properties::Diagonal)
+    if (orientation == Diagonal)
     {
       offset = map_diagonal(index);
     }
-    else if (orientation == Properties::Vertical)
+    else if (orientation == Vertical)
     {
       offset = map_columns(index, point);
     }
@@ -103,20 +182,20 @@ namespace glow
 
   uint16_t Grid::map_to_origin(uint16_t offset)
   {
-    if (origin == Properties::BottomRight)
+    if (origin == BottomRight)
     {
       return length - offset - 1;
     }
 
     point = div(offset, columns);
 
-    if (origin == Properties::BottomLeft)
+    if (origin == BottomLeft)
     {
       return (rows - point.quot - 1) * columns +
              point.rem;
     }
 
-    if (origin == Properties::TopRight)
+    if (origin == TopRight)
     {
       return point.quot * columns +
              (columns - point.rem - 1);
@@ -125,12 +204,4 @@ namespace glow
     return offset;
   }
 
-  void Grid::log_buffer(char *buffer, size_t buffer_size) const
-  {
-    snprintf(buffer, buffer_size,
-             "Grid:\n\tlength=%u\trows=%u  \tcolumns=%u\n"
-             "\tfirst=%u\tlast=%u\toffset=%u\n",
-             length, rows, columns,
-             pivot.first, pivot.last, pivot.offset);
-  }
-}
+} // namespace glow
