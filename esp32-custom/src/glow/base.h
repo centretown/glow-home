@@ -5,5 +5,8 @@
 #endif
 
 #include <cstdlib>
+
+#ifdef USE_ESP32
 #define MICRO_CONTROLLER
 #define ESPHOME_CONTROLLER
+#endif

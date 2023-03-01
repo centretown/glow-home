@@ -1,63 +1,52 @@
 
-      - addressable_lambda: 
-          name: "SPOTLIGHT"
-          update_interval: 48ms
-          lambda: |-
-            #include "glow/catalog.h"
-            static glow::Frame frame(glow::from_catalog(glow::SPOTLIGHT));
-            static glow::Light light;
-            if (initial_run) {
-              light.setup(&it);
-              frame.setup(it.size(), 4, 500);
-            }
+- addressable_lambda: 
+    name: "SPOTLIGHT"
+    update_interval: 48ms
+    lambda: |-
+      #include "glow/catalog.h"
+      static glow::Frame frame(glow::from_catalog(glow::SPOTLIGHT));
+      if (initial_run) {
+        frame.setup(it.size(), 4, 500);
+      }
+      if (frame.is_ready()) {
+        frame.spin(&it);
+      }
+      
+- addressable_lambda: 
+    name: "DOUBLE_SCANNER"
+    update_interval: 16ms
+    lambda: |-
+      #include "glow/catalog.h"
+      static glow::Frame frame(glow::from_catalog(glow::DOUBLE_SCANNER));
+      if (initial_run) {
+        frame.setup(it.size(), 4, 48);
+      }
+      if (frame.is_ready()) {
+        frame.spin(&it);
+      }
 
-            if (frame.is_ready()) {
-              frame.spin(&it);
-            }
-      - addressable_lambda: 
-          name: "DOUBLE_SCANNER"
-          update_interval: 16ms
-          lambda: |-
-            #include "glow/catalog.h"
-            static glow::Frame frame(glow::from_catalog(glow::DOUBLE_SCANNER));
-            static glow::Light light;
-            if (initial_run) {
-              light.setup(&it);
-              frame.setup(it.size(), 4, 48);
-            }
+- addressable_lambda: 
+    name: "SPLIT_IN_TWO"
+    update_interval: 16ms
+    lambda: |-
+      #include "glow/catalog.h"
+      static glow::Frame frame(glow::from_catalog(glow::SPLIT_IN_TWO));
+      if (initial_run) {
+        frame.setup(it.size(), 4, 48);
+      }
+      if (frame.is_ready()) {
+        frame.spin(&it);
+      }
 
-            if (frame.is_ready()) {
-              frame.spin(&it);
-            }
-
-      - addressable_lambda: 
-          name: "SPLIT_IN_TWO"
-          update_interval: 16ms
-          lambda: |-
-            #include "glow/catalog.h"
-            static glow::Frame frame(glow::from_catalog(glow::SPLIT_IN_TWO));
-            static glow::Light light;
-            if (initial_run) {
-              light.setup(&it);
-              frame.setup(it.size(), 4, 48);
-            }
-
-            if (frame.is_ready()) {
-              frame.spin(&it);
-            }
-
-      - addressable_lambda: 
-          name: "SPLIT_IN_THREE"
-          update_interval: 16ms
-          lambda: |-
-            #include "glow/catalog.h"
-            static glow::Frame frame(glow::from_catalog(glow::SPLIT_IN_THREE));
-            static glow::Light light;
-            if (initial_run) {
-              light.setup(&it);
-              frame.setup(it.size(), 4, 48);
-            }
-
-            if (frame.is_ready()) {
-              frame.spin(&it);
-            }
+- addressable_lambda: 
+    name: "SPLIT_IN_THREE"
+    update_interval: 16ms
+    lambda: |-
+      #include "glow/catalog.h"
+      static glow::Frame frame(glow::from_catalog(glow::SPLIT_IN_THREE));
+      if (initial_run) {
+        frame.setup(it.size(), 4, 48);
+      }
+      if (frame.is_ready()) {
+        frame.spin(&it);
+      }
