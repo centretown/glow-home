@@ -42,6 +42,6 @@ Frame catalog[FRAME_COUNT]= {
 {{540,9,{540,9,0,2},{540,{1402,204,255},{1402,204,255},0},0,0,0,100},
 }},
 };
-Frame &from_catalog(LIBRARY_INDEX index){return catalog[index%FRAME_COUNT];}
-const char *catalog_name(LIBRARY_INDEX index){return catalog_names[index%FRAME_COUNT];}
+Frame &from_catalog(CATALOG_INDEX index){return catalog[index%FRAME_COUNT];}
+const char *catalog_name(CATALOG_INDEX index){return catalog_names[index%FRAME_COUNT];}
 } // namespace glow

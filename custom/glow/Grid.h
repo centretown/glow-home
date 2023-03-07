@@ -10,7 +10,6 @@
 #include <sstream>
 #endif
 
-
 namespace glow
 {
   enum : uint16_t
@@ -160,9 +159,10 @@ namespace glow
     friend YAML::convert<Grid>;
     std::string make_code();
 
-#endif
+#endif // MICRO_CONTROLLER
   };
 }
+
 #ifndef MICRO_CONTROLLER
 
 namespace YAML
@@ -177,8 +177,6 @@ namespace YAML
       Node node;
       node[Grid::keys[Grid::LENGTH]] = grid.length;
       node[Grid::keys[Grid::ROWS]] = grid.rows;
-      // node[Grid::keys[Grid::ORIGIN]] = grid.origin;
-      // node[Grid::keys[Grid::ORIENTATION]] = grid.orientation;
       node[Grid::keys[Grid::ORIGIN]] =
           Grid::origin_keys[grid.origin];
       node[Grid::keys[Grid::ORIENTATION]] =
@@ -231,4 +229,4 @@ namespace YAML
     }
   };
 }
-#endif
+#endif // MICRO_CONTROLLER

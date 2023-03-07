@@ -18,7 +18,7 @@ packages:
 # https://esphome.io/index.html#
 esphome:
   includes:
-    - esp32-custom/src/glow
+    - custom/glow
     - esp32-custom/src/display
 
 # unique to this device
@@ -34,7 +34,7 @@ light:
     rgb_order: BRG
     num_leds: 20
     pin: GPIO12
-    effects: !include common/strip_effects.yml
+    effects: !include custom/strip_effects.yml
     on_turn_on:
       then:
         - lambda: |-

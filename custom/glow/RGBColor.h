@@ -71,7 +71,7 @@ namespace glow
     };
 
     static std::string keys[KEY_COUNT];
-#endif
+#endif // MICRO_CONTROLLER
   };
 
 } // namespace glow
@@ -105,4 +105,4 @@ namespace YAML
     }
   };
 }
-#endif
+#endif // MICRO_CONTROLLER

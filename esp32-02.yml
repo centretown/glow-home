@@ -16,7 +16,7 @@ packages:
 # https://esphome.io/index.html#
 esphome:
   includes:
-    - esp32-custom/src/glow
+    - custom/glow
     - esp32-custom/src/arduino_port_expander
     # - esp32-custom/src/display
 
@@ -52,7 +52,7 @@ light:
       then:
         - lambda: |-
             id(grid_on) = false;
-    effects: !include common/grid_effects.yml
+    effects: !include custom/grid_effects.yml
 
   - platform: fastled_clockless
     name: "LED Grid Section 1"
@@ -89,7 +89,7 @@ light:
     rgb_order: BRG
     num_leds: 30
     pin: GPIO26
-    effects: !include common/strip_effects.yml
+    effects: !include custom/strip_effects.yml
     on_turn_on:
       then:
         - lambda: |-

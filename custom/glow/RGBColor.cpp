@@ -8,5 +8,5 @@ namespace glow
       "green",
       "blue",
   };
-#endif
+#endif // MICRO_CONTROLLER
 }

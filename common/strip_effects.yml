@@ -8,7 +8,7 @@
         frame.setup(it.size(), 1, 500);
       }
       if (frame.is_ready()) {
-        frame.spin(&it);
+        frame.spin(it);
       }
 
 - addressable_lambda: 
@@ -21,7 +21,7 @@
         frame.setup(it.size(), 1, 48);
       }
       if (frame.is_ready()) {
-        frame.spin(&it);
+        frame.spin(it);
       }
 
 - addressable_lambda: 
@@ -34,7 +34,7 @@
         frame.setup(it.size(), 1, 48);
       }
       if (frame.is_ready()) {
-        frame.spin(&it);
+        frame.spin(it);
       }
 
 - addressable_lambda: 
@@ -47,5 +47,5 @@
         frame.setup(it.size(), 1, 48);
       }
       if (frame.is_ready()) {
-        frame.spin(&it);
+        frame.spin(it);
       }

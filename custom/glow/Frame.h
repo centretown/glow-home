@@ -74,14 +74,14 @@ namespace glow
     void copy(const Frame &frame);
 
     template <typename LIGHT>
-    void spin(LIGHT *light)
+    void spin(LIGHT &light)
     {
       for (auto &layer : layers)
       {
         layer.spin(light);
       }
 #ifndef ESPHOME_CONTROLLER
-      light->update();
+      light.update();
 #endif
     }
 

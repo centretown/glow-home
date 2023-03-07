@@ -11,12 +11,6 @@
 
 #include "RGBColor.h"
 
-// #include "esphome/core/color.h"
-// #include "esphome/components/light/esp_hsv_color.h"
-
-// using esphome::Color;
-// using esphome::light::ESPHSVColor;
-
 namespace glow
 {
   constexpr uint16_t byte_limit = 0xff;
@@ -55,18 +49,6 @@ namespace glow
       return true;
     }
 
-    // ESPHSVColor to_esp_hsv_color() const ALWAYS_INLINE
-    // {
-    //   return ESPHSVColor(hue / hue_segment_count, saturation, value);
-    // }
-
-    // void from_esp_hsv_color(ESPHSVColor esph_hsv)
-    // {
-    //   hue = esph_hsv.hue * hue_segment_count;
-    //   saturation = esph_hsv.saturation;
-    //   value = esph_hsv.value;
-    // }
-
     Color to_rgb();
 
     void from_rgb(Color color);
@@ -94,7 +76,7 @@ namespace glow
       value = static_cast<uint8_t>(f_value / 100.0f *
                                    static_cast<float>(byte_limit));
     }
-
+#ifndef MICRO_CONTROLLER
     enum : uint8_t
     {
       HUE,
@@ -105,6 +87,7 @@ namespace glow
 
     static std::string keys[KEY_COUNT];
     std::string make_code();
+#endif
   };
 }
 

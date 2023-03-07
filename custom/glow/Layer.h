@@ -140,7 +140,7 @@ namespace glow
     }
 
     template <typename LIGHT>
-    void spin(LIGHT *light)
+    void spin(LIGHT &light)
     {
       uint16_t start_at{first};
       uint16_t end_at{last};
@@ -152,7 +152,7 @@ namespace glow
 
       for (uint16_t i = start_at; i < end_at; ++i)
       {
-        light->get(grid.map(i)) = chroma.map(i).get();
+        light.get(grid.map(i)) = chroma.map(i).get();
       }
       chroma.update();
     }

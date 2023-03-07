@@ -1,0 +1,84 @@
+- addressable_lambda: 
+    name: "double-scanner"
+    update_interval: 48ms
+    lambda: |-
+      #include "glow/catalog.h"
+      static glow::Frame frame(glow::from_catalog(glow::DOUBLE_SCANNER));
+      if (initial_run) {
+        frame.setup(it.size(), 1, 48);
+      }
+      if (frame.is_ready()) {
+        frame.spin(it);
+      }
+- addressable_lambda: 
+    name: "salmon-strawberry"
+    update_interval: 48ms
+    lambda: |-
+      #include "glow/catalog.h"
+      static glow::Frame frame(glow::from_catalog(glow::SALMON_STRAWBERRY));
+      if (initial_run) {
+        frame.setup(it.size(), 1, 48);
+      }
+      if (frame.is_ready()) {
+        frame.spin(it);
+      }
+- addressable_lambda: 
+    name: "sky blue scan"
+    update_interval: 48ms
+    lambda: |-
+      #include "glow/catalog.h"
+      static glow::Frame frame(glow::from_catalog(glow::SKY_BLUE_SCAN));
+      if (initial_run) {
+        frame.setup(it.size(), 1, 48);
+      }
+      if (frame.is_ready()) {
+        frame.spin(it);
+      }
+- addressable_lambda: 
+    name: "split_in_three"
+    update_interval: 48ms
+    lambda: |-
+      #include "glow/catalog.h"
+      static glow::Frame frame(glow::from_catalog(glow::SPLIT_IN_THREE));
+      if (initial_run) {
+        frame.setup(it.size(), 1, 48);
+      }
+      if (frame.is_ready()) {
+        frame.spin(it);
+      }
+- addressable_lambda: 
+    name: "split_in_two"
+    update_interval: 48ms
+    lambda: |-
+      #include "glow/catalog.h"
+      static glow::Frame frame(glow::from_catalog(glow::SPLIT_IN_TWO));
+      if (initial_run) {
+        frame.setup(it.size(), 1, 48);
+      }
+      if (frame.is_ready()) {
+        frame.spin(it);
+      }
+- addressable_lambda: 
+    name: "spotlight"
+    update_interval: 48ms
+    lambda: |-
+      #include "glow/catalog.h"
+      static glow::Frame frame(glow::from_catalog(glow::SPOTLIGHT));
+      if (initial_run) {
+        frame.setup(it.size(), 1, 48);
+      }
+      if (frame.is_ready()) {
+        frame.spin(it);
+      }
+- addressable_lambda: 
+    name: "strawberry"
+    update_interval: 48ms
+    lambda: |-
+      #include "glow/catalog.h"
+      static glow::Frame frame(glow::from_catalog(glow::STRAWBERRY));
+      if (initial_run) {
+        frame.setup(it.size(), 1, 48);
+      }
+      if (frame.is_ready()) {
+        frame.spin(it);
+      }
