@@ -6,7 +6,7 @@
 substitutions:
   node_name: heltec32-01
   device_verbose_name: "Heltec w/display"
-  ip_suffix: "220"
+  ip_suffix: "119"
   ap_password: "y0ltlm7Rryim"
   board_type: heltec_wifi_kit_32
 
