@@ -1,7 +1,7 @@
 
 substitutions:
   node_name: rgb-control
-  device_verbose_name: "RGB Light Controller"
+  device_verbose_name: "RGB Control"
   ip_suffix: "31"
   ap_password: "y0ltlm7Rryim"
   board_type: esp32dev
@@ -9,15 +9,14 @@ substitutions:
 packages:
   wifi: !include common/wifi.yml
   device_base: !include common/device_base.yml
-  expander: !include common/expander.yml
-  # i2c: !include common/i2c.yml
 
 # https://esphome.io/index.html#
 esphome:
   includes:
+    - custom/glow.h
     - custom/glow
-    - esp32-custom/src/arduino_port_expander
-    # - esp32-custom/src/display
+  libraries:
+    # - esphome/FastLED=https://github.com/FastLED/FastLED.git
 
 # Enable Home Assistant API
 api:
@@ -28,7 +27,7 @@ api:
 # https://esphome.io/components/light/index.html
 light:
   - platform: partition
-    name: "LED Grid"
+    name: "Grid"
     id: 'grid0'
     segments:
       - id: strip0
@@ -54,35 +53,35 @@ light:
     effects: !include custom/grid_effects.yml
 
   - platform: fastled_clockless
-    name: "LED Grid Section 1"
+    name: "Grid Section 1"
     id: strip0
     chipset: NEOPIXEL
     num_leds: 9
     pin: GPIO33
 
   - platform: fastled_clockless
-    name: "LED Grid Section 2"
+    name: "Grid Section 2"
     id: strip1
     chipset: NEOPIXEL
     num_leds: 9
     pin: GPIO14
 
   - platform: fastled_clockless
-    name: "LED Grid Section 3"
+    name: "Grid Section 3"
     id: strip2
     chipset: NEOPIXEL
     num_leds: 9
     pin: GPIO27
 
   - platform: fastled_clockless
-    name: "LED Grid Section 4"
+    name: "Grid Section 4"
     id: strip3
     chipset: NEOPIXEL
     num_leds: 9
     pin: GPIO13
 
   - platform: fastled_clockless
-    name: "LED Strip"
+    name: "Strip"
     id: strip4
     chipset: WS2811
     rgb_order: BRG
@@ -101,7 +100,7 @@ light:
 # https://esphome.io/components/sensor/index.html
 sensor:
   - platform: rotary_encoder
-    name: "LED Brightness"
+    name: "Brightness"
     id: 'rotary1'
     pin_a:
       number: GPIO18
@@ -135,7 +134,7 @@ sensor:
 switch:
   - platform: template
     id: led_toggle
-    name: "LED Toggle Switch"
+    name: "Toggle Switch"
     optimistic: true
     on_turn_on:
       then:
@@ -146,11 +145,6 @@ switch:
         - light.turn_off: grid0
         - light.turn_off: strip4
   
-  - platform: template
-    id: led_toggle_2
-    name: "Double Click"
-    optimistic: true
-    
 # https://esphome.io/guides/automations.html?highlight=template#global-variables
 globals:
   - id: grid_on
@@ -169,7 +163,7 @@ globals:
 # https://esphome.io/components/binary_sensor/index.html
 binary_sensor:
   - platform: gpio
-    name: "LED Toggle Button"
+    name: "Toggle Button"
     pin:
       number: GPIO19
       mode:
@@ -178,30 +172,3 @@ binary_sensor:
       then:
         - switch.toggle: led_toggle
     
-    # on_click:
-    #   - min_length: 0ms
-    #     max_length: 500ms
-    #     then:
-    #       - switch.toggle: led_toggle
-    #   - min_length: 500ms
-    #     max_length: 1000ms
-    #     then:
-    #       - switch.toggle: led_toggle_2
-    
-# # https://esphome.io/components/display/index.html?highlight=font#fonts
-# font:
-#   # gfonts://family[@weight]
-#   - file: "gfonts://Lato"
-#     id: lato
-#     size: 11
-
-# # https://esphome.io/components/display/index.html
-# display:
-#   - platform: ssd1306_i2c
-#     id: display01
-#     model: "SSD1306 128x32"
-#     address: 0x3C
-#     lambda: |-
-#       #include "display/write_display.h"
-#       drawLines(it, id(lato),
-#         id(rotary1).state, id(grid_on), id(strip_on));

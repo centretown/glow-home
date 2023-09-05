@@ -6,10 +6,16 @@ namespace glow
   std::string Chroma::make_code()
   {
     std::stringstream s;
-    s << "{" << length << ","
-      << hsv_source.make_code() << ","
-      << hsv_target.make_code() << ","
-      << hue_shift << "}";
+    s << "{" << length << "," << '\n';
+    // << hsv_source.make_code() << ","
+    // << hsv_target.make_code() << ","
+    s << "{" << '\n';
+    for (auto &color : colors)
+    {
+      s << color.make_code() << "," << '\n';
+    }
+    s << "}," << '\n';
+    s << hue_shift << "}";
     return s.str();
   }
 
@@ -18,6 +24,7 @@ namespace glow
       "source",
       "target",
       "hue_shift",
+      "colors",
   };
   Palette Chroma::palette{};
 #endif
@@ -41,8 +48,8 @@ namespace glow
   {
     length = p_length;
     hue_shift = p_hue_shift;
-    hsv_source = p_source;
-    hsv_target = p_target;
+    colors.push_back(p_source);
+    colors.push_back(p_target);
     return setup();
   }
 
@@ -53,8 +60,10 @@ namespace glow
   {
     length = p_length;
     hue_shift = p_hue_shift;
-    hsv_source.from_rgb(p_source);
-    hsv_target = p_target;
+    HSVColor source;
+    source.from_rgb(p_source);
+    colors.push_back(source);
+    colors.push_back(p_target);
     return setup();
   }
 
@@ -64,31 +73,57 @@ namespace glow
     {
       return false;
     }
-    rgb_source = hsv_source.to_rgb();
-    rgb_target = hsv_target.to_rgb();
-    gradient_amount = (static_cast<float>(byte_limit) /
-                       static_cast<float>(length)) /
-                      static_cast<float>(byte_limit);
+
+    if (colors.size() < 1)
+    {
+      colors.push_back(color_default);
+    }
+
+    quick_color = colors[0].to_rgb();
+    uint16_t size = colors.size() - 1;
+    segment_size = (size < 2) ? length : length / size;
     return true;
   }
-  
+
+  bool Chroma::setup(uint16_t p_length,
+                     std::initializer_list<HSVColor> p_colors,
+                     int16_t p_hue_shift)
+  {
+    length = p_length;
+    colors = p_colors;
+    hue_shift = p_hue_shift;
+    return setup();
+  }
+
+  Color Chroma::map(uint16_t index)
+  {
+    uint16_t size = colors.size();
+    if (size < 2 || index == 0)
+    {
+      return quick_color;
+    }
+
+    // d.quot == segment
+    // d.rem == index within segment
+    div_t d = div(index, segment_size);
+    HSVColor first = colors[d.quot];
+    HSVColor last = colors[d.quot + 1];
+    return first.to_gradient(last, d.rem, segment_size).to_rgb();
+  }
+
   void Chroma::update()
   {
     if (hue_shift == 0)
       return;
 
-    auto update_hue = [&](HSVColor &hsv, Color &rgb)
+    for (auto &hsv : colors)
     {
       hsv.hue += hue_shift;
       if (hsv.hue > hue_limit)
       {
         hsv.hue = (hue_shift < 0) ? hue_limit : 0;
       }
-      rgb = hsv.to_rgb();
-    };
-
-    update_hue(hsv_source, rgb_source);
-    update_hue(hsv_target, rgb_target);
+    }
+    quick_color = colors.begin()->to_rgb();
   }
-
 }

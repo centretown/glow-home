@@ -1,0 +1,302 @@
+# heltec docs
+# https://resource.heltec.cn/download/WiFi_Kit_32/WiFi%20Kit32.pdf
+# heltec source code
+# https://github.com/HelTecAutomation/Heltec_ESP32
+
+substitutions:
+  node_name: heltec32-rmt
+  device_verbose_name: "Heltec light controller"
+  ip_suffix: "119"
+  ap_password: "y0ltlm7Rryim"
+  board_type: heltec_wifi_kit_32
+
+packages:
+  wifi: !include common/wifi.yml
+  device_base: !include common/device_base.yml
+
+# https://esphome.io/index.html#
+esphome:
+  includes:
+    - custom/glow
+    - custom/rgb_panels
+  on_boot:
+    priority: 600
+    then:
+      lambda: |-
+        rgb_panels::Resources resources = {
+          id(font_small),
+          id(font_medium),
+          id(font_large),
+          id(menu_up),
+          id(menu_down),
+          id(effect_icon),
+          {
+            id(bulb_00),
+            id(bulb_10), id(bulb_20), id(bulb_30), id(bulb_40), id(bulb_50), 
+            id(bulb_60), id(bulb_70), id(bulb_80), id(bulb_90), id(bulb_100)
+          }};
+        rgb_panels::control().setup(&resources);
+
+# unique to this device
+api:
+  encryption:
+    key: "YUuNOPdh1y1F2XZKiL6LsPwo3QNIHRFi7hzUrxXNizo="
+
+# https://esphome.io/components/light/index.html
+light:
+  - platform: partition
+    name: "LED Grid"
+    id: 'grid0'
+    segments:
+      - id: strip0
+        from: 0
+        to: 8
+      - id: strip1
+        from: 0
+        to: 8
+      - id: strip2
+        from: 0
+        to: 8
+      - id: strip3
+        from: 0
+        to: 8
+    on_state:
+      then:
+        lambda: |-
+          rgb_panels::control().on_light_state(id(grid0));
+    effects: !include custom/grid_effects.yml
+    restore_mode: RESTORE_DEFAULT_ON
+
+  - platform: esp32_rmt_led_strip
+    name: "LED Grid Section 1"
+    id: strip0
+    chipset: ws2812
+    num_leds: 9
+    pin: GPIO13
+    rgb_order: GRB
+    rmt_channel: 0
+
+  - platform: esp32_rmt_led_strip
+    name: "LED Grid Section 2"
+    id: strip1
+    chipset: ws2812
+    num_leds: 9
+    pin: GPIO14
+    rgb_order: GRB
+    rmt_channel: 1
+
+  - platform: esp32_rmt_led_strip
+    name: "LED Grid Section 3"
+    id: strip2
+    chipset: ws2812
+    num_leds: 9
+    pin: GPIO12
+    rgb_order: GRB
+    rmt_channel: 2
+
+  - platform: esp32_rmt_led_strip
+    name: "LED Grid Section 4"
+    id: strip3
+    chipset: ws2812
+    num_leds: 9
+    pin: GPIO27
+    rgb_order: GRB
+    rmt_channel: 3
+
+# https://esphome.io/components/i2c.html
+i2c:
+  # Built-in display
+  - id: oled_i2c
+    sda: GPIO04
+    scl: GPIO15
+    scan: false
+    frequency: 800kHz
+
+# https://esphome.io/components/binary_sensor/index.html
+binary_sensor:
+  - platform: gpio
+    name: "Controller-Button"
+    pin:
+      number: GPIO35
+      mode:
+        input: true
+    on_release:
+      then:
+        lambda: |-
+          rgb_panels::control().on_click(id(grid0), id(rotary1));
+
+# https://esphome.io/components/sensor/index.html
+# https://esphome.io/components/sensor/rotary_encoder
+sensor:
+  - platform: rotary_encoder
+    name: "Controller-Dial"
+    id: 'rotary1'
+    pin_a:
+      number: GPIO33
+      inverted: true
+      mode:
+        input: true
+    pin_b:
+      number: GPIO32
+      inverted: true
+      mode:
+        input: true
+        pullup: true
+    resolution: 1
+    min_value: 0
+    max_value: 100
+    unit_of_measurement: "%"
+    on_value:
+      then:
+        - lambda: |-
+            rgb_panels::control().on_rotate(id(grid0), id(rotary1));
+    restore_mode: ALWAYS_ZERO
+
+# https://esphome.io/components/sensor/wifi_signal
+  - platform: wifi_signal
+    id: wifi_signal_1
+    name: "WiFi Signal"
+    update_interval: 60s
+    entity_category: "diagnostic"    
+    on_value:
+      then:
+        - lambda: |-
+            rgb_panels::control().on_wifi_signal(id(wifi_signal_1).get_state());
+
+# https://esphome.io/components/text_sensor/wifi_info
+text_sensor:
+# - platform: template
+# 
+  - platform: wifi_info
+    ip_address:
+      id: ip_address
+      name: IP Address
+      on_value:
+        then:
+          - lambda: |-
+              rgb_panels::control().on_info(id(ip_address),
+                rgb_panels::IP_ADDRESS);
+    ssid:
+      id: ssid
+      name: SSID
+      on_value:
+        then:
+          - lambda: |-
+              rgb_panels::control().on_info(id(ssid),
+                rgb_panels::SSID);
+    bssid:
+      id: bssid
+      name: BSSID
+      on_value:
+        then:
+          - lambda: |-
+              rgb_panels::control().on_info(id(bssid),
+                rgb_panels::BSSID);
+    mac_address:
+      id: mac_address
+      name: Mac Address
+      on_value:
+        then:
+          - lambda: |-
+              rgb_panels::control().on_info(id(mac_address),
+                rgb_panels::MAC_ADDRESS);
+
+# https://esphome.io/components/display/index.html?highlight=font#fonts
+font:
+  - file: # "gfonts://Lato,Roboto Condensed,Raleway,Fira Sans"
+      type: gfonts
+      family: Arimo
+    id: font_small
+    size: 14
+  - file: # "gfonts://Lato"
+      type: gfonts
+      family: Arimo
+    id: font_medium
+    size: 16
+  - file: # "gfonts://Lato"
+      type: gfonts
+      family: Arimo
+    id: font_large
+    size: 20
+
+# https://esphome.io/components/display/#images
+image:
+  - file: "davers-head-inverted.png"
+    id: daves_head_inverted
+    type: BINARY
+    resize: 64x64
+    dither: FLOYDSTEINBERG
+  - file:  mdi:head-lightbulb
+    id: effect_icon
+    resize: 30x30
+  # - file:  "image/brightness.png"
+  - file:  mdi:lightbulb-outline
+    id: bulb_00
+    resize: 30x30
+  - file:  mdi:lightbulb-on-10
+    id: bulb_10
+    resize: 30x30
+  - file:  mdi:lightbulb-on-20
+    id: bulb_20
+    resize: 30x30
+  - file:  mdi:lightbulb-on-30
+    id: bulb_30
+    resize: 30x30
+  - file:  mdi:lightbulb-on-40
+    id: bulb_40
+    resize: 30x30
+  - file:  mdi:lightbulb-on-50
+    id: bulb_50
+    resize: 30x30
+  - file:  mdi:lightbulb-on-60
+    id: bulb_60
+    resize: 30x30
+  - file:  mdi:lightbulb-on-70
+    id: bulb_70
+    resize: 30x30
+  - file:  mdi:lightbulb-on-80
+    id: bulb_80
+    resize: 30x30
+  - file:  mdi:lightbulb-on-90
+    id: bulb_90
+    resize: 30x30
+  - file:  mdi:lightbulb-on
+    id: bulb_100
+    resize: 30x30
+
+  # - file:  mdi:star-four-points-small
+  #   id: star_small
+  #   resize: 20x20
+  - file:  mdi:wifi
+    id: wifi_icon
+    resize: 30x30
+  - file:  mdi:menu-up
+    id: menu_up
+    resize: 24x24
+  - file:  mdi:menu-down
+    id: menu_down
+    resize: 24x24
+
+# https://esphome.io/components/display/index.html
+display:
+  - platform: ssd1306_i2c
+    i2c_id: oled_i2c
+    model: "SSD1306 128x64"
+    id: blue_display
+    reset_pin: GPIO16
+    address: 0x3C
+    lambda: |-
+      rgb_panels::control().show(it);
+      
+
+# # https://esphome.io/components/sensor/ultrasonic.html?highlight=hc+sr04
+#   - platform: ultrasonic
+#     trigger_pin: GPIO18
+#     echo_pin: GPIO23
+#     id: ultra_1
+#     name: "Ultrasonic Sensor"
+# # defaults
+#     update_interval: 60s
+#     timeout: 2m
+#     pulse_time: 10us
+

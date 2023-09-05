@@ -14,6 +14,14 @@ esp32:
   board: $board_type
   framework:
     type: arduino
+  #   type: esp-idf
+  #   version: recommended
+  #   # Custom sdkconfig options
+  #   sdkconfig_options:
+  #     CONFIG_COMPILER_OPTIMIZATION_SIZE: y
+  #  # Advanced tweaking options
+  #   advanced:
+  #     ignore_efuse_mac_crc: false
   
 # Enable logging
 logger:

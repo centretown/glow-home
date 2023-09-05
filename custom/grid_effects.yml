@@ -1,9 +1,9 @@
 - addressable_lambda: 
-    name: "double-scanner"
+    name: "black-white-scan"
     update_interval: 48ms
     lambda: |-
       #include "glow/catalog.h"
-      static glow::Frame frame(glow::from_catalog(glow::DOUBLE_SCANNER));
+      static glow::Frame frame(glow::from_catalog(glow::BLACK_WHITE_SCAN));
       if (initial_run) {
         frame.setup(it.size(), 4, 48);
       }
@@ -11,11 +11,11 @@
         frame.spin(it);
       }
 - addressable_lambda: 
-    name: "salmon-strawberry"
+    name: "complementary-scan"
     update_interval: 48ms
     lambda: |-
       #include "glow/catalog.h"
-      static glow::Frame frame(glow::from_catalog(glow::SALMON_STRAWBERRY));
+      static glow::Frame frame(glow::from_catalog(glow::COMPLEMENTARY_SCAN));
       if (initial_run) {
         frame.setup(it.size(), 4, 48);
       }
@@ -23,11 +23,59 @@
         frame.spin(it);
       }
 - addressable_lambda: 
-    name: "sky blue scan"
+    name: "double-scan"
     update_interval: 48ms
     lambda: |-
       #include "glow/catalog.h"
-      static glow::Frame frame(glow::from_catalog(glow::SKY_BLUE_SCAN));
+      static glow::Frame frame(glow::from_catalog(glow::DOUBLE_SCAN));
+      if (initial_run) {
+        frame.setup(it.size(), 4, 48);
+      }
+      if (frame.is_ready()) {
+        frame.spin(it);
+      }
+- addressable_lambda: 
+    name: "gradient-scan"
+    update_interval: 48ms
+    lambda: |-
+      #include "glow/catalog.h"
+      static glow::Frame frame(glow::from_catalog(glow::GRADIENT_SCAN));
+      if (initial_run) {
+        frame.setup(it.size(), 4, 48);
+      }
+      if (frame.is_ready()) {
+        frame.spin(it);
+      }
+- addressable_lambda: 
+    name: "rainbow-diagonal"
+    update_interval: 48ms
+    lambda: |-
+      #include "glow/catalog.h"
+      static glow::Frame frame(glow::from_catalog(glow::RAINBOW_DIAGONAL));
+      if (initial_run) {
+        frame.setup(it.size(), 4, 48);
+      }
+      if (frame.is_ready()) {
+        frame.spin(it);
+      }
+- addressable_lambda: 
+    name: "rainbow-horizontal"
+    update_interval: 48ms
+    lambda: |-
+      #include "glow/catalog.h"
+      static glow::Frame frame(glow::from_catalog(glow::RAINBOW_HORIZONTAL));
+      if (initial_run) {
+        frame.setup(it.size(), 4, 48);
+      }
+      if (frame.is_ready()) {
+        frame.spin(it);
+      }
+- addressable_lambda: 
+    name: "rainbow-vertical"
+    update_interval: 48ms
+    lambda: |-
+      #include "glow/catalog.h"
+      static glow::Frame frame(glow::from_catalog(glow::RAINBOW_VERTICAL));
       if (initial_run) {
         frame.setup(it.size(), 4, 48);
       }
@@ -64,18 +112,6 @@
     lambda: |-
       #include "glow/catalog.h"
       static glow::Frame frame(glow::from_catalog(glow::SPOTLIGHT));
-      if (initial_run) {
-        frame.setup(it.size(), 4, 48);
-      }
-      if (frame.is_ready()) {
-        frame.spin(it);
-      }
-- addressable_lambda: 
-    name: "strawberry"
-    update_interval: 48ms
-    lambda: |-
-      #include "glow/catalog.h"
-      static glow::Frame frame(glow::from_catalog(glow::STRAWBERRY));
       if (initial_run) {
         frame.setup(it.size(), 4, 48);
       }

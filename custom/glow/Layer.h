@@ -81,6 +81,11 @@ namespace glow
         return false;
       }
 
+      if (scan > length)
+      {
+        scan = length;
+      }
+
       set_bounds();
 
       return true;

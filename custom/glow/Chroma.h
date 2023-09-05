@@ -2,6 +2,7 @@
 
 #include <stdint.h>
 #include <string>
+#include <vector>
 
 #include "base.h"
 #ifndef MICRO_CONTROLLER
@@ -14,42 +15,47 @@
 
 namespace glow
 {
-  const HSVColor source_default = {0, 0, 0};
-  const HSVColor target_default = {0, 0, 0};
-  const Color rgb_source_default = {0, 0, 0};
-  const Color rgb_target_default = {0, 0, 0};
+  const HSVColor color_default = {0, 0, 255};
 
   class Chroma
   {
   private:
     uint16_t length = 0;
-    HSVColor hsv_source = source_default;
-    HSVColor hsv_target = target_default;
     int16_t hue_shift = 0;
-
-    Color rgb_source = rgb_source_default;
-    Color rgb_target = rgb_target_default;
-    float gradient_amount = 0.0;
-
   public:
+    std::vector<HSVColor> colors;
+    uint16_t segment_size{0};
+    Color quick_color{0, 0, 0};
+
     Chroma() = default;
 
     Chroma(uint16_t p_length,
-           HSVColor p_source = source_default,
-           HSVColor p_target = target_default,
+           HSVColor p_source = color_default,
+           HSVColor p_target = color_default,
            int16_t p_hue_shift = 0)
     {
       setup(p_length, p_source, p_target, p_hue_shift);
     }
 
+    Chroma(uint16_t p_length,
+           std::initializer_list<HSVColor> p_colors,
+           int16_t p_hue_shift = 0)
+    {
+      setup(p_length, p_colors, p_hue_shift);
+    }
+
     bool setup(uint16_t p_length,
-               HSVColor p_source = source_default,
-               HSVColor p_target = target_default,
+               HSVColor p_source = color_default,
+               HSVColor p_target = color_default,
                int16_t p_hue_shift = 0);
 
     bool setup(uint16_t p_length,
                Color p_source,
-               HSVColor p_target = target_default,
+               HSVColor p_target = color_default,
+               int16_t p_hue_shift = 0);
+
+    bool setup(uint16_t p_length,
+               std::initializer_list<HSVColor> p_colors,
                int16_t p_hue_shift = 0);
 
     bool setup();
@@ -63,56 +69,33 @@ namespace glow
 
     uint16_t get_length() const ALWAYS_INLINE { return length; }
     int16_t get_hue_shift() const ALWAYS_INLINE { return hue_shift; }
-    HSVColor get_hsv_source() const ALWAYS_INLINE { return hsv_source; }
-    HSVColor get_hsv_target() const ALWAYS_INLINE { return hsv_target; }
-    Color get_rgb_source() const ALWAYS_INLINE { return rgb_source; }
-    Color get_rgb_target() const ALWAYS_INLINE { return rgb_target; }
-    float get_gradient_amount() const ALWAYS_INLINE { return gradient_amount; }
+    HSVColor get_hsv_source() const ALWAYS_INLINE { return colors[0]; }
+    HSVColor get_hsv_target() const ALWAYS_INLINE
+    {
+      if (colors.size() > 1)
+        return colors[1];
+      return colors[0];
+    }
+    Color get_rgb_source() const ALWAYS_INLINE { return get_hsv_source().to_rgb(); }
+    Color get_rgb_target() const ALWAYS_INLINE { return get_hsv_target().to_rgb(); }
 
     void set_hue_shift(int16_t a_hue_shift)
     {
       hue_shift = a_hue_shift;
     }
 
-    Color map(uint16_t index)
-    {
-      return step_gradient(static_cast<float>(index) * gradient_amount);
-    }
+    Color map(uint16_t index);
 
     void update();
 
-    Color step_gradient(float shift_amount) ALWAYS_INLINE
-    {
-      return Color{red_shift(shift_amount),
-                   green_shift(shift_amount),
-                   blue_shift(shift_amount)};
-    }
-
-  private:
-    uint8_t red_shift(float shift_amount) ALWAYS_INLINE
-    {
-      shift_amount *= static_cast<float>(rgb_target.red - rgb_source.red);
-      return rgb_source.red + static_cast<uint8_t>(shift_amount);
-    }
-    uint8_t green_shift(float shift_amount) ALWAYS_INLINE
-    {
-      shift_amount *= static_cast<float>(rgb_target.green - rgb_source.green);
-      return rgb_source.green + static_cast<uint8_t>(shift_amount);
-    }
-    uint8_t blue_shift(float shift_amount) ALWAYS_INLINE
-    {
-      shift_amount *= static_cast<float>(rgb_target.blue - rgb_source.blue);
-      return rgb_source.blue + static_cast<uint8_t>(shift_amount);
-    }
-
 #ifndef MICRO_CONTROLLER
-  public:
     enum : uint8_t
     {
       LENGTH,
       SOURCE,
       TARGET,
-      DELTA,
+      HUE_SHIFT,
+      COLORS,
       KEY_COUNT,
     };
 
@@ -139,7 +122,7 @@ namespace YAML
   template <>
   struct convert<Chroma>
   {
-    static void lookup(Node item, HSVColor &color)
+    static void lookup(Node &item, HSVColor &color)
     {
       if (item.IsMap())
       {
@@ -155,18 +138,36 @@ namespace YAML
       }
     }
 
+    static void lookup_list(Node &item, std::vector<HSVColor> &colors)
+    {
+      if (item.IsSequence())
+      {
+        HSVColor color;
+        for (auto color_node : item)
+        {
+          lookup(color_node, color);
+          colors.push_back(color);
+        }
+      }
+    }
+
     static Node encode(const Chroma &chroma)
     {
       Node node;
       node[Chroma::keys[Chroma::LENGTH]] = chroma.length;
-      node[Chroma::keys[Chroma::DELTA]] = chroma.hue_shift;
-      node[Chroma::keys[Chroma::SOURCE]] = chroma.hsv_source;
-      node[Chroma::keys[Chroma::TARGET]] = chroma.hsv_target;
+      node[Chroma::keys[Chroma::HUE_SHIFT]] = chroma.hue_shift;
+      Node list;
+      for (auto color : chroma.colors)
+      {
+        list.push_back(color);
+      }
+      node[Chroma::keys[Chroma::COLORS]] = list;
       return node;
     }
 
     static bool decode(const Node &node, Chroma &chroma)
     {
+      static glow::HSVColor color_hold{0, 0, 0};
       if (!node.IsMap())
       {
         chroma.setup();
@@ -186,14 +187,19 @@ namespace YAML
         case Chroma::LENGTH:
           chroma.length = item.as<uint16_t>();
           break;
-        case Chroma::DELTA:
+        case Chroma::HUE_SHIFT:
           chroma.hue_shift = item.as<int16_t>();
           break;
         case Chroma::SOURCE:
-          lookup(item, chroma.hsv_source);
+          lookup(item, color_hold);
+          chroma.colors.push_back(color_hold);
           break;
         case Chroma::TARGET:
-          lookup(item, chroma.hsv_target);
+          lookup(item, color_hold);
+          chroma.colors.push_back(color_hold);
+          break;
+        case Chroma::COLORS:
+          lookup_list(item, chroma.colors);
           break;
         }
       }
