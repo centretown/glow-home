@@ -2,6 +2,7 @@
 
 #include "esphome.h"
 #include "panel.h"
+#include "rotary.h"
 
 using esphome::display::BaseFont;
 using esphome::display::BaseImage;
@@ -10,9 +11,9 @@ using esphome::rotary_encoder::ROTARY_ENCODER_2_PULSES_PER_CYCLE;
 using esphome::rotary_encoder::ROTARY_ENCODER_4_PULSES_PER_CYCLE;
 using esphome::rotary_encoder::RotaryEncoderResolution;
 
-namespace rgb_panels
+namespace panels
 {
-    enum PanelID : uint32_t
+    enum PanelID : int
     {
         LIGHT_EFFECT,
         LIGHT_BRIGHTNESS,
@@ -22,7 +23,6 @@ namespace rgb_panels
         LIGHT_BLUE,
         LIGHT_HUE,
         LIGHT_SATURATION,
-        LIGHT_VALUE,
         PANEL_COUNT,
     };
 
@@ -49,7 +49,7 @@ namespace rgb_panels
     class Controller
     {
     private:
-        PanelID panel_id = (PanelID)0;
+        PanelID panel_id = PanelID(0);
         bool is_edit = false;
         std::string effect_name = "None";
         int wifi_signal = 0;
@@ -57,7 +57,7 @@ namespace rgb_panels
         static esphome::text_sensor::TextSensor *wifi_info[INFO_COUNT];
 
     public:
-        static void setup(Resources *res);
+        void setup(Resources *res, esphome::rotary_encoder::RotaryEncoderSensor *encoder);
 
         void on_click(esphome::light::AddressableLightState *light,
                       esphome::rotary_encoder::RotaryEncoderSensor *encoder);
@@ -80,10 +80,26 @@ namespace rgb_panels
 
         void show(esphome::display::Display &display);
 
-        // const bool is_edit() ALWAYS_INLINE { return edit; }
-
     private:
+        Resources resources = {
+            NULL,
+            NULL,
+            NULL,
+            NULL,
+            NULL,
+            NULL,
+            {
+                NULL,
+            },
+        };
+
+        esphome::display::BaseImage *light_bulb(int brightness);
+
+        void draw_bulbs(esphome::display::Display &display,
+                        int x, int y, int value);
+
         Panel panels[PANEL_COUNT] = {
+            // effect, brightness, wifi
             {0, 0, display_width, panel_height},                    //
             {0, panel_height, panel_width, panel_height},           //
             {panel_width, panel_height, panel_width, panel_height}, //
@@ -92,23 +108,26 @@ namespace rgb_panels
             {display_third_width, 0, display_third_width, display_height},      //
             {display_third_width << 1, 0, display_third_width, display_height}, //
             // hsv
-            {0, 0, display_third_width, display_height},                        //
-            {display_third_width, 0, display_third_width, display_height},      //
-            {display_third_width << 1, 0, display_third_width, display_height}, //
+            {0, 0, panel_width, panel_height},            //
+            {0, panel_height, panel_width, panel_height}, //
         };
 
-        RotarySettings rotary_settings[PANEL_COUNT]{
-            {ROTARY_ENCODER_1_PULSE_PER_CYCLE, -1, 100, -1},
-            {ROTARY_ENCODER_4_PULSES_PER_CYCLE, 0, 100, 0},
-            {ROTARY_ENCODER_1_PULSE_PER_CYCLE, 0, INFO_COUNT - 1, 0},
+        RotaryState selector =
+            {ROTARY_ENCODER_1_PULSE_PER_CYCLE, 0, PANEL_COUNT - 1, 0, true};
+
+        RotaryState rotary_states[PANEL_COUNT]{
+            // effect, brightness, wifi
+            {ROTARY_ENCODER_1_PULSE_PER_CYCLE, -1, 100, -1, true},
+            {ROTARY_ENCODER_4_PULSES_PER_CYCLE, 0, 100, 0, false},
+            {ROTARY_ENCODER_1_PULSE_PER_CYCLE, 0, INFO_COUNT - 1, 0, true},
             // rgb
-            {ROTARY_ENCODER_4_PULSES_PER_CYCLE, 0, 100, 0},
-            {ROTARY_ENCODER_4_PULSES_PER_CYCLE, 0, 100, 0},
-            {ROTARY_ENCODER_4_PULSES_PER_CYCLE, 0, 100, 0},
+            {ROTARY_ENCODER_4_PULSES_PER_CYCLE, 0, 100, 0, false},
+            {ROTARY_ENCODER_4_PULSES_PER_CYCLE, 0, 100, 0, false},
+            {ROTARY_ENCODER_4_PULSES_PER_CYCLE, 0, 100, 0, false},
             // hsv
-            {ROTARY_ENCODER_4_PULSES_PER_CYCLE, 0, 360, 0},
-            {ROTARY_ENCODER_4_PULSES_PER_CYCLE, 0, 100, 0},
-            {ROTARY_ENCODER_4_PULSES_PER_CYCLE, 0, 100, 0},
+            {ROTARY_ENCODER_4_PULSES_PER_CYCLE, 0, 360, 0, true},
+            {ROTARY_ENCODER_4_PULSES_PER_CYCLE, 0, 100, 0, false},
+            // select
         };
 
         void edit(esphome::display::Display &display);
@@ -128,10 +147,13 @@ namespace rgb_panels
             return (id >= PANEL_COUNT) ? (PanelID)0 : id;
         }
 
+        int validate_rotary_state(esphome::rotary_encoder::RotaryEncoderSensor *encoder,
+                                  RotaryState &settings);
+
         int find_effect_index(esphome::light::AddressableLightState *light_state);
 
         void encode_rotary(esphome::rotary_encoder::RotaryEncoderSensor *encoder,
-                           RotarySettings &settings);
+                           RotaryState &settings);
         void encode_effect(esphome::light::AddressableLightState *light_state,
                            esphome::rotary_encoder::RotaryEncoderSensor *encoder);
         void encode_select(esphome::rotary_encoder::RotaryEncoderSensor *encoder);
@@ -143,7 +165,7 @@ namespace rgb_panels
         void show_effect(esphome::display::Display &display);
 
         void edit_gauge(esphome::display::Display &display,
-                        RotarySettings &settings);
+                        RotaryState &settings);
         void edit_effect(esphome::display::Display &display);
         void edit_wifi_signal(esphome::display::Display &display);
 
@@ -159,17 +181,21 @@ namespace rgb_panels
                               panel.width, panel.height);
         }
         void show_index(esphome::display::Display &display,
-                        RotarySettings &settings);
+                        RotaryState &settings);
         void show_bulb_intensity(esphome::display::Display &display,
                                  Panel &panel,
-                                 RotarySettings &settings);
+                                 RotaryState &settings);
         void show_color_guage(esphome::display::Display &display,
                               Panel &panel,
-                              RotarySettings &settings, const char *prefix = "");
+                              RotaryState &settings, const char *prefix = "");
         void show_colors(esphome::display::Display &display);
-        void show_colors_hsv(esphome::display::Display &display);
+        // void show_colors_hsv(esphome::display::Display &display);
         void on_rotate_hsv(esphome::light::LightCall &call, float sensor_value);
         void show_hsv(esphome::display::Display &display);
+        void edit_hsv(esphome::display::Display &display);
+        void show_wheel(esphome::display::Display &display,
+                        RotaryState &hue_settings,
+                        RotaryState &sat_settings);
     };
 
     Controller &control();

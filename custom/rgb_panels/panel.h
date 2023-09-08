@@ -5,7 +5,7 @@
 using esphome::display::BaseImage;
 using esphome::rotary_encoder::RotaryEncoderResolution;
 
-namespace rgb_panels
+namespace panels
 {
     constexpr uint32_t display_width = 128;
     constexpr uint32_t display_height = 64;
@@ -37,12 +37,4 @@ namespace rgb_panels
         int32_t height;
     };
 
-    struct RotarySettings
-    {
-        // rotary state
-        RotaryEncoderResolution mode;
-        int32_t min_value;
-        int32_t max_value;
-        int32_t value;
-    };
 }

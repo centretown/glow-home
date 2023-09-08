@@ -23,7 +23,7 @@ esphome:
     priority: 600
     then:
       lambda: |-
-        rgb_panels::Resources resources = {
+        panels::Resources resources = {
           id(font_small),
           id(font_medium),
           id(font_large),
@@ -35,7 +35,7 @@ esphome:
             id(bulb_10), id(bulb_20), id(bulb_30), id(bulb_40), id(bulb_50), 
             id(bulb_60), id(bulb_70), id(bulb_80), id(bulb_90), id(bulb_100)
           }};
-        rgb_panels::control().setup(&resources);
+        panels::control().setup(&resources, id(rotary1));
 
 # unique to this device
 api:
@@ -63,7 +63,7 @@ light:
     on_state:
       then:
         lambda: |-
-          rgb_panels::control().on_light_state(id(grid0));
+          panels::control().on_light_state(id(grid0));
     effects: !include custom/grid_effects.yml
     restore_mode: RESTORE_DEFAULT_ON
 
@@ -123,7 +123,7 @@ binary_sensor:
     on_release:
       then:
         lambda: |-
-          rgb_panels::control().on_click(id(grid0), id(rotary1));
+          panels::control().on_click(id(grid0), id(rotary1));
 
 # https://esphome.io/components/sensor/index.html
 # https://esphome.io/components/sensor/rotary_encoder
@@ -149,7 +149,7 @@ sensor:
     on_value:
       then:
         - lambda: |-
-            rgb_panels::control().on_rotate(id(grid0), id(rotary1));
+            panels::control().on_rotate(id(grid0), id(rotary1));
     restore_mode: ALWAYS_ZERO
 
 # https://esphome.io/components/sensor/wifi_signal
@@ -161,7 +161,7 @@ sensor:
     on_value:
       then:
         - lambda: |-
-            rgb_panels::control().on_wifi_signal(id(wifi_signal_1).get_state());
+            panels::control().on_wifi_signal(id(wifi_signal_1).get_state());
 
 # https://esphome.io/components/text_sensor/wifi_info
 text_sensor:
@@ -174,32 +174,32 @@ text_sensor:
       on_value:
         then:
           - lambda: |-
-              rgb_panels::control().on_info(id(ip_address),
-                rgb_panels::IP_ADDRESS);
+              panels::control().on_info(id(ip_address),
+                panels::IP_ADDRESS);
     ssid:
       id: ssid
       name: SSID
       on_value:
         then:
           - lambda: |-
-              rgb_panels::control().on_info(id(ssid),
-                rgb_panels::SSID);
+              panels::control().on_info(id(ssid),
+                panels::SSID);
     bssid:
       id: bssid
       name: BSSID
       on_value:
         then:
           - lambda: |-
-              rgb_panels::control().on_info(id(bssid),
-                rgb_panels::BSSID);
+              panels::control().on_info(id(bssid),
+                panels::BSSID);
     mac_address:
       id: mac_address
       name: Mac Address
       on_value:
         then:
           - lambda: |-
-              rgb_panels::control().on_info(id(mac_address),
-                rgb_panels::MAC_ADDRESS);
+              panels::control().on_info(id(mac_address),
+                panels::MAC_ADDRESS);
 
 # https://esphome.io/components/display/index.html?highlight=font#fonts
 font:
@@ -286,7 +286,7 @@ display:
     reset_pin: GPIO16
     address: 0x3C
     lambda: |-
-      rgb_panels::control().show(it);
+      panels::control().show(it);
       
 
 # # https://esphome.io/components/sensor/ultrasonic.html?highlight=hc+sr04

@@ -4,32 +4,16 @@
 #include <string.h>
 #include <algorithm>
 
-namespace rgb_panels
+namespace panels
 {
   constexpr int padding_x = 3;
   constexpr int padding_y = 2;
   constexpr float MY_PI = 3.1415926535897932384626433832795;
 
-  Resources resources = {
-      NULL,
-      NULL,
-      NULL,
-      NULL,
-      NULL,
-      NULL,
-      {
-          NULL,
-      },
-  };
-
-  esphome::display::BaseImage *light_bulb(int brightness)
+  esphome::display::BaseImage *Controller::light_bulb(int brightness)
   {
     return resources.bulbs[(brightness / 10) % 11];
   }
-
-  esphome::text_sensor::TextSensor *Controller::wifi_info[INFO_COUNT] = {
-      NULL,
-  };
 
   void draw_guage(esphome::display::Display &display, int value, int range)
   {
@@ -40,8 +24,8 @@ namespace rgb_panels
     display.filled_rectangle(padding_x, padding_y, guage_length, guage_height);
   }
 
-  void draw_bulbs(esphome::display::Display &display,
-                  Resources &resources, int x, int y, int value)
+  void Controller::draw_bulbs(esphome::display::Display &display,
+                  int x, int y, int value)
   {
     char buffer[8];
     snprintf(buffer, sizeof(buffer), "%3d", value);
@@ -50,21 +34,6 @@ namespace rgb_panels
     display.print(x - width - padding_x, y, resources.large, buffer);
     display.image(x + padding_x, y, light_bulb(value));
   }
-
-  void Controller::setup(Resources *res)
-  {
-    resources.small = res->small;
-    resources.medium = res->medium;
-    resources.large = res->large;
-    resources.up = res->up;
-    resources.down = res->down;
-    resources.effect = res->effect;
-    const auto count = sizeof(resources.bulbs) / sizeof(resources.bulbs[0]);
-    for (int i = 0; i < count; i++)
-    {
-      resources.bulbs[i] = res->bulbs[i];
-    }
-  };
 
   Panel edit_panel =
       {0, 0, display_width, display_height};
@@ -75,7 +44,9 @@ namespace rgb_panels
   int Controller::wifi_bar_count(float signal)
   {
     if (std::isnan(signal))
+    {
       return 0;
+    }
 
     int bars = wifi_signals.size();
     for (auto s : wifi_signals)
@@ -112,7 +83,7 @@ namespace rgb_panels
     }
     else if (panel_id < PANEL_COUNT)
     {
-      show_colors_hsv(display);
+      show_hsv(display);
     }
     else
     {
@@ -135,9 +106,9 @@ namespace rgb_panels
     }
 
     if (panel_id < LIGHT_HUE)
-      edit_gauge(display, rotary_settings[panel_id]);
+      edit_gauge(display, rotary_states[panel_id]);
     else if (panel_id < PANEL_COUNT)
-      show_hsv(display);
+      edit_hsv(display);
   }
 
   void Controller::show_wifi_signal(esphome::display::Display &display)
@@ -171,17 +142,41 @@ namespace rgb_panels
 
   void Controller::show_hsv(esphome::display::Display &display)
   {
-    RotarySettings hue_settings = rotary_settings[LIGHT_HUE];
-    RotarySettings sat_settings = rotary_settings[LIGHT_SATURATION];
+    RotaryState &hue_settings = rotary_states[LIGHT_HUE];
     display.printf(padding_x, padding_y,
                    resources.medium, "H: %3d", hue_settings.value);
-    display.printf(padding_x, display_height / 4,
+
+    RotaryState &sat_settings = rotary_states[LIGHT_SATURATION];
+    display.printf(padding_x, display_height / 2,
                    resources.medium, "S: %3d", sat_settings.value);
 
+    show_wheel(display, hue_settings, sat_settings);
+  }
+
+  void Controller::edit_hsv(esphome::display::Display &display)
+  {
+    RotaryState &hue_settings = rotary_states[LIGHT_HUE];
+    RotaryState &sat_settings = rotary_states[LIGHT_SATURATION];
+
+    auto font = (panel_id == LIGHT_HUE) ? resources.large : resources.medium;
+    display.printf(padding_x, padding_y,
+                   font, "H: %3d", hue_settings.value);
+
+    font = (panel_id == LIGHT_SATURATION) ? resources.large : resources.medium;
+    display.printf(padding_x, display_height / 2,
+                   font, "S: %3d", sat_settings.value);
+
+    show_wheel(display, hue_settings, sat_settings);
+  }
+
+  void Controller::show_wheel(esphome::display::Display &display,
+                              RotaryState &hue_settings,
+                              RotaryState &sat_settings)
+  {
     int x = (3 * display_width) / 4;
     int y = display_half_height;
 
-    int outer_radius = (display_width >> 2) - 1;
+    int outer_radius = (display_width >> 2) - padding_x;
     display.circle(x, y, outer_radius);
 
     int radius = outer_radius - (padding_x << 1);
@@ -191,37 +186,37 @@ namespace rgb_panels
                        sat_settings.max_value;
     display.filled_circle(x, y, inner_radius);
 
-    // 0 degrees x2 = x, y2 = y - r
-    // 90 degrees x2 = x + r, y2 = y
-    // 180 degs  x2 = x, y2 = y + r
-    const float angle = static_cast<float>(rotary_settings[LIGHT_HUE].value);
+    const float angle = static_cast<float>(rotary_states[LIGHT_HUE].value);
     const float phi = angle * MY_PI / 180.0f;
-    float dx = std::cos(phi) * outer_radius;
-    float dy = std::sin(phi) * outer_radius;
+    float dx = std::cos(phi) * radius;
+    float dy = std::sin(phi) * radius;
     // display.printf(padding_x, display_height / 2,
     //                resources.medium, "dx: %3.0f", dx);
     // display.printf(padding_x, 3 * display_height / 4,
     //                resources.medium, "dy: %3.0f", dy);
-    display.line(x, y, x + static_cast<int>(dx), y + static_cast<int>(dy));
+    const int x2 = x + static_cast<int>(dx);
+    const int y2 = y + static_cast<int>(dy);
+    display.line(x, y, x2, y2);
+    display.filled_circle(x2, y2, padding_x << 1);
   }
 
-  void Controller::show_colors_hsv(esphome::display::Display &display)
-  {
-    show_color_guage(display, panels[LIGHT_HUE], rotary_settings[LIGHT_HUE], "H");
-    show_color_guage(display, panels[LIGHT_SATURATION], rotary_settings[LIGHT_SATURATION], "S");
-    show_color_guage(display, panels[LIGHT_VALUE], rotary_settings[LIGHT_VALUE], "V");
-  }
+  // void Controller::show_colors_hsv(esphome::display::Display &display)
+  // {
+  //   show_color_guage(display, panels[LIGHT_HUE], rotary_settings[LIGHT_HUE], "H");
+  //   show_color_guage(display, panels[LIGHT_SATURATION], rotary_settings[LIGHT_SATURATION], "S");
+  //   show_color_guage(display, panels[LIGHT_VALUE], rotary_settings[LIGHT_VALUE], "V");
+  // }
 
   void Controller::show_colors(esphome::display::Display &display)
   {
-    show_color_guage(display, panels[LIGHT_RED], rotary_settings[LIGHT_RED], "R");
-    show_color_guage(display, panels[LIGHT_GREEN], rotary_settings[LIGHT_GREEN], "G");
-    show_color_guage(display, panels[LIGHT_BLUE], rotary_settings[LIGHT_BLUE], "B");
+    show_color_guage(display, panels[LIGHT_RED], rotary_states[LIGHT_RED], "R");
+    show_color_guage(display, panels[LIGHT_GREEN], rotary_states[LIGHT_GREEN], "G");
+    show_color_guage(display, panels[LIGHT_BLUE], rotary_states[LIGHT_BLUE], "B");
   }
 
   void Controller::show_color_guage(esphome::display::Display &display,
                                     Panel &panel,
-                                    RotarySettings &settings,
+                                    RotaryState &settings,
                                     const char *prefix)
   {
     int intensity = settings.value;
@@ -245,7 +240,7 @@ namespace rgb_panels
 
   void Controller::show_bulb_intensity(esphome::display::Display &display,
                                        Panel &panel,
-                                       RotarySettings &settings)
+                                       RotaryState &settings)
   {
     int intensity = settings.value;
     display.printf(panel.x + padding_x,
@@ -257,7 +252,7 @@ namespace rgb_panels
 
   void Controller::show_brightness(esphome::display::Display &display)
   {
-    show_bulb_intensity(display, panels[LIGHT_BRIGHTNESS], rotary_settings[LIGHT_BRIGHTNESS]);
+    show_bulb_intensity(display, panels[LIGHT_BRIGHTNESS], rotary_states[LIGHT_BRIGHTNESS]);
   }
 
   void Controller::show_text(esphome::display::Display &display,
@@ -345,7 +340,7 @@ namespace rgb_panels
   }
 
   void Controller::edit_gauge(esphome::display::Display &display,
-                              RotarySettings &settings)
+                              RotaryState &settings)
   {
     int value = settings.value;
     draw_guage(display, value, settings.max_value - settings.min_value);
@@ -372,7 +367,7 @@ namespace rgb_panels
 
   void Controller::edit_effect(esphome::display::Display &display)
   {
-    auto settings = rotary_settings[LIGHT_EFFECT];
+    auto settings = rotary_states[LIGHT_EFFECT];
     auto index = settings.value;
     if (index > settings.min_value)
       show_image(display, resources.up, TOP_MIDDLE);
@@ -383,7 +378,7 @@ namespace rgb_panels
   }
 
   void Controller::show_index(esphome::display::Display &display,
-                              RotarySettings &settings)
+                              RotaryState &settings)
   {
     char buffer[12];
     auto index = settings.value + 1;
@@ -399,7 +394,7 @@ namespace rgb_panels
 
   void Controller::edit_wifi_signal(esphome::display::Display &display)
   {
-    auto settings = rotary_settings[WIFI_SIGNAL];
+    auto settings = rotary_states[WIFI_SIGNAL];
     int index = settings.value;
     if (index < settings.min_value || index > settings.max_value)
     {
