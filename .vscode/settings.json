@@ -70,7 +70,8 @@
     "ranges": "cpp",
     "compare": "cpp",
     "concepts": "cpp",
-    "numbers": "cpp"
+    "numbers": "cpp",
+    "charconv": "cpp"
   },
   "cmake.sourceDirectory": "${workspaceFolder}/esp32-custom/test"
 }

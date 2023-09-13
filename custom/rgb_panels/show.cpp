@@ -3,6 +3,7 @@
 #include <cmath>
 #include <string.h>
 #include <algorithm>
+#include <charconv>
 
 namespace panels
 {
@@ -25,7 +26,7 @@ namespace panels
   }
 
   void Controller::draw_bulbs(esphome::display::Display &display,
-                  int x, int y, int value)
+                              int x, int y, int value)
   {
     char buffer[8];
     snprintf(buffer, sizeof(buffer), "%3d", value);
@@ -35,11 +36,8 @@ namespace panels
     display.image(x + padding_x, y, light_bulb(value));
   }
 
-  Panel edit_panel =
-      {0, 0, display_width, display_height};
-
-  const std::vector<float> wifi_signals = {
-      -44.0, -67.0, -70.0, -80.0};
+  const std::vector<float> wifi_signals =
+      {-44.0, -67.0, -70.0, -80.0};
 
   int Controller::wifi_bar_count(float signal)
   {
@@ -63,6 +61,18 @@ namespace panels
 
   void Controller::show(esphome::display::Display &display)
   {
+    uint32_t now = esphome::millis();
+    if (now > next)
+    {
+      const int image_count = sizeof(resources.idle) / sizeof(resources.idle[0]);
+      sleeping = true;
+      now = (now - next) / MAX_TIME;
+      display.image(display_half_width, 0,
+                    resources.idle[now % image_count],
+                    esphome::display::ImageAlign::TOP_CENTER);
+      return;
+    }
+
     if (is_edit)
       edit(display);
     else
@@ -71,13 +81,13 @@ namespace panels
 
   void Controller::show_all(esphome::display::Display &display)
   {
-    if (panel_id < LIGHT_RED)
+    if (panel_id < RED_VALUE)
     {
       show_brightness(display);
       show_effect(display);
       show_wifi_signal(display);
     }
-    else if (panel_id < LIGHT_HUE)
+    else if (panel_id < HUE)
     {
       show_colors(display);
     }
@@ -94,21 +104,28 @@ namespace panels
 
   void Controller::edit(esphome::display::Display &display)
   {
-    if (panel_id == LIGHT_EFFECT)
+    switch (panel_id)
     {
+    case EFFECT:
       edit_effect(display);
-      return;
-    }
-    if (panel_id == WIFI_SIGNAL)
-    {
+      break;
+    case WIFI_SIGNAL:
       edit_wifi_signal(display);
-      return;
+      break;
+    case BRIGHTNESS:
+      edit_gauge(display, rotary_states[BRIGHTNESS]);
+      break;
+    default:
+      if (panel_id < HUE)
+      {
+        show_colors(display);
+      }
+      else if (panel_id < PANEL_COUNT)
+      {
+        show_hsv(display);
+      }
+      break;
     }
-
-    if (panel_id < LIGHT_HUE)
-      edit_gauge(display, rotary_states[panel_id]);
-    else if (panel_id < PANEL_COUNT)
-      edit_hsv(display);
   }
 
   void Controller::show_wifi_signal(esphome::display::Display &display)
@@ -120,11 +137,11 @@ namespace panels
     display.printf(panel.x + padding_x, panel.y + padding_y,
                    resources.medium, "%d", signal);
 
-    const int bar_count = 5;
-    const int bar_width = 6;
-    const int bar_space = 1;
+    constexpr int bar_count = 5;
+    constexpr int bar_width = 6;
+    constexpr int bar_space = 1;
+    constexpr int base_bar_height = 4;
     const int bar_begin = panel_width - padding_x - bar_count * (bar_width + bar_space);
-    const int base_bar_height = 4;
 
     int bars = wifi_bar_count(signal);
     for (int i = 0; i < 5; i++)
@@ -142,87 +159,69 @@ namespace panels
 
   void Controller::show_hsv(esphome::display::Display &display)
   {
-    RotaryState &hue_settings = rotary_states[LIGHT_HUE];
-    display.printf(padding_x, padding_y,
-                   resources.medium, "H: %3d", hue_settings.value);
+    char buffer[80];
 
-    RotaryState &sat_settings = rotary_states[LIGHT_SATURATION];
-    display.printf(padding_x, display_height / 2,
-                   resources.medium, "S: %3d", sat_settings.value);
+    auto centre = [&](PanelID id)
+    {
+      RotaryState &state = rotary_states[id];
+      Panel &panel = panels[id];
+      display.print(panel.x + (panel.width >> 1), panel.y + (panel.height >> 1),
+                    (is_edit && panel_id == id) ? resources.large : resources.medium,
+                    esphome::display::TextAlign::CENTER, buffer);
+    };
 
-    show_wheel(display, hue_settings, sat_settings);
+    snprintf(buffer, sizeof(buffer), "H: %3d", rotary_states[HUE].value);
+    centre(HUE);
+
+    snprintf(buffer, sizeof(buffer), "S: %3d", rotary_states[SATURATION].value);
+    centre(SATURATION);
+
+    show_wheel(display);
   }
 
-  void Controller::edit_hsv(esphome::display::Display &display)
+  void Controller::show_wheel(esphome::display::Display &display)
   {
-    RotaryState &hue_settings = rotary_states[LIGHT_HUE];
-    RotaryState &sat_settings = rotary_states[LIGHT_SATURATION];
+    const int x = ((3 * display_width) >> 2);
+    const int y = display_half_height;
 
-    auto font = (panel_id == LIGHT_HUE) ? resources.large : resources.medium;
-    display.printf(padding_x, padding_y,
-                   font, "H: %3d", hue_settings.value);
-
-    font = (panel_id == LIGHT_SATURATION) ? resources.large : resources.medium;
-    display.printf(padding_x, display_height / 2,
-                   font, "S: %3d", sat_settings.value);
-
-    show_wheel(display, hue_settings, sat_settings);
-  }
-
-  void Controller::show_wheel(esphome::display::Display &display,
-                              RotaryState &hue_settings,
-                              RotaryState &sat_settings)
-  {
-    int x = (3 * display_width) / 4;
-    int y = display_half_height;
-
-    int outer_radius = (display_width >> 2) - padding_x;
-    display.circle(x, y, outer_radius);
-
-    int radius = outer_radius - (padding_x << 1);
+    const int radius = (display_width >> 2) - 5;
     display.circle(x, y, radius);
 
-    int inner_radius = (radius * (sat_settings.max_value - sat_settings.value)) /
-                       sat_settings.max_value;
-    display.filled_circle(x, y, inner_radius);
-
-    const float angle = static_cast<float>(rotary_states[LIGHT_HUE].value);
+    const float angle = static_cast<float>(rotary_states[HUE].value);
     const float phi = angle * MY_PI / 180.0f;
-    float dx = std::cos(phi) * radius;
-    float dy = std::sin(phi) * radius;
-    // display.printf(padding_x, display_height / 2,
-    //                resources.medium, "dx: %3.0f", dx);
-    // display.printf(padding_x, 3 * display_height / 4,
-    //                resources.medium, "dy: %3.0f", dy);
-    const int x2 = x + static_cast<int>(dx);
-    const int y2 = y + static_cast<int>(dy);
-    display.line(x, y, x2, y2);
-    display.filled_circle(x2, y2, padding_x << 1);
-  }
 
-  // void Controller::show_colors_hsv(esphome::display::Display &display)
-  // {
-  //   show_color_guage(display, panels[LIGHT_HUE], rotary_settings[LIGHT_HUE], "H");
-  //   show_color_guage(display, panels[LIGHT_SATURATION], rotary_settings[LIGHT_SATURATION], "S");
-  //   show_color_guage(display, panels[LIGHT_VALUE], rotary_settings[LIGHT_VALUE], "V");
-  // }
+    const float dx = std::cos(phi) * radius;
+    const float dy = std::sin(phi) * radius;
+    display.line(x, y, x + static_cast<int>(dx), y + static_cast<int>(dy));
+
+    const float saturation = static_cast<float>(rotary_states[SATURATION].value);
+    const float sx = dx * saturation / 100.0f;
+    const float sy = dy * saturation / 100.0f;
+
+    display.circle(x + static_cast<int>(sx),
+                   y + static_cast<int>(sy), 5);
+  }
 
   void Controller::show_colors(esphome::display::Display &display)
   {
-    show_color_guage(display, panels[LIGHT_RED], rotary_states[LIGHT_RED], "R");
-    show_color_guage(display, panels[LIGHT_GREEN], rotary_states[LIGHT_GREEN], "G");
-    show_color_guage(display, panels[LIGHT_BLUE], rotary_states[LIGHT_BLUE], "B");
+    show_color_guage(display, RED_VALUE, "R:");
+    show_color_guage(display, GREEN_VALUE, "G:");
+    show_color_guage(display, BLUE_VALUE, "B:");
   }
 
   void Controller::show_color_guage(esphome::display::Display &display,
-                                    Panel &panel,
-                                    RotaryState &settings,
-                                    const char *prefix)
+                                    PanelID id, const char *prefix)
   {
-    int intensity = settings.value;
+    Panel &panel = panels[id];
+    RotaryState &rotary_state = rotary_states[id];
+
+    int intensity = rotary_state.value;
     display.print(panel.x + padding_x,
                   panel.y + padding_y,
-                  resources.large, prefix);
+                  (is_edit && id == panel_id)
+                      ? resources.large
+                      : resources.medium,
+                  prefix);
     display.printf(panel.x + padding_x,
                    panel.y + panel.height / 2,
                    resources.medium, "%3d", intensity);
@@ -234,15 +233,15 @@ namespace panels
     display.rectangle(panel.x + panel.width - padding_x - bar_width,
                       y, bar_width, max_height);
 
-    const int bar_height = (intensity * max_height) / (settings.max_value - settings.min_value);
+    const int bar_height = (intensity * max_height) / (rotary_state.max_value - rotary_state.min_value);
     display.filled_rectangle(x, y + max_height - bar_height, bar_width, bar_height);
   }
 
   void Controller::show_bulb_intensity(esphome::display::Display &display,
                                        Panel &panel,
-                                       RotaryState &settings)
+                                       RotaryState &rotary_state)
   {
-    int intensity = settings.value;
+    int intensity = rotary_state.value;
     display.printf(panel.x + padding_x,
                    panel.y + padding_y,
                    resources.medium, "%3d", intensity);
@@ -250,108 +249,85 @@ namespace panels
     display.image(panel.x + panel_width - image->get_width(), panel.y, image);
   }
 
-  void Controller::show_brightness(esphome::display::Display &display)
+  std::size_t Controller::split(std::string text, std::string sections[], std::size_t length)
   {
-    show_bulb_intensity(display, panels[LIGHT_BRIGHTNESS], rotary_states[LIGHT_BRIGHTNESS]);
-  }
-
-  void Controller::show_text(esphome::display::Display &display,
-                             BaseFont *font,
-                             std::string text, Panel &panel)
-  {
-    int width, x_offset, baseline, line_height;
-    font->measure(text.c_str(), &width, &x_offset, &baseline, &line_height);
-    int max_width = panel.width - padding_x * 2;
-    int x = panel.x;
-
-    if (!is_edit)
-      x += padding_x;
-    int y = panel.y + padding_y;
-    if (is_edit)
-      y += 10;
-    int line = 0;
-    const int max_line = panel_height / baseline;
-
+    std::size_t start = 0;
     std::size_t found = 0;
-    if (width > max_width)
+    std::size_t count = 0;
+
+    for (; count < length - 1; ++count)
     {
       found = text.find_first_of(" -_", found);
-      if (found != std::string::npos)
+      if (found == std::string::npos)
       {
-        display.print(x + max_width / 2, y, font,
-                      esphome::display::TextAlign::CENTER_HORIZONTAL,
-                      text.substr(0, found).c_str());
-        text = text.substr(found + 1);
-        y += baseline - 2;
-        x += padding_x;
+        break;
       }
-    }
-    else
-    {
-      y += baseline / 2;
+
+      sections[count] = text.substr(start, found - start);
+      start = ++found;
     }
 
-    display.print(x + max_width / 2, y, font,
-                  esphome::display::TextAlign::CENTER_HORIZONTAL,
-                  text.c_str());
+    sections[count] = text.substr(start);
+    return count + 1;
+  }
+
+  void Controller::split_effect(esphome::display::Display &display, Panel &panel,
+                                std::string text)
+  {
+    auto font = (is_edit) ? resources.medium : resources.small;
+    int width, x_offset, baseline, line_height;
+    font->measure(text.c_str(), &width, &x_offset, &baseline, &line_height);
+
+    int x = panel.width >> 1;
+    int y = (is_edit) ? 14 : padding_y;
+    int y2 = y + baseline - 2;
+
+    std::size_t start = 0;
+
+    constexpr std::size_t MAX_SECTIONS = 3;
+    std::string sections[MAX_SECTIONS];
+    std::size_t count = split(text, sections, MAX_SECTIONS);
+
+    switch (count)
+    {
+    case 1:
+      display.print(x, y, font,
+                    esphome::display::TextAlign::CENTER_HORIZONTAL,
+                    sections[0].c_str());
+      break;
+    case 2:
+      display.print(x, y, font,
+                    esphome::display::TextAlign::CENTER_HORIZONTAL,
+                    sections[0].c_str());
+      display.print(x, y2, font,
+                    esphome::display::TextAlign::CENTER_HORIZONTAL,
+                    sections[1].c_str());
+      break;
+    case 3:
+      display.print(x, y, font,
+                    esphome::display::TextAlign::CENTER_HORIZONTAL,
+                    sections[0].c_str());
+      display.print(x, y2, font,
+                    esphome::display::TextAlign::CENTER_HORIZONTAL,
+                    (sections[1] + " " + sections[2]).c_str());
+      break;
+    }
   }
 
   void Controller::show_effect(esphome::display::Display &display)
   {
-    show_text(display, resources.small, effect_name, panels[LIGHT_EFFECT]);
-  }
-
-  void Controller::show_image(esphome::display::Display &display,
-                              esphome::display::BaseImage *image, PanelPos pos)
-  {
-    if (image != NULL)
-    {
-      const int height = image->get_height();
-      const int width = image->get_width();
-      const int half_width = image->get_width() >> 1;
-      int x = 0;
-      int y = 0;
-      switch (pos)
-      {
-      case TOP_LEFT:
-        break;
-      case TOP_RIGHT:
-        x = display_width - width;
-        break;
-      case TOP_MIDDLE:
-        x = display_half_width - half_width;
-        break;
-      case BOTTOM_LEFT:
-        y = display_height - height;
-        break;
-      case BOTTOM_RIGHT:
-        x = display_width - width;
-        y = display_height - height;
-        break;
-      case BOTTOM_MIDDLE:
-        x = display_half_width - half_width;
-        y = display_height - height;
-        break;
-      default:
-        break;
-      }
-      display.image(x, y, image);
-    }
+    Panel &panel = panels[EFFECT];
+    split_effect(display, panel, effect_name);
+    display.image(panel.x, panel.y, resources.effect);
+    display.image(panel.x + panel.width - resources.effect->get_width(),
+                  panel.y, resources.effect);
   }
 
   void Controller::edit_gauge(esphome::display::Display &display,
-                              RotaryState &settings)
+                              RotaryState &rotary_state)
   {
-    int value = settings.value;
-    draw_guage(display, value, settings.max_value - settings.min_value);
-
-    // const int guage_max = display_width - (padding_x << 1);
-    // const int guage_height = display_half_height - (padding_y << 1);
-    // display.rectangle(padding_x, padding_y, guage_max, guage_height);
-
-    // const int guage_length = static_cast<int>((value * guage_max) /
-    //                                           (settings.max_value - settings.min_value));
-    // display.filled_rectangle(padding_x, padding_y, guage_length, guage_height);
+    int value = rotary_state.value;
+    draw_guage(display, value, rotary_state.max_value - rotary_state.min_value);
 
     int y = display_half_height;
     int x = display_half_width;
@@ -367,95 +343,74 @@ namespace panels
 
   void Controller::edit_effect(esphome::display::Display &display)
   {
-    auto settings = rotary_states[LIGHT_EFFECT];
-    auto index = settings.value;
-    if (index > settings.min_value)
-      show_image(display, resources.up, TOP_MIDDLE);
-    if (index < settings.max_value)
-      show_image(display, resources.down, BOTTOM_MIDDLE);
-    show_text(display, resources.medium, effect_name, edit_panel);
-    show_index(display, settings);
+    Panel full_panel =
+        {0, 0, display_width, display_height};
+    split_effect(display, full_panel, effect_name);
+    show_index(display, rotary_states[EFFECT]);
+    display.image(0, 0, resources.effect);
+    display.image(display_width - resources.effect->get_width(),
+                  0, resources.effect);
   }
 
   void Controller::show_index(esphome::display::Display &display,
-                              RotaryState &settings)
+                              RotaryState &rotary_state)
   {
     char buffer[12];
-    auto index = settings.value + 1;
-    auto count = settings.max_value + 1;
-    snprintf(buffer, sizeof(buffer), "%d/%d", index, count);
-
-    int width, x_offset, baseline, line_height;
-    resources.small->measure(buffer, &width, &x_offset, &baseline, &line_height);
-
-    display.printf(display_width - width, display_height - baseline,
-                   resources.small, buffer);
+    snprintf(buffer, sizeof(buffer), "%d/%d",
+             rotary_state.value + 1,
+             rotary_state.max_value + 1);
+    display.print(display_width - 1, display_height - 1, resources.small,
+                  esphome::display::TextAlign::BOTTOM_RIGHT,
+                  buffer);
   }
+
+  void Controller::write_panel(esphome::display::Display &display,
+                               const char *title, esphome::display::BaseFont *title_font,
+                               const char *value, esphome::display::BaseFont *value_font)
+  {
+    display.print(display_half_width, 0,
+                  title_font,
+                  esphome::display::TextAlign::CENTER_HORIZONTAL,
+                  title);
+    display.print(display_half_width, display_half_height,
+                  value_font,
+                  esphome::display::TextAlign::CENTER,
+                  value);
+    show_index(display, rotary_states[WIFI_SIGNAL]);
+  };
 
   void Controller::edit_wifi_signal(esphome::display::Display &display)
   {
-    auto settings = rotary_states[WIFI_SIGNAL];
-    int index = settings.value;
-    if (index < settings.min_value || index > settings.max_value)
+    int index = rotary_states[WIFI_SIGNAL].value;
+
+    if (index == WIFI_STRENGTH)
     {
-      show_index(display, settings);
+      char buffer[12];
+      snprintf(buffer, sizeof(buffer), "%3d dBm", wifi_signal);
+      write_panel(display, "WiFi Signal", resources.large,
+                  buffer, resources.medium);
       return;
     }
 
     esphome::text_sensor::TextSensor *info = wifi_info[index];
     if (info == NULL)
     {
-      display.print(display_half_width, display_half_height,
-                    resources.medium,
-                    esphome::display::TextAlign::CENTER,
-                    "unavailable");
-      show_index(display, settings);
+      write_panel(display, "Missing", resources.large,
+                  "unavailable", resources.medium);
       return;
     }
 
-    display.print(display_half_width, padding_y,
-                  resources.medium,
-                  esphome::display::TextAlign::CENTER_HORIZONTAL,
-                  info->get_name().c_str());
-
+    auto value = info->get_state().c_str();
+    auto value_font = resources.medium;
     int width, x_offset, baseline, line_height;
-    const char *text = info->get_state().c_str();
-    auto font = resources.large;
-    font->measure(text, &width, &x_offset, &baseline, &line_height);
-    int y = padding_y + baseline;
-
+    value_font->measure(value, &width, &x_offset, &baseline, &line_height);
     if (width > display_width)
     {
-      font = resources.medium;
-      font->measure(text, &width, &x_offset, &baseline, &line_height);
-      if (width > display_width)
-      {
-        font = resources.small;
-        font->measure(text, &width, &x_offset, &baseline, &line_height);
-      }
+      value_font = resources.small;
     }
 
-    if (width > display_width)
-    {
-      const std::string &state = info->get_state();
-      auto length = state.size();
-      display.print(display_half_width, y,
-                    font,
-                    esphome::display::TextAlign::CENTER_HORIZONTAL,
-                    state.substr(0, length / 2).c_str());
-      display.print(display_half_width, y + baseline,
-                    font,
-                    esphome::display::TextAlign::CENTER_HORIZONTAL,
-                    state.substr(length / 2).c_str());
-    }
-    else
-    {
-      display.print(display_half_width, y,
-                    font,
-                    esphome::display::TextAlign::CENTER_HORIZONTAL,
-                    info->get_state().c_str());
-    }
-
-    show_index(display, settings);
+    write_panel(display,
+                info->get_name().c_str(), resources.large,
+                value, value_font);
   }
 }

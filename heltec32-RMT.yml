@@ -34,6 +34,10 @@ esphome:
             id(bulb_00),
             id(bulb_10), id(bulb_20), id(bulb_30), id(bulb_40), id(bulb_50), 
             id(bulb_60), id(bulb_70), id(bulb_80), id(bulb_90), id(bulb_100)
+          },
+          {
+            id(rm01), id(rm02), id(rm03), id(rm04), id(rm05), id(rm06),
+            id(rm07), id(rm08), id(rm09), id(rm10), id(rm11)
           }};
         panels::control().setup(&resources, id(rotary1));
 
@@ -165,8 +169,6 @@ sensor:
 
 # https://esphome.io/components/text_sensor/wifi_info
 text_sensor:
-# - platform: template
-# 
   - platform: wifi_info
     ip_address:
       id: ip_address
@@ -174,32 +176,28 @@ text_sensor:
       on_value:
         then:
           - lambda: |-
-              panels::control().on_info(id(ip_address),
-                panels::IP_ADDRESS);
+              panels::control().on_info_ip_address(id(ip_address));
     ssid:
       id: ssid
       name: SSID
       on_value:
         then:
           - lambda: |-
-              panels::control().on_info(id(ssid),
-                panels::SSID);
+              panels::control().on_info_ssid(id(ssid));
     bssid:
       id: bssid
       name: BSSID
       on_value:
         then:
           - lambda: |-
-              panels::control().on_info(id(bssid),
-                panels::BSSID);
+              panels::control().on_info_bssid(id(bssid));
     mac_address:
       id: mac_address
       name: Mac Address
       on_value:
         then:
           - lambda: |-
-              panels::control().on_info(id(mac_address),
-                panels::MAC_ADDRESS);
+              panels::control().on_info_mac_address(id(mac_address));
 
 # https://esphome.io/components/display/index.html?highlight=font#fonts
 font:
@@ -221,14 +219,65 @@ font:
 
 # https://esphome.io/components/display/#images
 image:
-  - file: "davers-head-inverted.png"
-    id: daves_head_inverted
+  - file: "image/rm01.png"
+    id: rm01
     type: BINARY
-    resize: 64x64
+    resize: 128x64
     dither: FLOYDSTEINBERG
-  - file:  mdi:head-lightbulb
-    id: effect_icon
-    resize: 30x30
+  - file: "image/rm02.png"
+    id: rm02
+    type: BINARY
+    resize: 128x64
+    dither: FLOYDSTEINBERG
+  - file: "image/shorebird.png"
+    id: rm03
+    type: BINARY
+    resize: 128x64
+    dither: FLOYDSTEINBERG
+  - file: "image/popeye.png"
+    id: rm04
+    type: BINARY
+    resize: 128x64
+    dither: FLOYDSTEINBERG
+  - file: "image/plant.png"
+    id: rm05
+    type: BINARY
+    resize: 128x64
+    dither: FLOYDSTEINBERG
+  - file: "image/homer.png"
+    id: rm06
+    type: BINARY
+    resize: 128x64
+    dither: FLOYDSTEINBERG
+  - file: "image/sunset.png"
+    id: rm07
+    type: BINARY
+    resize: 128x64
+    dither: FLOYDSTEINBERG
+  - file: "image/stewie.png"
+    id: rm08
+    type: BINARY
+    resize: 128x64
+    dither: FLOYDSTEINBERG
+  - file: "image/roger.png"
+    id: rm09
+    type: BINARY
+    resize: 128x64
+    dither: FLOYDSTEINBERG
+  - file: "image/roger2.png"
+    id: rm10
+    type: BINARY
+    resize: 128x64
+    dither: FLOYDSTEINBERG
+  - file: "image/orang.png"
+    id: rm11
+    type: BINARY
+    resize: 128x64
+    dither: FLOYDSTEINBERG
+    
+  # - file:  mdi:head-lightbulb
+  #   id: effect_icon
+    # resize: 30x30
   # - file:  "image/brightness.png"
   - file:  mdi:lightbulb-outline
     id: bulb_00
@@ -265,8 +314,10 @@ image:
     resize: 30x30
 
   # - file:  mdi:star-four-points-small
-  #   id: star_small
-  #   resize: 20x20
+  - file:  mdi:star-four-points
+    id: effect_icon
+    resize: 12x12
+
   - file:  mdi:wifi
     id: wifi_icon
     resize: 30x30

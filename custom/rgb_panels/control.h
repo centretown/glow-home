@@ -13,16 +13,18 @@ using esphome::rotary_encoder::RotaryEncoderResolution;
 
 namespace panels
 {
-    enum PanelID : int
+    constexpr uint32_t MAX_TIME = 1000 * 10;
+
+    enum PanelID : int32_t
     {
-        LIGHT_EFFECT,
-        LIGHT_BRIGHTNESS,
+        EFFECT,
+        BRIGHTNESS,
         WIFI_SIGNAL,
-        LIGHT_RED,
-        LIGHT_GREEN,
-        LIGHT_BLUE,
-        LIGHT_HUE,
-        LIGHT_SATURATION,
+        RED_VALUE,
+        GREEN_VALUE,
+        BLUE_VALUE,
+        HUE,
+        SATURATION,
         PANEL_COUNT,
     };
 
@@ -32,6 +34,8 @@ namespace panels
         SSID,
         BSSID,
         MAC_ADDRESS,
+        SENSOR_INFO_COUNT,
+        WIFI_STRENGTH = SENSOR_INFO_COUNT,
         INFO_COUNT,
     };
 
@@ -44,6 +48,7 @@ namespace panels
         BaseImage *down;
         BaseImage *effect;
         BaseImage *bulbs[11];
+        BaseImage *idle[11];
     };
 
     class Controller
@@ -53,34 +58,8 @@ namespace panels
         bool is_edit = false;
         std::string effect_name = "None";
         int wifi_signal = 0;
+        static esphome::text_sensor::TextSensor *wifi_info[SENSOR_INFO_COUNT];
 
-        static esphome::text_sensor::TextSensor *wifi_info[INFO_COUNT];
-
-    public:
-        void setup(Resources *res, esphome::rotary_encoder::RotaryEncoderSensor *encoder);
-
-        void on_click(esphome::light::AddressableLightState *light,
-                      esphome::rotary_encoder::RotaryEncoderSensor *encoder);
-        void on_rotate(esphome::light::AddressableLightState *light,
-                       esphome::rotary_encoder::RotaryEncoderSensor *encoder);
-
-        void on_light_state(esphome::light::AddressableLightState *state);
-
-        void on_wifi_signal(float signal)
-        {
-            wifi_signal = static_cast<int>(signal);
-        }
-
-        void on_info(esphome::text_sensor::TextSensor *info,
-                     InfoID id)
-        {
-            if (info->has_state() && id < INFO_COUNT)
-                wifi_info[id] = info;
-        }
-
-        void show(esphome::display::Display &display);
-
-    private:
         Resources resources = {
             NULL,
             NULL,
@@ -91,12 +70,10 @@ namespace panels
             {
                 NULL,
             },
+            {
+                NULL,
+            },
         };
-
-        esphome::display::BaseImage *light_bulb(int brightness);
-
-        void draw_bulbs(esphome::display::Display &display,
-                        int x, int y, int value);
 
         Panel panels[PANEL_COUNT] = {
             // effect, brightness, wifi
@@ -127,8 +104,62 @@ namespace panels
             // hsv
             {ROTARY_ENCODER_4_PULSES_PER_CYCLE, 0, 360, 0, true},
             {ROTARY_ENCODER_4_PULSES_PER_CYCLE, 0, 100, 0, false},
-            // select
         };
+
+        uint32_t next = millis() + MAX_TIME;
+        bool sleeping = false;
+
+    public:
+        void setup(Resources *res, esphome::rotary_encoder::RotaryEncoderSensor *encoder);
+
+        void on_click(esphome::light::AddressableLightState *light,
+                      esphome::rotary_encoder::RotaryEncoderSensor *encoder);
+        void on_rotate(esphome::light::AddressableLightState *light,
+                       esphome::rotary_encoder::RotaryEncoderSensor *encoder);
+
+        void on_light_state(esphome::light::AddressableLightState *state);
+
+        void on_wifi_signal(float signal) ALWAYS_INLINE
+        {
+            wifi_signal = static_cast<int>(signal);
+        }
+
+        void on_info_ip_address(esphome::text_sensor::TextSensor *info) ALWAYS_INLINE
+        {
+            wifi_info[IP_ADDRESS] = info;
+        }
+        void on_info_ssid(esphome::text_sensor::TextSensor *info) ALWAYS_INLINE
+        {
+            info->get_state();
+            wifi_info[SSID] = info;
+        }
+        void on_info_bssid(esphome::text_sensor::TextSensor *info) ALWAYS_INLINE
+        {
+            wifi_info[BSSID] = info;
+        }
+        void on_info_mac_address(esphome::text_sensor::TextSensor *info) ALWAYS_INLINE
+        {
+            wifi_info[MAC_ADDRESS] = info;
+        }
+
+        void show(esphome::display::Display &display);
+
+    private:
+        bool wake_up()
+        {
+            next = millis() + MAX_TIME;
+            if (sleeping)
+            {
+                sleeping = false;
+                return true;
+            }
+            return false;
+        }
+
+        void draw_bulbs(esphome::display::Display &display,
+                        int x, int y, int value);
+
+        esphome::display::BaseImage *light_bulb(int brightness);
 
         void edit(esphome::display::Display &display);
 
@@ -152,16 +183,14 @@ namespace panels
 
         int find_effect_index(esphome::light::AddressableLightState *light_state);
 
+        void on_rotate_hsv(esphome::light::LightCall &call, float sensor_value);
+
         void encode_rotary(esphome::rotary_encoder::RotaryEncoderSensor *encoder,
                            RotaryState &settings);
-        void encode_effect(esphome::light::AddressableLightState *light_state,
-                           esphome::rotary_encoder::RotaryEncoderSensor *encoder);
-        void encode_select(esphome::rotary_encoder::RotaryEncoderSensor *encoder);
 
         void show_all(esphome::display::Display &display);
 
         void show_wifi_signal(esphome::display::Display &display);
-        void show_brightness(esphome::display::Display &display);
         void show_effect(esphome::display::Display &display);
 
         void edit_gauge(esphome::display::Display &display,
@@ -169,33 +198,39 @@ namespace panels
         void edit_effect(esphome::display::Display &display);
         void edit_wifi_signal(esphome::display::Display &display);
 
-        void show_text(esphome::display::Display &display,
-                       BaseFont *font,
-                       std::string text, Panel &panel);
-        void show_image(esphome::display::Display &display,
-                        esphome::display::BaseImage *image, PanelPos pos);
+        std::size_t split(std::string text, std::string sections[], std::size_t length);
+        // std::size_t split(std::string text, std::size_t sections[], std::size_t length);
+
+        void split_effect(esphome::display::Display &display,
+                          Panel &panel, std::string LOG_TEXT_SENSOR);
+
         void show_border(esphome::display::Display &display,
                          const Panel &panel) ALWAYS_INLINE
         {
             display.rectangle(panel.x, panel.y,
                               panel.width, panel.height);
         }
+
+        void show_brightness(esphome::display::Display &display) ALWAYS_INLINE
+        {
+            show_bulb_intensity(display, panels[BRIGHTNESS],
+                                rotary_states[BRIGHTNESS]);
+        }
+
         void show_index(esphome::display::Display &display,
                         RotaryState &settings);
         void show_bulb_intensity(esphome::display::Display &display,
                                  Panel &panel,
                                  RotaryState &settings);
         void show_color_guage(esphome::display::Display &display,
-                              Panel &panel,
-                              RotaryState &settings, const char *prefix = "");
+                              PanelID id, const char *prefix = "");
         void show_colors(esphome::display::Display &display);
-        // void show_colors_hsv(esphome::display::Display &display);
-        void on_rotate_hsv(esphome::light::LightCall &call, float sensor_value);
+
         void show_hsv(esphome::display::Display &display);
-        void edit_hsv(esphome::display::Display &display);
-        void show_wheel(esphome::display::Display &display,
-                        RotaryState &hue_settings,
-                        RotaryState &sat_settings);
+        void show_wheel(esphome::display::Display &display);
+        void write_panel(esphome::display::Display &display,
+                         const char *title, esphome::display::BaseFont *title_font,
+                         const char *value, esphome::display::BaseFont *value_font);
     };
 
     Controller &control();
