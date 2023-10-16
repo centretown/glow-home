@@ -136,12 +136,12 @@ sensor:
     name: "Controller-Dial"
     id: 'rotary1'
     pin_a:
-      number: GPIO33
+      number: GPIO32
       inverted: true
       mode:
         input: true
     pin_b:
-      number: GPIO32
+      number: GPIO33
       inverted: true
       mode:
         input: true
@@ -229,7 +229,7 @@ image:
     type: BINARY
     resize: 128x64
     dither: FLOYDSTEINBERG
-  - file: "image/shorebird.png"
+  - file: "image/moon.png"
     id: rm03
     type: BINARY
     resize: 128x64
@@ -259,7 +259,7 @@ image:
     type: BINARY
     resize: 128x64
     dither: FLOYDSTEINBERG
-  - file: "image/roger.png"
+  - file: "image/mmmdonuts.png"
     id: rm09
     type: BINARY
     resize: 128x64
@@ -269,7 +269,7 @@ image:
     type: BINARY
     resize: 128x64
     dither: FLOYDSTEINBERG
-  - file: "image/orang.png"
+  - file: "image/lakeofthewoods.png"
     id: rm11
     type: BINARY
     resize: 128x64
@@ -336,6 +336,8 @@ display:
     id: blue_display
     reset_pin: GPIO16
     address: 0x3C
+    flip_y: false
+    flip_x: false
     lambda: |-
       panels::control().show(it);
       
