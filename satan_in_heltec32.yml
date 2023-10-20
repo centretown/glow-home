@@ -107,6 +107,17 @@ light:
     rgb_order: GRB
     rmt_channel: 3
 
+  - platform: esp32_rmt_led_strip
+    name: "LED Strip"
+    id: strip4
+    chipset: ws2812
+    rgb_order: BRG
+    num_leds: 30
+    # num_leds: 20
+    pin: GPIO26
+    rmt_channel: 4
+    effects: !include custom/strip_effects.yml
+
 # https://esphome.io/components/i2c.html
 i2c:
   # Built-in display

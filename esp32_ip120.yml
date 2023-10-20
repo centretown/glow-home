@@ -1,0 +1,210 @@
+
+substitutions:
+  node_name: esp32-ip120
+  device_verbose_name: "esp32-ip120 light controller"
+  ip_suffix: "120"
+  ap_password: ""
+  board_type:  nodemcu-32s
+
+packages:
+  wifi: !include common/wifi.yml
+  device_base: !include common/device_base.yml
+
+# https://esphome.io/index.html#
+esphome:
+  includes:
+    - custom/glow
+    # - custom/rgb_panels
+  # on_boot:
+  #   priority: 600
+  #   then:
+  #     lambda: |-
+  #       panels::Resources resources = {
+  #         id(font_small),
+  #         id(font_medium),
+  #         id(font_large),
+  #         id(menu_up),
+  #         id(menu_down),
+  #         id(effect_icon),
+  #         {
+  #           id(bulb_00),
+  #           id(bulb_00), id(bulb_00), id(bulb_00), id(bulb_00), id(bulb_00), 
+  #           id(bulb_00), id(bulb_00), id(bulb_00), id(bulb_00), id(bulb_00)
+  #         },
+  #         {
+  #           id(rm01), id(rm01), id(rm01), id(rm01), id(rm01), id(rm01),
+  #           id(rm01), id(rm01), id(rm01), id(rm01), id(rm01)
+  #         }};
+  #       panels::control().setup(&resources, id(rotary1));
+
+# unique to this device
+api:
+  encryption:
+    key: "qHDZKf7gzKqHXF8MnmX2RuJuvd0+M2QpBcOnE6AiE2M="
+
+# https://esphome.io/components/light/index.html
+light:
+  - platform: esp32_rmt_led_strip
+    name: "LED Strip"
+    id: strip1
+    chipset: ws2812
+    rgb_order: BRG
+    num_leds: 30
+    pin: GPIO26
+    restore_mode: RESTORE_DEFAULT_ON
+    rmt_channel: 4
+    effects: !include custom/strip_effects.yml
+
+  - platform: esp32_rmt_led_strip
+    name: "LED Square"
+    id: square1
+    chipset: ws2812
+    rgb_order: BRG
+    num_leds: 19
+    pin: GPIO27
+    # restore_mode: RESTORE_DEFAULT_ON
+    rmt_channel: 3
+    effects: !include custom/strip_effects.yml
+
+# https://esphome.io/components/binary_sensor/index.html
+binary_sensor:
+  - platform: gpio
+    name: "Controller-Button"
+    pin:
+      number: GPIO35
+      mode:
+        input: true
+    # on_release:
+    #   then:
+    #     lambda: |-
+    #       panels::control().on_click(id(strip1), id(rotary1));
+
+# https://esphome.io/components/sensor/index.html
+# https://esphome.io/components/sensor/rotary_encoder
+sensor:
+  - platform: rotary_encoder
+    name: "Controller-Dial"
+    id: 'rotary1'
+    pin_a:
+      number: GPIO32
+      inverted: true
+      mode:
+        input: true
+    pin_b:
+      number: GPIO33
+      inverted: true
+      mode:
+        input: true
+        pullup: true
+    resolution: 1
+    min_value: 0
+    max_value: 100
+    unit_of_measurement: "%"
+    # on_value:
+    #   then:
+    #     - lambda: |-
+    #         panels::control().on_rotate(id(strip1), id(rotary1));
+    restore_mode: ALWAYS_ZERO
+
+# https://esphome.io/components/sensor/wifi_signal
+  - platform: wifi_signal
+    id: wifi_signal_1
+    name: "WiFi Signal"
+    update_interval: 60s
+    entity_category: "diagnostic"    
+    # on_value:
+    #   then:
+    #     - lambda: |-
+    #         panels::control().on_wifi_signal(id(wifi_signal_1).get_state());
+
+# https://esphome.io/components/text_sensor/wifi_info
+text_sensor:
+  - platform: wifi_info
+    ip_address:
+      id: ip_address
+      name: IP Address
+    #   on_value:
+    #     then:
+    #       - lambda: |-
+    #           panels::control().on_info_ip_address(id(ip_address));
+    # ssid:
+    #   id: ssid
+    #   name: SSID
+    #   on_value:
+    #     then:
+    #       - lambda: |-
+    #           panels::control().on_info_ssid(id(ssid));
+    # bssid:
+    #   id: bssid
+    #   name: BSSID
+    #   on_value:
+    #     then:
+    #       - lambda: |-
+    #           panels::control().on_info_bssid(id(bssid));
+    # mac_address:
+    #   id: mac_address
+    #   name: Mac Address
+    #   on_value:
+    #     then:
+    #       - lambda: |-
+    #           panels::control().on_info_mac_address(id(mac_address));
+
+# # https://esphome.io/components/display/#images
+# image:
+#   - file: "image/rm01.png"
+#     id: rm01
+#     type: BINARY
+#     resize: 128x64
+#     dither: FLOYDSTEINBERG
+#   - file:  mdi:lightbulb-outline
+#     id: bulb_00
+#     resize: 30x30
+#   - file:  mdi:star-four-points
+#     id: effect_icon
+#     resize: 12x12
+#   - file:  mdi:wifi
+#     id: wifi_icon
+#     resize: 30x30
+#   - file:  mdi:menu-up
+#     id: menu_up
+#     resize: 24x24
+#   - file:  mdi:menu-down
+#     id: menu_down
+#     resize: 24x24
+
+# # https://esphome.io/components/display/index.html?highlight=font#fonts
+# font:
+#   - file: # "gfonts://Lato,Roboto Condensed,Raleway,Fira Sans"
+#       type: gfonts
+#       family: Arimo
+#     id: font_small
+#     size: 14
+#   - file: # "gfonts://Lato"
+#       type: gfonts
+#       family: Arimo
+#     id: font_medium
+#     size: 16
+#   - file: # "gfonts://Lato"
+#       type: gfonts
+#       family: Arimo
+#     id: font_large
+#     size: 20
+
+# spi:
+#   clk_pin: GPIO18
+#   mosi_pin: GPIO19
+
+# # https://www.esphome.io/components/display/st7789v
+# display:
+#   - platform: st7789v
+#     model: Custom
+#     height: 240
+#     width: 240
+#     offset_height: 80
+#     offset_width: 0
+#     backlight_pin: GPIO17
+#     cs_pin: GPIO5
+#     dc_pin: GPIO16
+#     reset_pin: GPIO23
+#     lambda: |-
+#       it.print(0, 0, id(font_large), "Hello World!");
